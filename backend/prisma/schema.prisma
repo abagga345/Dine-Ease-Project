@@ -18,10 +18,11 @@ model Users {
   username    String       @unique
   firstName   String
   lastName    String
-  contactNo   String
+  contactNo   BigInt
   password    String
   Addresses  Address[]
   orders Orders[]
+  reviews Reviews[]
 }
 
 model Address {
@@ -29,7 +30,7 @@ model Address {
   username    String
   houseStreet String
   city        String
-  pincode     Int
+  pincode     BigInt
   user        Users   @relation(fields: [username], references: [username])
 }
 
@@ -64,6 +65,18 @@ model OrderItems {
   item Menu @relation(fields: [itemId],references: [id])
 }
 
+model Reviews{
+  id Int @id @default(autoincrement())
+  username String
+  itemId Int
+  description String
+  rating Int
+  item Menu @relation(fields: [itemId],references: [id])
+  user        Users     @relation(fields: [username], references: [username])
+}
+
+
+
 model Menu {
   id          Int    @id @default(autoincrement())
   imageUrl    String
@@ -71,9 +84,10 @@ model Menu {
   discount    Int    @default(0)
   details     String
   visibility  Boolean @default(true)
-  storeId     Int
-  store       Store   @relation(fields: [storeId], references: [id])
+  storeId     String
+  store       Store   @relation(fields: [storeId], references: [storeId])
   orders      OrderItems[]
+  review      Reviews[]
 }
 
 model Store {
@@ -82,7 +96,7 @@ model Store {
   storeSecret String
   storeStreet String
   city        String
-  pincode     Int
+  pincode     BigInt
   admins      Admins[]
   menu        Menu[]
   orders      Orders[]
