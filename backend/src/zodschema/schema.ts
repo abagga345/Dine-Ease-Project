@@ -4,7 +4,7 @@ export const UserSignup=z.object({
     username:z.string().min(4).max(30),
     firstName:z.string(),
     lastName:z.string(),
-    ContactNo:z.number().min(6000000000).max(9999999999),
+    ContactNo:z.string().length(10),
     password:z.string().min(5).max(30)
 }).required()
 
@@ -30,7 +30,7 @@ export const AdminSignin=z.object({
 export const address=z.object({
     houseStreet:z.string().max(60),
     city:z.string().max(30),
-    pincode:z.number().int().min(110000).max(999999)
+    pincode:z.string().min(6).max(7)
 }).required()
 
 export const review=z.object({
@@ -46,6 +46,25 @@ export const additem=z.object({
     details:z.string().max(40),
     visibility:z.boolean()
 }).required()
+
+export const status=z.object({
+    orderId:z.number().int(),
+    status:z.literal("pending").or(z.literal("completed")).or(z.literal("cancelled"))
+})
+
+export const item=z.object({
+    imageUrl:z.string(),
+    title:z.string(),
+    amount:z.number().int(),
+    discount:z.number().int().optional(),
+    details:z.string(),
+    visibility:z.boolean().optional(),
+})
+
+export const visibility=z.object({
+    id:z.number().int(),
+    visibility:z.boolean()
+})
 
 //visibility
 //status
