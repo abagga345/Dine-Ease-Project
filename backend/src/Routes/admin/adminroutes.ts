@@ -25,7 +25,15 @@ adminRouter.post("/signup",async (req:Request,res:Response)=>{
             res.status(400).json({"message":"Invalid Store"});
         }
         let temp=await bcrypt.hash(req.body.password,5);
-        await prisma.admins.create({data:{firstName:req.body.firstName,lastName:req.body.lastName,username:req.body.username,password:temp,storeId:req.body.storeId}});
+        await prisma.admins.create({
+            data:{
+                firstName:req.body.firstName,
+                lastName:req.body.lastName,
+                username:req.body.username,
+                password:temp,
+                storeId:req.body.storeId
+            }
+        });
         let token=jwt.sign({username:req.body.username,storeId:req.body.storeId},JWT_SECRET);
         res.json({"message":"Successful sign up","token":"Bearer "+token});
     }catch(err){
@@ -40,7 +48,11 @@ adminRouter.post("/signin",async (req:Request,res:Response)=>{
         return;
     }
     try{
-        let result1=await prisma.admins.findFirst({where:{username:req.body.username}});
+        let result1=await prisma.admins.findFirst({
+            where:{
+                username:req.body.username
+            }
+        });
         if (result1===null){
             res.status(401).json({"message":"Invalid credentials"});
             return;
@@ -60,7 +72,16 @@ adminRouter.get("/allorders",authMiddlewareadmin,async (req:CustomRequest,res:Re
     let storeId:string=req.storeId as string;
     let skipcnt:number=parseInt(req.query.skipcnt as string);
     try{
-        let result=await prisma.orders.findMany({where:{storeId:storeId},skip:skipcnt,take:20,orderBy:{timestamp:"desc"}});
+        let result=await prisma.orders.findMany({
+            where:{
+                storeId:storeId
+            },
+            skip:skipcnt,
+            take:20,
+            orderBy:{
+                timestamp:"desc"
+            }
+        });
         res.json({"orders":result});
     }catch(err){
         res.status(500).json({"message":"Internal Server Error"});
@@ -69,7 +90,15 @@ adminRouter.get("/allorders",authMiddlewareadmin,async (req:CustomRequest,res:Re
 adminRouter.get("/pendingorders",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
     let storeId:string=req.storeId as string;
     try{
-        let result=await prisma.orders.findMany({where:{storeId:storeId,status:"pending"},orderBy:{timestamp:"desc"}});
+        let result=await prisma.orders.findMany({
+            where:{
+                storeId:storeId,
+                status:"pending"
+            },
+            orderBy:{
+                timestamp:"desc"
+            }
+        });
         res.json({"orders":result});
     }catch(err){
         res.status(500).json({"message":"Internal Server Error"});
@@ -82,7 +111,15 @@ adminRouter.put("/changestatus",authMiddlewareadmin,async (req:CustomRequest,res
         return;
     }
     try{
-        await prisma.orders.update({where:{id:req.body.orderId,storeId:req.storeId as string},data:{status:req.body.status}})
+        await prisma.orders.update({
+            where:{
+                id:req.body.orderId,
+                storeId:req.storeId as string
+            },
+            data:{
+                status:req.body.status
+            }
+        })
         res.json({"message":"Status updated successfully"});
     }catch(err){
         res.status(500).json({"message":"Internal Server Error"});
@@ -116,7 +153,15 @@ adminRouter.put("/changevisibility",authMiddlewareadmin,async (req:CustomRequest
     }
     try{
         let id:number=req.body.id;
-        await prisma.menu.update({where:{id:id,storeId:storeId},data:{visibility:req.body.visibility}});
+        await prisma.menu.update({
+            where:{
+                id:id,
+                storeId:storeId
+            },
+            data:{
+                visibility:req.body.visibility
+            }
+        });
         res.json({"message":"Updation Successful"});
     }catch(err){
         res.status(500).json({"message":"Internal Server Error"});
