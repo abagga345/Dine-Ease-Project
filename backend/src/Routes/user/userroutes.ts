@@ -1,5 +1,6 @@
 import express, { NextFunction } from "express"
 import  jwt  from "jsonwebtoken";
+import bcrypt from "bcrypt"
 import { PrismaClient } from "@prisma/client";
 import { Request,Response} from "express"
 import { JWT_SECRET } from "../../config"
@@ -24,7 +25,8 @@ userRouter.post("/signup",async (req:Request,res:Response,next:NextFunction)=>{
             res.status(400).json({"message":"User already exists"});
             return;
         }
-        let result1=await prisma.users.create({data:{username:req.body.username,firstName:req.body.firstName,lastName:req.body.lastName,password:req.body.password,contactNo:req.body.contactNo},select:{username:true}}) as {username:string};
+        let temp=await bcrypt.hash(req.body.password,5);
+        let result1=await prisma.users.create({data:{username:req.body.username,firstName:req.body.firstName,lastName:req.body.lastName,password:temp,contactNo:req.body.contactNo},select:{username:true}}) as {username:string};
         let token=jwt.sign({username:result1["username"]},JWT_SECRET);
         res.json({"message":"Successful sign up","token":"Bearer "+token});
     }catch(err){
@@ -39,9 +41,13 @@ userRouter.post("/signin",async (req:Request,res:Response,next:NextFunction)=>{
         return;
     }
     try{
-        let result1=await prisma.users.findFirst({where:{username:req.body.username,password:req.body.password}});
+        let result1=await prisma.users.findFirst({where:{username:req.body.username}});
         if (result1===null){
             res.status(401).json({"message":"Invalid credentials"});
+            return;
+        }
+        if (! await bcrypt.compare(req.body.password,result1["password"])){
+            res.status(401).json({"message":"Unauthorised"});
             return;
         }
         let token:string=jwt.sign({username:result1["username"]},JWT_SECRET);
@@ -136,7 +142,9 @@ userRouter.put("/editreview",authMiddlewareuser,(req:CustomRequest,res:Response)
 })
 
 userRouter.post("/checkout",authMiddlewareuser,(req:CustomRequest,res:Response)=>{
-    //transaction , amount integrity
+    //transaction 
+
+    //amount req.body.amount
 })
 
 userRouter.put("/editprofile",authMiddlewareuser,(req:CustomRequest,res:Response)=>{

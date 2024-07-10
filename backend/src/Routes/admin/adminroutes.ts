@@ -1,5 +1,6 @@
 import express from "express"
 import { Request,Response} from "express"
+import bcrypt from "bcrypt"
 import { PrismaClient } from "@prisma/client";
 import { JWT_SECRET } from "../../config"
 import jwt from "jsonwebtoken"
@@ -23,10 +24,12 @@ adminRouter.post("/signup",async (req:Request,res:Response)=>{
         if (result1===null){
             res.status(400).json({"message":"Invalid Store"});
         }
-        await prisma.admins.create({data:{firstName:req.body.firstName,lastName:req.body.lastName,username:req.body.username,password:req.body.password,storeId:req.body.storeId}});
+        let temp=await bcrypt.hash(req.body.password,5);
+        await prisma.admins.create({data:{firstName:req.body.firstName,lastName:req.body.lastName,username:req.body.username,password:temp,storeId:req.body.storeId}});
         let token=jwt.sign({username:req.body.username,storeId:req.body.storeId},JWT_SECRET);
         res.json({"message":"Successful sign up","token":"Bearer "+token});
     }catch(err){
+        console.log(err);
         res.status(500).json({"message":"Internal Server Error"});
     }
 })
@@ -37,9 +40,13 @@ adminRouter.post("/signin",async (req:Request,res:Response)=>{
         return;
     }
     try{
-        let result1=await prisma.admins.findFirst({where:{username:req.body.username,password:req.body.password}});
+        let result1=await prisma.admins.findFirst({where:{username:req.body.username}});
         if (result1===null){
             res.status(401).json({"message":"Invalid credentials"});
+            return;
+        }
+        if (!await bcrypt.compare(req.body.password,result1["password"])){
+            res.status(401).json({"message":"Unauthorised "});
             return;
         }
         let token:string=jwt.sign({username:result1["username"],storeId:result1["storeId"]},JWT_SECRET);
@@ -116,14 +123,68 @@ adminRouter.put("/changevisibility",authMiddlewareadmin,async (req:CustomRequest
     }
 })
 
-adminRouter.get("/totaldaysales",authMiddlewareadmin,(req:CustomRequest,res:Response)=>{
-    
+adminRouter.get("/totaldaysales",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
+    const dateobj=new Date();
+    let currentYear=dateobj.getFullYear();
+    let currentMonth=dateobj.getMonth();
+    let currentDay=dateobj.getDate();
+    try{
+        const total = await prisma.orders.aggregate({
+            where: {
+              AND: [
+                {
+                  timestamp: {
+                    gte: new Date(currentYear, currentMonth, currentDay), 
+                  },
+                },
+                {
+                  timestamp: {
+                    lt: new Date(currentYear, currentMonth, currentDay+1), 
+                  },
+                },
+              ],
+            },
+            _sum:{
+                amount:true
+            }
+        });
+        res.json({"total":total["_sum"]["amount"]});
 
-
+    }catch(err){
+        res.status(500).json({"message":"INTERNAL SERVER ERROR"});
+    }
 
 })
-adminRouter.get("/totalmonthlysales",authMiddlewareadmin,(req:CustomRequest,res:Response)=>{
-    
+adminRouter.get("/totalmonthlysales",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
+    const dateobj=new Date();
+    let currentYear=dateobj.getFullYear();
+    let currentMonth=dateobj.getMonth(); 
+    let currentDay=dateobj.getDate();
+    try{ 
+        const total = await prisma.orders.aggregate({
+            where: {
+              AND: [
+                {
+                  timestamp: {
+                    gte: new Date(currentYear, currentMonth-1, currentDay+1), 
+                  },
+                },
+                {
+                  timestamp: {
+                    lt: new Date(currentYear, currentMonth, currentDay+1), 
+                  },
+                },
+              ],
+            },
+            _sum:{
+                amount:true
+            }
+        });
+        res.json({"total":total["_sum"]["amount"]});
+
+    }catch(err){
+        res.status(500).json({"message":"INTERNAL SERVER ERROR"});
+    }
 
 
 

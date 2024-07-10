@@ -40,8 +40,8 @@ model Admins {
   lastName   String
   username   String @unique
   password   String
-  storeId    Int
-  store      Store  @relation(fields: [storeId], references: [id])
+  storeId    String
+  store      Store  @relation(fields: [storeId], references: [storeId])
 }
 
 model Orders {
