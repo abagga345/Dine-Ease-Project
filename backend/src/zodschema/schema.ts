@@ -66,7 +66,31 @@ export const visibility=z.object({
     visibility:z.boolean()
 })
 
-//visibility
-//status
-//checkout
-//edit profile
+export const checkout=z.object({
+    description:z.string().max(75),
+    storeId:z.string(),
+    items:z.array(z.object({
+        id:z.number().int(),
+        quantity:z.number().int()
+    })),
+    amount:z.number()
+})
+
+
+export const editaddress=z.object({
+    houseStreet:z.string().max(60).optional(),
+    city:z.string().max(30).optional(),
+    pincode:z.string().min(6).max(7).optional()
+})
+
+export const editUser=z.object({
+    firstName:z.string().optional(),
+    lastName:z.string().optional(),
+    ContactNo:z.string().length(10).optional(),
+    password:z.string().min(5).max(30).optional()
+})
+
+export const editreview=z.object({
+    rating:z.literal(0).or(z.literal(1)).or(z.literal(2)).or(z.literal(3)).or(z.literal(4)).or(z.literal(5)).optional(),
+    description:z.string().min(1).max(70).optional(),
+})

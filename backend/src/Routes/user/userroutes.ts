@@ -5,12 +5,16 @@ import { PrismaClient } from "@prisma/client";
 import { Request,Response} from "express"
 import { JWT_SECRET } from "../../config"
 import { authMiddlewareuser } from "../../Middlewares/authMiddlewareuser";
-import { UserSignin, UserSignup, address, review } from "../../zodschema/schema";
+import { UserSignin, UserSignup, address, checkout, editUser, editaddress, editreview, review } from "../../zodschema/schema";
 
 export const userRouter=express.Router();
 const prisma=new PrismaClient();
 interface CustomRequest extends Request{
     username?:string
+}
+interface Item{
+    id:number,
+    quantity:number
 }
 
 userRouter.post("/signup",async (req:Request,res:Response,next:NextFunction)=>{
@@ -214,22 +218,107 @@ userRouter.delete("/deletereview",authMiddlewareuser,async (req:CustomRequest,re
     }
 })
 
-userRouter.put("/editreview",authMiddlewareuser,(req:CustomRequest,res:Response)=>{
+
+
+
+userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
+    
+    let result =checkout.safeParse(req.body);
+    if (result["success"]===false){
+        res.status(400).json({"message":"INVALID INPUTS"});
+    }
+    try{
+        let total=0;
+        for(let i=0;i<req.body.items.length;i++){
+            let price =await prisma.menu.findFirst({where:{id:req.body.items[i].id,storeId:req.body.storeId}}) ;
+            if (price===null){
+                throw new Error;
+            }
+            total+=(price["amount"]-price["discount"])*req.body.items[i].quantity;
+        }
+        if (total!==req.body.amount){
+            res.status(400).json({"message":"Price updated,Please retry"});
+        }
+        let result1=await prisma.orders.create({data:{
+            amount:total,
+            storeId:req.body.storeId,
+            username:req.username as string,
+            description:req.body.description,
+            status:"pending",
+            items:{
+                create:req.body.items.map((element:Item)=>{
+                    return{
+                        id:element.id,
+                        quantity:element.quantity
+                    } 
+                })
+            }
+        }})
+        res.json({"message":"Order placed successfully","orderId":result1["id"]});
+    }catch(err){
+        res.status(500).json({"message":"INTERNAL SERVER ERROR"});
+    } 
+})
+userRouter.put("/editreview",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
+    let rev_id:number=parseInt(req.query.id as string);
+    let result=editreview.safeParse(req.body);
+    if (result["success"]===false){
+        res.status(400).json({"message":"Invalid Inputs"});
+        return;
+    }
+    try{
+        let result1=await prisma.reviews.update({
+            where:{
+                id:rev_id
+            },
+            data:req.body
+        });
+        res.json({"message":"Review updated successfully","review":result1});
+    }catch(err){
+        res.status(500).json({"message":"INTERNAL SERVER ERROR"});
+    }
+})
+
+
+userRouter.put("/editprofile",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
+    let username:string=req.username as string;
+    let result=editUser.safeParse(req.body);
+    if (result["success"]===false){
+        res.status(400).json({"message":"Invalid Inputs"});
+        return;
+    }
+    try{
+        let result1=await prisma.users.update({
+            where:{
+                username:username
+            },
+            data:req.body
+        });
+        res.json({"message":"Profile updated successfully","profile":result1});
+    }catch(err){
+        res.status(500).json({"message":"INTERNAL SERVER ERROR"});
+    }
 
 })
 
-userRouter.post("/checkout",authMiddlewareuser,(req:CustomRequest,res:Response)=>{
-    //transaction 
-
-    //amount req.body.amount
-})
-
-userRouter.put("/editprofile",authMiddlewareuser,(req:CustomRequest,res:Response)=>{
-
-})
-
-userRouter.put("/editaddress",authMiddlewareuser,(req:CustomRequest,res:Response)=>{
- 
+userRouter.put("/editaddress",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
+    let add_id:number=parseInt(req.query.id as string);
+    let result=editaddress.safeParse(req.body);
+    if (result["success"]===false){
+        res.status(400).json({"message":"Invalid Inputs"});
+        return;
+    }
+    try{
+        let result1=await prisma.address.update({
+            where:{
+                id:add_id
+            },
+            data:req.body
+        });
+        res.json({"message":"Address updated successfully","address":result1});
+    }catch(err){
+        res.status(500).json({"message":"INTERNAL SERVER ERROR"});
+    }
 })
 
 userRouter.delete("/deleteaddress",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{

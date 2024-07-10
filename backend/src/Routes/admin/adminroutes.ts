@@ -126,8 +126,26 @@ adminRouter.put("/changestatus",authMiddlewareadmin,async (req:CustomRequest,res
     }
 })
 adminRouter.get("/allitems",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
-
-
+    let storeId:string=req.storeId as string;
+    try{
+        let result1=await prisma.menu.findMany({
+            where:{
+                storeId:storeId
+            },
+            select:{
+                id:true,
+                imageUrl:true,
+                amount:true,
+                discount:true,
+                details:true,
+                visibility:true,
+                title:true
+            }
+        })
+        res.json({"items":result1});
+    }catch(err){
+        res.status(500).json({"message":"INTERNAL SERVER ERROR"});
+    }
 })
 
 
