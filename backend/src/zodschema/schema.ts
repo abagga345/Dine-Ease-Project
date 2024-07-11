@@ -1,16 +1,16 @@
 import {z} from 'zod'
 
 export const UserSignup=z.object({
-    username:z.string().min(4).max(30),
-    firstName:z.string(),
-    lastName:z.string(),
-    ContactNo:z.string().length(10),
-    password:z.string().min(5).max(30)
+    username:z.string().min(4,{"message":"Username length is very short"}).max(30,{"message":"Username length is very large"}),
+    firstName:z.string({message:"FirstName should be a string"}),
+    lastName:z.string({message:"LastName should be a string"}),
+    contactNo:z.string().length(10,{"message":"ContactNo not of 10 digits"}),
+    password:z.string({message:"Password should be a string"}).min(5,{"message":"Username length is very short"}).max(30,{"message":"Password length is very large"})
 }).required()
 
 export const UserSignin=z.object({
-    username:z.string().min(4).max(30),
-    password:z.string().min(5).max(30)
+    username:z.string().min(4,{"message":"Username length is very short"}).max(30,{"message":"Username length is very large"}),
+    password:z.string({message:"Password should be a string"}).min(5,{"message":"Username length is very short"}).max(30,{"message":"Password length is very large"})
 }).required()
 
 export const AdminSignup=z.object({

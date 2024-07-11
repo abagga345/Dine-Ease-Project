@@ -9,5 +9,5 @@ app.use("/api/v1",mainRouter);
 
 
 app.listen(3000,function(){
-    console.log("SERVER STARTED ON PORT 3000");
+    console.log("SERVER STARTED ON PORT 3000"); 
 })

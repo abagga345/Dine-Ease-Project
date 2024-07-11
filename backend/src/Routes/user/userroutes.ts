@@ -18,10 +18,14 @@ interface Item{
 }
 
 userRouter.post("/signup",async (req:Request,res:Response,next:NextFunction)=>{
-    let result=UserSignup.safeParse(req.body);
-    if (result["success"]==false){
-        res.status(400).json({"message":"INVALID DATA"});
-        return;
+    try{
+    let result=UserSignup.parse(req.body);
+    // if (result["success"]==false){
+    //     res.status(400).json({"message":"INVALID INPUTS"});
+    //     return;
+    // }
+    }catch(err){
+        console.log(err);
     }
     try{
         let result2=await prisma.users.findFirst({where:{username:req.body.username}});

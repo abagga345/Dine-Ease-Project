@@ -248,8 +248,5 @@ adminRouter.get("/totalmonthlysales",authMiddlewareadmin,async (req:CustomReques
     }catch(err){
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
-
-
-
 })
 
