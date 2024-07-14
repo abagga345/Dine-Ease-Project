@@ -9,6 +9,8 @@ import { AdminSignin } from "./Components/Admin/AdminSignin"
 import {AdminSignup} from "./Components/Admin/AdminSignup"
 import {AdminDashboard} from "./Components/Admin/AdminDashboard"
 import './App.css'
+import { MainScreenHome } from "./Components/Admin/MainScreenHome"
+import { MainScreenMenu } from "./Components/Admin/MainScreenMenu"
 
 function App() {
   return (
@@ -23,7 +25,9 @@ function App() {
           <Route path="/cart" element={<UserCart></UserCart>}></Route>
           <Route path="/admin/signup" element={<AdminSignup></AdminSignup>}></Route>
           <Route path="/admin/signin" element={<AdminSignin></AdminSignin>}></Route>
-          <Route path="/admin/dashboard" element={<AdminDashboard></AdminDashboard>}></Route>
+          <Route path="/admin/dashboard/" element={<MainScreenHome></MainScreenHome>}>
+            <Route path="admin/dashboard/menu" element={<MainScreenMenu></MainScreenMenu>}></Route>
+          </Route>
         </Routes>
       </BrowserRouter>
      

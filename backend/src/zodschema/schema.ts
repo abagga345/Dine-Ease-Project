@@ -49,7 +49,7 @@ export const additem=z.object({
 
 export const status=z.object({
     orderId:z.number().int(),
-    status:z.literal("pending").or(z.literal("completed")).or(z.literal("cancelled"))
+    status:z.literal("Pending").or(z.literal("Completed")).or(z.literal("Cancelled"))
 })
 
 export const item=z.object({

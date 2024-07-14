@@ -2,26 +2,34 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-interface SigninresultSuccess{
+interface SignupresultSuccess{
     token:string,
     message:string
 }
 
 interface FormFields{
+    firstName:string,
+    lastName:string,
+    storeId:string,
+    storeSecret:string,
     username:string,
     password:string
 }
 
-export function SigninCard(){
+export function SignupCard(){
     const [error,setError]=useState("");
     const {register,handleSubmit,formState:{errors,isSubmitting}}=useForm<FormFields>();
     
     const navigate=useNavigate();
 
     async function submithandler(data:FormFields){
-        let result=await fetch("http://localhost:3000/api/v1/user/signin",{
+        let result=await fetch("http://localhost:3000/api/v1/admin/signup",{
             method:"POST",
             body:JSON.stringify({
+                firstName:data.firstName,
+                lastName:data.lastName,
+                storeId:data.storeId,
+                storeSecret:data.storeSecret,
                 username:data.username,
                 password:data.password
             }),
@@ -30,7 +38,7 @@ export function SigninCard(){
             }
         })
         if (result.ok){
-            const data:SigninresultSuccess=await result.json();
+            const data:SignupresultSuccess=await result.json();
             localStorage.setItem("token",data["token"]);
             navigate("/UserHome");
             return;
@@ -39,14 +47,14 @@ export function SigninCard(){
         setError(err.message);
     }
 
-    function signupnavigator(event:any){
+    function signinnavigator(event:any){
         event.preventDefault();
-        navigate("/");
+        navigate("/admin/signin");
     }
 
 
     return (
-        <div className="w-full flex justify-center items-center">
+        <div className="w-full h-full flex justify-center items-center">
         <div className="mt-10 z-10 bg-white  flex h-full  flex-1 md:flex-none lg:w-5/12 flex-col justify-center px-6 py-12 lg:px-8 md:shadow-xl ">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
               <img
@@ -55,14 +63,102 @@ export function SigninCard(){
                 className="mx-auto h-24 w-24"
               />
               <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                Sign in to your  account
+                Sign up to create an admin account
               </h2>
             </div>
     
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
               
         <form onSubmit={handleSubmit(submithandler)}>
-              <div>
+              <div className="flex justify-between gap-5">
+                <div className="w-1/2">
+                    <label htmlFor="firstname" className="block text-sm font-medium leading-6 text-gray-900">
+                     FirstName
+                    </label>
+                    <div className="mt-2">
+                        <input {...register('firstName'
+                        )}
+                        id="firstName"
+                        name="firstName"
+                        type="text"
+                        required
+                        autoComplete="firstName"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                         />
+                    </div>
+                </div>
+                <div className="w-1/2">
+                  <label htmlFor="lastname" className="block text-sm font-medium leading-6 text-gray-900">
+                   LastName
+                  </label>
+                  <div className="mt-2">
+                    <input {...register('lastName')}
+                      id="lastName"
+                      name="lastName"
+                      type="text"
+                      required
+                      autoComplete="lastName"
+                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+            </div>
+
+            <div className="flex justify-between gap-5">
+                <div className="w-1/2">
+                    <label htmlFor="storeId" className="block text-sm font-medium leading-6 text-gray-900">
+                     StoreId
+                    </label>
+                    <div className="mt-2">
+                        <input {...register('storeId',{
+                        minLength:{
+                            value:4,
+                            message:"INVALID STORE ID"
+                        },
+                        maxLength:{
+                            value:30,
+                            message:"INVALID STORE ID"
+                        }
+                    }
+                        )}
+                        id="storeId"
+                        name="storeId"
+                        type="text"
+                        required
+                        autoComplete="storeId"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                         />
+                    </div>
+                </div>
+                <div className="w-1/2">
+                  <label htmlFor="storeSecret" className="block text-sm font-medium leading-6 text-gray-900">
+                   StoreAccessKey
+                  </label>
+                  <div className="mt-2">
+                    <input {...register('storeSecret',{
+                        minLength:{
+                            value:5,
+                            message:"INVALID STORE KEY"
+                        },
+                        maxLength:{
+                            value:30,
+                            message:"INVALID STORE KEY"
+                        }
+                    })}
+                      id="storeSecret"
+                      name="storeSecret"
+                      type="password"
+                      required
+                      autoComplete="storeSecret"
+                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+            </div>
+              
+             
+    
+                <div>
                   <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
                     Username
                   </label>
@@ -133,7 +229,7 @@ export function SigninCard(){
                     
                     className="flex mt-8 w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
-                    Sign in
+                    Sign up
                   </button>}
                 </div>
         </form>
@@ -141,8 +237,8 @@ export function SigninCard(){
     
               <p className="mt-10 text-center text-sm text-gray-500">
                 Have an account?{' '}
-                <a href="#" onClick={signupnavigator} className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-                  SignUp
+                <a href="#" onClick={signinnavigator} className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                  SignIn
                 </a>
               </p>
             </div>

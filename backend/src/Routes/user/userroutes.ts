@@ -7,6 +7,7 @@ import { JWT_SECRET } from "../../config"
 import { authMiddlewareuser } from "../../Middlewares/authMiddlewareuser";
 import { UserSignin, UserSignup, address, checkout, editUser, editaddress, editreview, review } from "../../zodschema/schema";
 
+
 export const userRouter=express.Router();
 const prisma=new PrismaClient();
 interface CustomRequest extends Request{
@@ -246,7 +247,7 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
             storeId:req.body.storeId,
             username:req.username as string,
             description:req.body.description,
-            status:"pending",
+            status:'Pending',
             items:{
                 create:req.body.items.map((element:Item)=>{
                     return{

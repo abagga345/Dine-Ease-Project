@@ -43,13 +43,18 @@ model Admins {
   storeId    String
   store      Store  @relation(fields: [storeId], references: [storeId])
 }
+enum status{
+  Pending
+  Completed
+  Cancelled
+}
 
 model Orders {
   id          Int          @id @default(autoincrement())
   items       OrderItems[]
   amount      Int
   description String
-  status      String
+  status      status
   username    String
   timestamp   DateTime  @default(now())
   user        Users     @relation(fields: [username], references: [username])

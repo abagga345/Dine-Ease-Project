@@ -1,227 +1,233 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+// import { useState } from "react";
+// import { useForm } from "react-hook-form";
+// import { useNavigate } from "react-router-dom";
 
-interface resultSuccess{
-    token:string,
-    message:string
-}
+// interface resultSuccess{
+//     token:string,
+//     message:string
+// }
 
-interface SignupFields{
-    firstName:string,
-    lastName:string,
-    contactNo:string,
-    username:string,
-    password:string
-}
+// interface SignupFields{
+//     firstName:string,
+//     lastName:string,
+//     contactNo:string,
+//     username:string,
+//     password:string
+// }
 
-interface SigninFields{
-    username:string,
-    password:string
-}
-export function GeneralCard({fields,navigatorlink,fetchurl,type}){
-    if (type=="signin") interface FormFields extends SigninFields{}
-    else interface FormFields extends SignupFields{};
-    const [error,setError]=useState("");
-    const {register,handleSubmit,formState:{errors,isSubmitting}}=useForm<FormFields>();
+// interface SigninFields{
+//     username:string,
+//     password:string
+// }
+// type allfields="username" | "password" | "contactNo" | "firstName" | "lastName"
+
+// interface Innermost{
+//     name:string
+//     datatype:string,
+//     validate:(value:string)=>(string | boolean),
+//     field:allfields,
+// }
+// interface props{
+//     fields:Innermost[];
+//     navigatorlink:string;
+//     fetchurl:string;
+//     type:"signin" | "signup";
+// }
+// function GeneralCard({fields,navigatorlink,fetchurl,type}:props){
+//     if (type=="signin") interface FormFields extends SigninFields{}
+//     else interface FormFields extends SignupFields{};
+//     const [error,setError]=useState("");
+//     const {register,handleSubmit,formState:{errors,isSubmitting}}=useForm<FormFields>();
     
-    const navigate=useNavigate();
+//     const navigate=useNavigate();
 
-    async function submithandler(data:FormFields){
-        let result=await fetch(fetchurl,{
-            method:"POST",
-            body:JSON.stringify({
-                
-            }),
-            headers:{
-                "content-type":"application/json"
-            }
-        })
-        if (result.ok){
-            const data:resultSuccess=await result.json();
-            localStorage.setItem("token",data["token"]);
-            navigate("/UserHome");
-            return;
-        }
-        const err:{message:string}=await result.json();
-        setError(err.message);
-    }
+//     async function submithandler(data:FormFields){
+//         let result=await fetch(fetchurl,{
+//             method:"POST",
+//             body:JSON.stringify(
+//                 ((type=="signup")?{username:data.username,firstName:data.firstName,password:data.password,lastName:data.lastName,contactNo:data.contactNo}:{username:data.username,password:data.password})
+//             ),
+//             headers:{
+//                 "content-type":"application/json"
+//             }
+//         })
+//         if (result.ok){
+//             const data:resultSuccess=await result.json();
+//             localStorage.setItem("token",data["token"]);
+//             navigate("/UserHome");
+//             return;
+//         }
+//         const err:{message:string}=await result.json();
+//         setError(err.message);
+//     }
 
-    function navigatetolink(event:any){
-        event.preventDefault();
-        navigate(navigatorlink);
-    }
+//     function navigatetolink(event:any){
+//         event.preventDefault();
+//         navigate(navigatorlink);
+//     }
 
 
-    return (
-        <div className="w-full h-full flex justify-center items-center">
-        <div className="mt-10 z-10 bg-white  flex h-full  flex-1 md:flex-none lg:w-5/12 flex-col justify-center px-6 py-12 lg:px-8 md:shadow-xl ">
-            <div className="sm:mx-auto sm:w-full sm:max-w-md">
-              <img
-                alt="Your Company"
-                src="https://dynamic.design.com/asset/logo/dbf56484-b03e-440a-b09e-7160d7cff02c/logo-search-grid-1x?logoTemplateVersion=1&v=637888957314700000&text=Burger+store"
-                className="mx-auto h-24 w-24"
-              />
-              <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                Sign up to create an account
-              </h2>
-            </div>
+//     return (
+//         <div className="w-full h-full flex justify-center items-center">
+//         <div className="mt-10 z-10 bg-white  flex h-full  flex-1 md:flex-none lg:w-5/12 flex-col justify-center px-6 py-12 lg:px-8 md:shadow-xl ">
+//             <div className="sm:mx-auto sm:w-full sm:max-w-md">
+//               <img
+//                 alt="Your Company"
+//                 src="https://dynamic.design.com/asset/logo/dbf56484-b03e-440a-b09e-7160d7cff02c/logo-search-grid-1x?logoTemplateVersion=1&v=637888957314700000&text=Burger+store"
+//                 className="mx-auto h-24 w-24"
+//               />
+//               <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+//                {type=="signup"?"Sign up to create an account":"Sign in to your account"}
+//               </h2>
+//             </div>
     
-            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+//             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
               
-        <form onSubmit={handleSubmit(submithandler)}>
-              <div className="flex justify-between gap-5">
-                <div className="w-1/2">
-                    <label htmlFor="firstname" className="block text-sm font-medium leading-6 text-gray-900">
-                     FirstName
-                    </label>
-                    <div className="mt-2">
-                        <input {...register('firstName'
-                        )}
-                        id="firstName"
-                        name="firstName"
-                        type="text"
-                        required
-                        autoComplete="firstName"
-                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                         />
-                    </div>
-                </div>
-                <div className="w-1/2">
-                  <label htmlFor="lastname" className="block text-sm font-medium leading-6 text-gray-900">
-                   LastName
-                  </label>
-                  <div className="mt-2">
-                    <input {...register('lastName')}
-                      id="lastName"
-                      name="lastName"
-                      type="text"
-                      required
-                      autoComplete="lastName"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-            </div>
-              
-              <div>
-                  <label htmlFor="contactNo" className="block text-sm font-medium leading-6 text-gray-900">
-                   ContactNo
-                  </label>
-                  <div className="mt-2">
-                    <input {...register('contactNo',{
-                        validate:(value)=>{
-                            if (value.length!=10){
-                                return "CONTACT NUMBER NOT OF 10 DIGITS"
-                            }
-                            else{
-                                for(let i=0;i<value.length;i++){
-                                    if (value[i]>='0' && value[i]<='9') continue;
-                                    else return "CONTACT NUMBER INCORRECT"
-                                }
-                                return true;
-                            }
-                        }
-                    })}
-                      id="contactNo"
-                      name="contactNo"
-                      type="text"
-                      required
-                      autoComplete="contactNo"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-                
-                <div className="mt-2 ">
-                    {(errors.contactNo)?<div style={{color:"#e53e3e"}} >{errors.contactNo.message}</div>:""}
-                </div>
-    
-                <div>
-                  <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
-                    Username
-                  </label>
-                  <div className="mt-2">
-                    <input {...register('username',{
-                        minLength:{
-                            value:4,
-                            message:"USERNAME TOO SHORT"
-                        },
-                        maxLength:{
-                            value:30,
-                            message:"USERNAME TOO LARGE"
-                        }
-                    })}
-                      id="username"
-                      name="username"
-                      type="text"
-                      required
-                      autoComplete="username"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-                <div className="mt-2 ">
-                    {(errors.username)?<div style={{color:"#e53e3e"}} >{errors.username?.message}</div>:""}
-                </div>
-    
-                <div>
-                  <div className="flex items-center justify-between">
-                    <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-                      Password
-                    </label>
-                </div>
-                  <div className="mt-2">
-                    <input {...register('password',{
-                        minLength:{
-                            value:5,
-                            message:"PASSWORD TOO  SHORT"
-                        },
-                        maxLength:{
-                            value:30,
-                            message:"PASSWORD TOO LARGE"
-                        }
-                    })}
-                      id="password"
-                      name="password"
-                      type="password"
-                      required
-                      autoComplete="current-password"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-                <div className="mt-2 ">
-                    {(errors.password)?<div style={{color:"#e53e3e"}} >{errors.password?.message}</div>:""}
-                </div>
+//         <form onSubmit={handleSubmit(submithandler)}>
+//             {(type=="signup")? <div className="flex justify-between gap-5">
+//                 <div className="w-1/2">
+//                     <label htmlFor="firstname" className="block text-sm font-medium leading-6 text-gray-900">
+//                      FirstName
+//                     </label>
+//                     <div className="mt-2">
+//                         <input {...register('firstName'
+//                         )}
+//                         id="firstName"
+//                         name="firstName"
+//                         type="text"
+//                         required
+//                         autoComplete="firstName"
+//                         className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+//                          />
+//                     </div>
+//                 </div>
+//                 <div className="w-1/2">
+//                   <label htmlFor="lastname" className="block text-sm font-medium leading-6 text-gray-900">
+//                    LastName
+//                   </label>
+//                   <div className="mt-2">
+//                     <input {...register('lastName')}
+//                       id="lastName"
+//                       name="lastName"
+//                       type="text"
+//                       required
+//                       autoComplete="lastName"
+//                       className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+//                     />
+//                   </div>
+//                 </div>
+//             </div>:""}
 
-                <div className="mt-2 flex justify-center items-center">
-                    {(error!="")?<div style={{color:"#e53e3e"}} >{error}</div>:""}
-                </div>
+//               {fields.map((element:Innermost)=>{
+//                 return (<div>
+//                     <div>
+//                   <label htmlFor={element.field} className="block text-sm font-medium leading-6 text-gray-900">
+//                    {element.name}
+//                   </label>
+//                   <div className="mt-2">
+//                     <input {...register(element.field,{
+//                         validate:element.validate
+//                     })}
+//                       id={element.field}
+//                       name={element.field}
+//                       type={element.datatype}
+//                       required
+//                       autoComplete={element.field}
+//                       className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+//                     />
+//                   </div>
+//                 </div>
+//                 <div className="mt-2 ">
+//                 {/* { const fiel1:allfields=element.field; */}
+//                 {(errors.fiel1)?<div style={{color:"#e53e3e"}}>{errors.fiel1.message}</div>:""}
+//                 </div>
+//                 </div>
+
+//                 )
+//               })}
+//               <div className="mt-2 flex justify-center items-center">
+//                     {(error!="")?<div style={{color:"#e53e3e"}} >{error}</div>:""}
+//                 </div>
     
-                <div>
-                    {(isSubmitting)?<button type="button" className="flex mt-8 gap-1 w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" disabled>
-                        <svg aria-hidden="true" className="w-4 h-4 mt-1 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-    </svg>Loading...</button>:<button type="submit"
+//                 <div>
+//                     {(isSubmitting)?<button type="button" className="flex mt-8 gap-1 w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" disabled>
+//                         <svg aria-hidden="true" className="w-4 h-4 mt-1 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+//         <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+//         <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+//     </svg>Loading...</button>:<button type="submit"
                     
-                    className="flex mt-8 w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  >
-                    Sign up
-                  </button>}
-                </div>
-        </form>
-              
-    
-              <p className="mt-10 text-center text-sm text-gray-500">
-                Have an account?{' '}
-                <a href="#" onClick={navigatetolink} className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-                  SignIn
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      )
-}
+//                     className="flex mt-8 w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+//                   >
+//                    {type=="signup"?"Sign up":"Sign in"}
+//                   </button>}
+//                 </div>
+//         </form>
+//         <p className="mt-10 text-center text-sm text-gray-500">
+//                 {(type=="signup")?"Have an account?":"Create an account"}{' '}
+//                 <a href="#" onClick={navigatetolink} className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+//                   {(type=="signup")?"Sign up":"Sign in"}
+//                 </a>
+//               </p>
+//             </div>
+//           </div>
+//         </div>
+//       )
+// }
+
+// function UserSignup(){
+//     return (
+//         <div className="h-screen">
+//             <GeneralCard navigatorlink={"/signin"} type={"signup"} fetchurl={"https://localhost:3000/api/v1/user/"} fields={
+//                 [
+//                     {
+//                        name:"Username",
+//                        datatype:"text",
+//                        field:"username",
+//                        validate:(value:string):string|boolean=>{
+//                             if (value.length<4){
+//                                 return "Username too short"
+//                             }
+//                             else if (value.length>30){
+//                                 return "Username too large"
+//                             }
+//                             return true;
+//                        }
+//                     },
+//                     {
+//                         name:"ContactNo",
+//                         datatype:"text",
+//                         field:"contactNo",
+//                         validate:(value:string)=>{
+//                             if (value.length!=10){
+//                                 return "CONTACT NUMBER NOT OF 10 DIGITS"
+//                             }
+//                             else{
+//                                 for(let i=0;i<value.length;i++){
+//                                     if (value[i]>='0' && value[i]<='9') continue;
+//                                     else return "CONTACT NUMBER INCORRECT"
+//                                 }
+//                                 return true;
+//                             }
+//                         }
+
+//                     },
+//                     {
+//                         name:"Password",
+//                         datatype:"password",
+//                         field:"password",
+//                         validate:(value:string)=>{
+//                             if (value.length<4){
+//                                 return "Username too short"
+//                             }
+//                             else if (value.length>30){
+//                                 return "Username too large"
+//                             }
+//                             return true;
+//                         }
+//                     }
+//                 ]
+//             }></GeneralCard>
+//         </div>
+
+//     )
+// }

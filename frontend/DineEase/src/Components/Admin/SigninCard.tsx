@@ -41,13 +41,13 @@ export function SigninCard(){
 
     function signupnavigator(event:any){
         event.preventDefault();
-        navigate("/");
+        navigate("/admin/signup");
     }
 
 
     return (
-        <div className="w-full flex justify-center items-center">
-        <div className="mt-10 z-10 bg-white  flex h-full  flex-1 md:flex-none lg:w-5/12 flex-col justify-center px-6 py-12 lg:px-8 md:shadow-xl ">
+        <div className="w-full h-fit flex justify-center items-center">
+        <div className="mt-10 z-10 bg-white  flex   flex-1 md:flex-none lg:w-5/12 flex-col justify-center px-6 py-12 lg:px-8 md:shadow-xl ">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
               <img
                 alt="Your Company"
@@ -55,7 +55,7 @@ export function SigninCard(){
                 className="mx-auto h-24 w-24"
               />
               <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                Sign in to your  account
+                Sign in to your admin account
               </h2>
             </div>
     
@@ -82,11 +82,12 @@ export function SigninCard(){
                       type="text"
                       required
                       autoComplete="username"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset  focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
-                <div className="mt-2 ">
+                
+                <div className="mt-2">
                     {(errors.username)?<div style={{color:"#e53e3e"}} >{errors.username?.message}</div>:""}
                 </div>
     

@@ -76,7 +76,7 @@ adminRouter.get("/allorders",authMiddlewareadmin,async (req:CustomRequest,res:Re
             where:{
                 storeId:storeId
             },
-            skip:skipcnt,
+            skip:(skipcnt-1)*20,
             take:20,
             orderBy:{
                 timestamp:"desc"
@@ -93,7 +93,7 @@ adminRouter.get("/pendingorders",authMiddlewareadmin,async (req:CustomRequest,re
         let result=await prisma.orders.findMany({
             where:{
                 storeId:storeId,
-                status:"pending"
+                status:'Pending'
             },
             orderBy:{
                 timestamp:"desc"
