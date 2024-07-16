@@ -11,6 +11,7 @@ import {AdminDashboard} from "./Components/Admin/AdminDashboard"
 import './App.css'
 import { MainScreenHome } from "./Components/Admin/MainScreenHome"
 import { MainScreenMenu } from "./Components/Admin/MainScreenMenu"
+import { ErrorPage } from "./Components/common/errorpage"
 
 function App() {
   return (
@@ -28,6 +29,8 @@ function App() {
           <Route path="/admin/dashboard/" element={<MainScreenHome></MainScreenHome>}>
             <Route path="admin/dashboard/menu" element={<MainScreenMenu></MainScreenMenu>}></Route>
           </Route>
+          <Route path="/admin/notfound" element={<ErrorPage link="/admin/signin"></ErrorPage>}></Route>
+          <Route path="/user/notfound" element={<ErrorPage link="/signin"></ErrorPage>}></Route>
         </Routes>
       </BrowserRouter>
      

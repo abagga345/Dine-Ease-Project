@@ -1,15 +1,15 @@
-import React from "react"
+import React, { PropsWithChildren } from "react"
 import { Sidebar } from "./SideBar"
 import { MainScreenHome } from "./MainScreenHome"
 import { Routes,Route } from "react-router-dom"
 import { MainScreenMenu } from "./MainScreenMenu"
-export function AdminDashboard({children}){
+export const AdminDashboard=({children}:PropsWithChildren)=>{
     return (
-        <div className="grid grid-cols-6 ">
-            <div className="col-span-1 bg-red-500 ">
+        <div className="grid grid-cols-6 w-screen h-screen ">
+            <div className="col-span-1 ">
                 <Sidebar></Sidebar>
             </div>
-            <div className="col-span-5 bg-blue-500">
+            <div className="col-span-5 ">
                 {children}
            </div>
         </div>

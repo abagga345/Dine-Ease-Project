@@ -24,6 +24,11 @@ adminRouter.post("/signup",async (req:Request,res:Response)=>{
         if (result1===null){
             res.status(400).json({"message":"Invalid Store"});
         }
+        let result2=await prisma.admins.findFirst({where:{username:req.body.username}});
+        if (result2!==null){
+            res.status(400).json({"message":"User already exists"});
+            return;
+        }
         let temp=await bcrypt.hash(req.body.password,5);
         await prisma.admins.create({
             data:{
@@ -76,8 +81,8 @@ adminRouter.get("/allorders",authMiddlewareadmin,async (req:CustomRequest,res:Re
             where:{
                 storeId:storeId
             },
-            skip:(skipcnt-1)*20,
-            take:20,
+            skip:(skipcnt-1)*15,
+            take:15,
             orderBy:{
                 timestamp:"desc"
             }

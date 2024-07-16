@@ -19,7 +19,7 @@ export function SigninCard(){
     const navigate=useNavigate();
 
     async function submithandler(data:FormFields){
-        let result=await fetch("http://localhost:3000/api/v1/user/signin",{
+      let result=await fetch("http://localhost:3000/api/v1/admin/signin",{
             method:"POST",
             body:JSON.stringify({
                 username:data.username,
@@ -32,7 +32,7 @@ export function SigninCard(){
         if (result.ok){
             const data:SigninresultSuccess=await result.json();
             localStorage.setItem("token",data["token"]);
-            navigate("/UserHome");
+            navigate("/admin/dashboard");
             return;
         }
         const err:{message:string}=await result.json();

@@ -40,7 +40,7 @@ export function SignupCard(){
         if (result.ok){
             const data:SignupresultSuccess=await result.json();
             localStorage.setItem("token",data["token"]);
-            navigate("/UserHome");
+            navigate("/admin/dashboard");
             return;
         }
         const err:{message:string}=await result.json();
