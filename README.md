@@ -1,12 +1,12 @@
 # DineEase: Comprehensive Restaurant Website and Management System
 
-Users can browse menu, place orders with delivery or pickup functionality , contact for inquiries , leave customer reviews
+Users can browse menu, place orders with delivery functionality , contact for inquiries , leave customer reviews
 
-![UserFlow depiction](./UserFlow.jpeg)
 
-Admins can manage pending orders , check complete order history , stock in inventories , get analytics regarding profit , total sales and popular menu items. They can also manage menu items. They can get an alert if inventory falls below the minimum set indicating menu updation
 
-![AdminFlow depiction](./AdminFlow.jpeg)
+Admins can manage pending orders , check complete order history , get analytics regarding profit , total sales and popular menu items. They can also manage menu items. 
+
+
 
 ## TECHNOLOGY STACK:-
 
