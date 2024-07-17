@@ -2,10 +2,7 @@
 
 Users can browse menu, place orders with delivery functionality , contact for inquiries , leave customer reviews
 
-
-
 Admins can manage pending orders , check complete order history , get analytics regarding profit , total sales and popular menu items. They can also manage menu items. 
-
 
 
 ## TECHNOLOGY STACK:-
@@ -18,7 +15,7 @@ Admins can manage pending orders , check complete order history , get analytics 
 
 4 PRISMA ORM
 
-5 MONGO DB AS DATABASE (CAN BE LATER MIGRATED TO POSTGRESQL FOR BETTER NORMALISED SCHEMA)
+5 POSTGRESQL
 
 6 TYPESCRIPT FOR COMPILE TIME TYPE SAFETY
 
@@ -30,7 +27,5 @@ Admins can manage pending orders , check complete order history , get analytics 
 
 10 GITHUB FOR VERSION CONTROL
 
-## FUTURE UPDATION:- 
 
-Otp verification , Payment gateway integration , SOP creation for menu and automated inventory management after every order.
 
