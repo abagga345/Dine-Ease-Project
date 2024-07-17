@@ -12,6 +12,7 @@ import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import ToggleColorMode from './ToggleColorMode';
 import FastfoodIcon from '@mui/icons-material/Fastfood';
+import { useNavigate } from 'react-router-dom';
 
 // const logoStyle = {
 //     width: '140px',
@@ -25,6 +26,7 @@ interface AppAppBarProps {
 }
 
 function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
+    const navigate=useNavigate();
     const [open, setOpen] = React.useState(false);
 
     const toggleDrawer = (newOpen: boolean) => () => {
@@ -129,7 +131,7 @@ function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
                                 variant="text"
                                 size="small"
                                 component="a"
-                                href="/signin"
+                                onClick={()=>{navigate("/signin")}}
                                 target="_blank"
                             >
                                 Sign in
@@ -139,7 +141,7 @@ function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
                                 variant="contained"
                                 size="small"
                                 component="a"
-                                href="/"
+                                onClick={()=>{navigate("/signup")}}
                                 target="_blank"
                             >
                                 Sign up

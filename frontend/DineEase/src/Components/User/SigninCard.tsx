@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import FastfoodIcon from '@mui/icons-material/Fastfood';
 
 interface SigninresultSuccess{
     token:string,
@@ -32,7 +33,7 @@ export function SigninCard(){
         if (result.ok){
             const data:SigninresultSuccess=await result.json();
             localStorage.setItem("token",data["token"]);
-            navigate("/UserHome");
+            navigate("/home");
             return;
         }
         const err:{message:string}=await result.json();
@@ -41,7 +42,7 @@ export function SigninCard(){
 
     function signupnavigator(event:any){
         event.preventDefault();
-        navigate("/");
+        navigate("/signup");
     }
 
 
@@ -49,11 +50,15 @@ export function SigninCard(){
         <div className="w-full flex justify-center items-center">
         <div className="mt-10 z-10 bg-white  flex h-full  flex-1 md:flex-none lg:w-5/12 flex-col justify-center px-6 py-12 lg:px-8 md:shadow-xl ">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-              <img
+            <div className="flex justify-center">
+              <h1 className='text-sky-600 font-bold mx-6 text-lg'><FastfoodIcon fontSize="small" />&nbsp;DineEase</h1>
+            </div>
+              {/* <img
                 alt="Your Company"
                 src="https://dynamic.design.com/asset/logo/dbf56484-b03e-440a-b09e-7160d7cff02c/logo-search-grid-1x?logoTemplateVersion=1&v=637888957314700000&text=Burger+store"
                 className="mx-auto h-24 w-24"
-              />
+              /> */}
+              {/* <h1 className='text-sky-600 font-bold mx-6 text-lg'><FastfoodIcon fontSize="small" />&nbsp;DineEase</h1> */}
               <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                 Sign in to your  account
               </h2>
