@@ -28,29 +28,38 @@ const products = [
   },
 ];
 
-interface InfoProps {
-  totalPrice: string;
+interface Innermost{
+  id:number;
+  amount:number;
+  title:string;
+  quantity:number;
 }
 
-export default function Info({ totalPrice }: InfoProps) {
+interface InfoProps {
+  items:Innermost[];
+  total:number;
+}
+
+
+export default function Info({ items,total }: InfoProps) {
   return (
     <React.Fragment>
       <Typography variant="subtitle2" color="text.secondary">
         Total
       </Typography>
       <Typography variant="h4" gutterBottom>
-        {totalPrice}
+        ${total}
       </Typography>
       <List disablePadding>
-        {products.map((product) => (
-          <ListItem key={product.name} sx={{ py: 1, px: 0 }}>
+        {items.map((product:Innermost) => (
+          <ListItem key={product.id} sx={{ py: 1, px: 0 }}>
             <ListItemText
-              sx={{ mr: 2 }}
-              primary={product.name}
-              secondary={product.desc}
+              sx={{ mr: 2}}
+              primary={product.title}
+              secondary={"QUANTITY " + product.quantity}
             />
             <Typography variant="body1" fontWeight="medium">
-              {product.price}
+              ${product.amount * product.quantity}
             </Typography>
           </ListItem>
         ))}

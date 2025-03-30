@@ -3,7 +3,7 @@ import { Request,Response,NextFunction } from "express"
 import { JWT_SECRET } from "../config"
 import  jwt from "jsonwebtoken";
 interface CustomRequest extends Request{
-    username?:string
+    email?:string
     storeId?:string
 }
 export function authMiddlewareadmin(req:CustomRequest,res:Response,next:NextFunction){
@@ -11,8 +11,8 @@ export function authMiddlewareadmin(req:CustomRequest,res:Response,next:NextFunc
     try{
         if (!token) throw Error;
         let tokenstring:string=token.split(' ')[1];
-        let result=jwt.verify(tokenstring,JWT_SECRET) as {username:string,storeId:string};
-        req.username=result.username;
+        let result=jwt.verify(tokenstring,JWT_SECRET) as {email:string,storeId:string};
+        req.email=result.email;
         req.storeId=result.storeId;
         next();
     }catch(err){

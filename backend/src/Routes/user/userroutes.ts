@@ -11,7 +11,7 @@ import { UserSignin, UserSignup, address, checkout, editUser, editaddress, editr
 export const userRouter=express.Router();
 const prisma=new PrismaClient();
 interface CustomRequest extends Request{
-    username?:string
+    email?:string
 }
 interface Item{
     id:number,
@@ -27,7 +27,7 @@ userRouter.post("/signup",async (req:Request,res:Response,next:NextFunction)=>{
         return;
     }
     try{
-        let result2=await prisma.users.findFirst({where:{username:req.body.username}});
+        let result2=await prisma.users.findFirst({where:{email:req.body.email}});
         if (result2!==null){
             res.status(400).json({"message":"User already exists"});
             return;
@@ -35,17 +35,18 @@ userRouter.post("/signup",async (req:Request,res:Response,next:NextFunction)=>{
         let temp=await bcrypt.hash(req.body.password,5);
         let result1=await prisma.users.create({
             data:{
-                username:req.body.username,
+                email:req.body.email,
                 firstName:req.body.firstName,
                 lastName:req.body.lastName,
                 password:temp,
-                contactNo:req.body.contactNo
+                contactNo:req.body.contactNo,
+                role:'User'
             },
             select:{
-                username:true
+                email:true
             }
-        }) as {username:string};
-        let token=jwt.sign({username:result1["username"]},JWT_SECRET);
+        }) as {email:string};
+        let token=jwt.sign({email:result1["email"]},JWT_SECRET);
         res.json({"message":"Successful sign up","token":"Bearer "+token});
     }catch(err){
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
@@ -61,7 +62,7 @@ userRouter.post("/signin",async (req:Request,res:Response,next:NextFunction)=>{
     try{
         let result1=await prisma.users.findFirst({
             where:{
-                username:req.body.username
+                email:req.body.email
             }
         });
         if (result1===null){
@@ -72,7 +73,7 @@ userRouter.post("/signin",async (req:Request,res:Response,next:NextFunction)=>{
             res.status(401).json({"message":"Unauthorised"});
             return;
         }
-        let token:string=jwt.sign({username:result1["username"]},JWT_SECRET);
+        let token:string=jwt.sign({email:result1["email"]},JWT_SECRET);
         res.json({"message":"Successful sign in","token":"Bearer "+token});
     }catch(err){
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
@@ -81,9 +82,10 @@ userRouter.post("/signin",async (req:Request,res:Response,next:NextFunction)=>{
 
 userRouter.get("/vieworders",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     try{
+       
         let result1=await prisma.orders.findMany({
             where:{
-                username:req.username as string
+                email:req.email as string
             },
             include:{
                 items:{
@@ -100,19 +102,20 @@ userRouter.get("/vieworders",authMiddlewareuser,async (req:CustomRequest,res:Res
 })
 
 userRouter.post("/addaddress",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
+    // need some  limit on address count 
     let result=address.safeParse(req.body);
     if (result["success"]==false){
         res.status(400).json({"message":"INVALID ADDRESS"});
         return;
     }
-    let username:string=req.username as string;
+    let email:string=req.email as string;
     try{
         await prisma.address.create({
             data:{
                 houseStreet:req.body.houseStreet,
                 city:req.body.city,
                 pincode:req.body.pincode,
-                username:username
+                email:email
             }
         });
         res.json({"message":"Address Added successfully"});
@@ -122,11 +125,12 @@ userRouter.post("/addaddress",authMiddlewareuser,async (req:CustomRequest,res:Re
 })
 
 userRouter.get("/getaddresses",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
-    let username:string=req.username as string;
+    let email:string=req.email as string;
     try{
+        
         let result1=await prisma.address.findMany({
             where:{
-                username:username
+                email:email
             },
             select:{
                 id:true,
@@ -153,9 +157,9 @@ userRouter.get("/viewmenu",authMiddlewareuser,async (req:CustomRequest,res:Respo
             select:{
                 imageUrl:true,
                 amount:true,
-                discount:true,
-                details:true,
-                id:true
+                description:true,
+                id:true,
+                title:true
             }
         });
         res.json({"items":result1});
@@ -173,7 +177,7 @@ userRouter.get("/viewreviews",authMiddlewareuser,async (req:CustomRequest,res:Re
             },
             select:{
                 id:true,
-                username:true,
+                email:true,
                 description:true,
                 rating:true
             }
@@ -190,11 +194,11 @@ userRouter.post("/dropreview",authMiddlewareuser,async (req:CustomRequest,res:Re
         res.status(400).json({"message":"INVALID REVIEW"});
         return;
     }
-    let username:string=req.username as string;
+    let email:string=req.email as string;
     try{
         await prisma.reviews.create({
             data:{
-                "username":username,
+                "email":email,
                 "description":req.body.description,
                 "rating":req.body.rating,
                 "itemId":req.body.itemId
@@ -212,7 +216,7 @@ userRouter.delete("/deletereview",authMiddlewareuser,async (req:CustomRequest,re
         await prisma.reviews.delete({
             where:{
                 id:id,
-                username:req.username as string
+                email:req.email as string
             }
         });
         res.json({"message":"Review Deleted Successfully"});
@@ -233,25 +237,27 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
     try{
         let total=0;
         for(let i=0;i<req.body.items.length;i++){
-            let price =await prisma.menu.findFirst({where:{id:req.body.items[i].id,storeId:req.body.storeId}}) ;
+            let price =await prisma.menu.findFirst({where:{id:req.body.items[i].id,storeId:req.body.storeId,visibility:true}}) ;
             if (price===null){
-                throw new Error;
+                res.status(400).json({"message":"Some items are out of stock"});
+                return;
             }
-            total+=(price["amount"]-price["discount"])*req.body.items[i].quantity;
+            total+=(price["amount"])*req.body.items[i].quantity;
         }
         if (total!==req.body.amount){
             res.status(400).json({"message":"Price updated,Please retry"});
+            return;
         }
         let result1=await prisma.orders.create({data:{
             amount:total,
             storeId:req.body.storeId,
-            username:req.username as string,
+            email:req.email as string,
             description:req.body.description,
-            status:'Pending',
+            status:'Unconfirmed',
             items:{
                 create:req.body.items.map((element:Item)=>{
                     return{
-                        id:element.id,
+                        itemId:element.id,
                         quantity:element.quantity
                     } 
                 })
@@ -264,6 +270,7 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
 })
 userRouter.put("/editreview",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     let rev_id:number=parseInt(req.query.id as string);
+    let email:string=req.email as string;
     let result=editreview.safeParse(req.body);
     if (result["success"]===false){
         res.status(400).json({"message":"Invalid Inputs"});
@@ -272,7 +279,8 @@ userRouter.put("/editreview",authMiddlewareuser,async (req:CustomRequest,res:Res
     try{
         let result1=await prisma.reviews.update({
             where:{
-                id:rev_id
+                id:rev_id,
+                email:email
             },
             data:req.body
         });
@@ -284,7 +292,7 @@ userRouter.put("/editreview",authMiddlewareuser,async (req:CustomRequest,res:Res
 
 
 userRouter.put("/editprofile",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
-    let username:string=req.username as string;
+    let email:string=req.email as string;
     let result=editUser.safeParse(req.body);
     if (result["success"]===false){
         res.status(400).json({"message":"Invalid Inputs"});
@@ -293,7 +301,7 @@ userRouter.put("/editprofile",authMiddlewareuser,async (req:CustomRequest,res:Re
     try{
         let result1=await prisma.users.update({
             where:{
-                username:username
+                email:email
             },
             data:req.body
         });
@@ -307,6 +315,7 @@ userRouter.put("/editprofile",authMiddlewareuser,async (req:CustomRequest,res:Re
 userRouter.put("/editaddress",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     let add_id:number=parseInt(req.query.id as string);
     let result=editaddress.safeParse(req.body);
+    let email:string=req.email as string;
     if (result["success"]===false){
         res.status(400).json({"message":"Invalid Inputs"});
         return;
@@ -314,7 +323,8 @@ userRouter.put("/editaddress",authMiddlewareuser,async (req:CustomRequest,res:Re
     try{
         let result1=await prisma.address.update({
             where:{
-                id:add_id
+                id:add_id,
+                email:email
             },
             data:req.body
         });
@@ -326,11 +336,11 @@ userRouter.put("/editaddress",authMiddlewareuser,async (req:CustomRequest,res:Re
 
 userRouter.delete("/deleteaddress",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     let id:number=parseInt(req.query.id as string);
-    let username:string=req.username as string;
+    let email:string=req.email as string;
     try{
         await prisma.address.delete({
             where:{
-                username:username,
+                email:email,
                 id:id
             }
         });
@@ -340,27 +350,27 @@ userRouter.delete("/deleteaddress",authMiddlewareuser,async (req:CustomRequest,r
     }
 })
 
-userRouter.get("/filteritems:filter",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
-    let storeId:string=req.query.storeId as string;
-    let filter:string=req.params.filter as string;
-    try{
-        let result1=await prisma.menu.findMany({
-            where:{
-                OR:[
-                    {title:{contains:filter},storeId:storeId},
-                    {details:{contains:filter},storeId:storeId}
-                ]
-            },
-            select:{
-                imageUrl:true,
-                amount:true,
-                discount:true,
-                details:true,
-                id:true
-            }
-        });
-        res.json({"items":result1});
-    }catch(err){
-        res.status(500).json({"message":"INTERNAL SERVER ERROR"});
-    }
-})
+// userRouter.get("/filteritems:filter",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
+//     let storeId:string=req.query.storeId as string;
+//     let filter:string=req.params.filter as string;
+//     try{
+//         let result1=await prisma.menu.findMany({
+//             where:{
+//                 OR:[
+//                     {title:{contains:filter},storeId:storeId},
+//                     {details:{contains:filter},storeId:storeId}
+//                 ]
+//             },
+//             select:{
+//                 imageUrl:true,
+//                 amount:true,
+//                 discount:true,
+//                 details:true,
+//                 id:true
+//             }
+//         });
+//         res.json({"items":result1});
+//     }catch(err){
+//         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
+//     }
+// })

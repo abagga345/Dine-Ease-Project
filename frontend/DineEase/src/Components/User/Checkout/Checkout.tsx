@@ -1,5 +1,5 @@
 import * as React from 'react';
-
+import { useLocation } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -25,10 +25,11 @@ import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import AddressForm from './AddressForm';
 import getCheckoutTheme from './getCheckoutTheme';
 import Info from './Info1';
-import InfoMobile from './infoMobile';
+
 import PaymentForm from './PaymentForm';
 import Review from './Review';
 import ToggleColorMode from './ToggleColorMode';
+import { InfoMobile } from './InfoMobile';
 
 interface ToggleCustomThemeProps {
   showCustomTheme: Boolean;
@@ -89,10 +90,26 @@ function getStepContent(step: number) {
     case 1:
       return <PaymentForm />;
     case 2:
-      return <Review />;
+      return <Review items={undefined} total={undefined} />;
     default:
       throw new Error('Unknown step');
   }
+}
+
+interface InnerMost{
+  id:number;
+  quantity:number;
+  title:string;
+  amount:number;
+}
+
+interface RouteProps{
+  items:InnerMost[]
+  total:number;
+}
+
+interface Outer{
+  state:RouteProps;
 }
 
 export default function Checkout() {
@@ -101,6 +118,8 @@ export default function Checkout() {
   const checkoutTheme = createTheme(getCheckoutTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
   const [activeStep, setActiveStep] = React.useState(0);
+
+
 
   const toggleColorMode = () => {
     setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
@@ -171,7 +190,20 @@ export default function Checkout() {
               maxWidth: 500,
             }}
           >
-            <Info totalPrice={activeStep >= 2 ? '$144.97' : '$134.98'} />
+            {/* <Info total={location.state.total} items={location.state.items} /> */}
+            <Info total={500} items={[
+              {
+                id:1,
+                title:"burger1",
+                quantity:1,
+                amount:5,
+              },{
+                id:1,
+                title:"burger1",
+                quantity:1,
+                amount:5,
+              }
+            ]} />
           </Box>
         </Grid>
         <Grid
@@ -223,7 +255,7 @@ export default function Checkout() {
                   alt="Sitemark's logo"
                 />
               </Button>
-              <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+
             </Box>
             <Box
               sx={{
@@ -235,7 +267,7 @@ export default function Checkout() {
                 height: 150,
               }}
             >
-              <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+
               <Stepper
                 id="desktop-stepper"
                 activeStep={activeStep}
@@ -394,10 +426,7 @@ export default function Checkout() {
           </Box>
         </Grid>
       </Grid>
-      <ToggleCustomTheme
-        toggleCustomTheme={toggleCustomTheme}
-        showCustomTheme={showCustomTheme}
-      />
+      
     </ThemeProvider>
   );
 }

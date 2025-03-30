@@ -12,6 +12,7 @@ import './App.css'
 import { MainScreenHome } from "./Components/Admin/MainScreenHome"
 import { MainScreenMenu } from "./Components/Admin/MainScreenMenu"
 import { ErrorPage } from "./Components/common/errorpage"
+import Checkout from "./Components/User/Checkout/Checkout"
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
           <Route path="/home" element={<UserHome></UserHome>}></Route>
           <Route path="/profile" element={<UserProfile></UserProfile>}></Route>
           <Route path="/menu" element={<UserMenu></UserMenu>}></Route>
-          <Route path="/cart" element={<UserCart></UserCart>}></Route>
+          <Route path="/checkout" element={<Checkout></Checkout>}></Route>
           <Route path="/admin/signup" element={<AdminSignup></AdminSignup>}></Route>
           <Route path="/admin/signin" element={<AdminSignin></AdminSignin>}></Route>
           <Route path="/admin/dashboard/" element={<MainScreenHome></MainScreenHome>}>

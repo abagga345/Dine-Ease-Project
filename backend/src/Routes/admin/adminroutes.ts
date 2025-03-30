@@ -5,7 +5,7 @@ import { PrismaClient } from "@prisma/client";
 import { JWT_SECRET } from "../../config"
 import jwt from "jsonwebtoken"
 import { authMiddlewareadmin } from "../../Middlewares/authMiddlewareadmin";
-import { AdminSignin, AdminSignup, item, status, visibility } from "../../zodschema/schema";
+import { AdminSignin,status, visibility,additem } from "../../zodschema/schema";
 
 export const adminRouter=express.Router();
 const prisma=new PrismaClient();
@@ -13,39 +13,7 @@ interface CustomRequest extends Request{
     username?:string
     storeId?:string
 }
-adminRouter.post("/signup",async (req:Request,res:Response)=>{
-    let result=AdminSignup.safeParse(req.body);
-    if (result["success"]==false){
-        res.status(400).json({"message":"Invalid Inputs"});
-        return;
-    }
-    try{
-        let result1=await prisma.store.findFirst({where:{storeId:req.body.storeId,storeSecret:req.body.storeSecret}});
-        if (result1===null){
-            res.status(400).json({"message":"Invalid Store"});
-        }
-        let result2=await prisma.admins.findFirst({where:{username:req.body.username}});
-        if (result2!==null){
-            res.status(400).json({"message":"User already exists"});
-            return;
-        }
-        let temp=await bcrypt.hash(req.body.password,5);
-        await prisma.admins.create({
-            data:{
-                firstName:req.body.firstName,
-                lastName:req.body.lastName,
-                username:req.body.username,
-                password:temp,
-                storeId:req.body.storeId
-            }
-        });
-        let token=jwt.sign({username:req.body.username,storeId:req.body.storeId},JWT_SECRET);
-        res.json({"message":"Successful sign up","token":"Bearer "+token});
-    }catch(err){
-        console.log(err);
-        res.status(500).json({"message":"Internal Server Error"});
-    }
-})
+
 adminRouter.post("/signin",async (req:Request,res:Response)=>{
     let result=AdminSignin.safeParse(req.body);
     if (result["success"]===false){
@@ -53,9 +21,10 @@ adminRouter.post("/signin",async (req:Request,res:Response)=>{
         return;
     }
     try{
-        let result1=await prisma.admins.findFirst({
+        let result1=await prisma.users.findFirst({
             where:{
-                username:req.body.username
+                email:req.body.email,
+                role:'Admin'
             }
         });
         if (result1===null){
@@ -81,10 +50,8 @@ adminRouter.get("/allorders",authMiddlewareadmin,async (req:CustomRequest,res:Re
             where:{
                 storeId:storeId
             },
-            skip:(skipcnt-1)*15,
-            take:15,
             orderBy:{
-                timestamp:"desc"
+                creationDate:"desc"
             }
         });
         res.json({"orders":result});
@@ -98,10 +65,10 @@ adminRouter.get("/pendingorders",authMiddlewareadmin,async (req:CustomRequest,re
         let result=await prisma.orders.findMany({
             where:{
                 storeId:storeId,
-                status:'Pending'
+                status:'Unconfirmed'
             },
             orderBy:{
-                timestamp:"desc"
+                creationDate:"desc"
             }
         });
         res.json({"orders":result});
@@ -141,8 +108,7 @@ adminRouter.get("/allitems",authMiddlewareadmin,async (req:CustomRequest,res:Res
                 id:true,
                 imageUrl:true,
                 amount:true,
-                discount:true,
-                details:true,
+                description:true,
                 visibility:true,
                 title:true
             }
@@ -155,7 +121,7 @@ adminRouter.get("/allitems",authMiddlewareadmin,async (req:CustomRequest,res:Res
 
 
 adminRouter.post("/additem",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
-    let result=item.safeParse(req.body);
+    let result=additem.safeParse(req.body);
     if (result['success']===false){
         res.json({"message":"Invalid Item Details"});
     }
@@ -201,12 +167,12 @@ adminRouter.get("/totaldaysales",authMiddlewareadmin,async (req:CustomRequest,re
             where: {
               AND: [
                 {
-                  timestamp: {
+                  creationDate: {
                     gte: new Date(currentYear, currentMonth, currentDay), 
                   },
                 },
                 {
-                  timestamp: {
+                  creationDate: {
                     lt: new Date(currentYear, currentMonth, currentDay+1), 
                   },
                 },
@@ -233,12 +199,12 @@ adminRouter.get("/totalmonthlysales",authMiddlewareadmin,async (req:CustomReques
             where: {
               AND: [
                 {
-                  timestamp: {
+                  creationDate: {
                     gte: new Date(currentYear, currentMonth-1, currentDay+1), 
                   },
                 },
                 {
-                  timestamp: {
+                  creationDate: {
                     lt: new Date(currentYear, currentMonth, currentDay+1), 
                   },
                 },
@@ -255,3 +221,39 @@ adminRouter.get("/totalmonthlysales",authMiddlewareadmin,async (req:CustomReques
     }
 })
 
+
+
+
+// adminRouter.post("/signup",async (req:Request,res:Response)=>{
+//     let result=AdminSignup.safeParse(req.body);
+//     if (result["success"]==false){
+//         res.status(400).json({"message":"Invalid Inputs"});
+//         return;
+//     }
+//     try{
+//         let result1=await prisma.store.findFirst({where:{storeId:req.body.storeId,storeSecret:req.body.storeSecret}});
+//         if (result1===null){
+//             res.status(400).json({"message":"Invalid Store"});
+//         }
+//         let result2=await prisma.admins.findFirst({where:{username:req.body.username}});
+//         if (result2!==null){
+//             res.status(400).json({"message":"User already exists"});
+//             return;
+//         }
+//         let temp=await bcrypt.hash(req.body.password,5);
+//         await prisma.admins.create({
+//             data:{
+//                 firstName:req.body.firstName,
+//                 lastName:req.body.lastName,
+//                 username:req.body.username,
+//                 password:temp,
+//                 storeId:req.body.storeId
+//             }
+//         });
+//         let token=jwt.sign({username:req.body.username,storeId:req.body.storeId},JWT_SECRET);
+//         res.json({"message":"Successful sign up","token":"Bearer "+token});
+//     }catch(err){
+//         console.log(err);
+//         res.status(500).json({"message":"Internal Server Error"});
+//     }
+// })

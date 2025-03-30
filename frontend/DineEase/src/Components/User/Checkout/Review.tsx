@@ -16,7 +16,7 @@ const payments = [
   { name: 'Expiry date:', detail: '04/2024' },
 ];
 
-export default function Review() {
+export default function Review({ items,total}) {
   return (
     <Stack spacing={2}>
       <List disablePadding>
