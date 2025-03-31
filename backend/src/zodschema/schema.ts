@@ -8,6 +8,15 @@ export const UserSignup=z.object({
     password:z.string({message:"Password should be a string"}).min(5,{"message":"Username length is very short"}).max(30,{"message":"Password length is very large"})
 }).required()
 
+export const AdminSignup=z.object({
+    email:z.string().min(4,{"message":"Username length is very short"}).max(30,{"message":"Username length is very large"}),
+    firstName:z.string({message:"FirstName should be a string"}),
+    lastName:z.string({message:"LastName should be a string"}),
+    contactNo:z.string().length(10,{"message":"ContactNo not of 10 digits"}),
+    password:z.string({message:"Password should be a string"}).min(5,{"message":"Username length is very short"}).max(30,{"message":"Password length is very large"}),
+    storeId:z.string().max(50)
+}).required()
+
 export const UserSignin=z.object({
     email:z.string().min(4,{"message":"Email length is very short"}).max(100,{"message":"Email length is very large"}),
     password:z.string({message:"Password should be a string"}).min(5,{"message":"Username length is very short"}).max(30,{"message":"Password length is very large"})
@@ -32,11 +41,11 @@ export const review=z.object({
 
 export const additem=z.object({
     imageUrl:z.string().url(),
-    title:z.string().max(50),
+    title:z.string().max(60),
     amount:z.number().int().min(100).max(5000),
-    description:z.string().max(40),
-    visibility:z.boolean()
-}).required()
+    description:z.string().max(200),
+    visibility:z.boolean().optional()
+})
 
 export const status=z.object({
     orderId:z.number().int(),
@@ -63,7 +72,8 @@ export const checkout=z.object({
         id:z.number().int(),
         quantity:z.number().int()
     })),
-    amount:z.number()
+    amount:z.number(),
+    addressId:z.number()
 })
 
 

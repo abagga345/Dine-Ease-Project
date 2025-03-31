@@ -18,6 +18,7 @@ interface Item{
     quantity:number
 }
 
+//CHECKED 
 userRouter.post("/signup",async (req:Request,res:Response,next:NextFunction)=>{
     let result=UserSignup.safeParse(req.body);
     if (result["success"]==false){
@@ -53,6 +54,7 @@ userRouter.post("/signup",async (req:Request,res:Response,next:NextFunction)=>{
     }
 })
 
+//CHECKED
 userRouter.post("/signin",async (req:Request,res:Response,next:NextFunction)=>{
     let result=UserSignin.safeParse(req.body);
     if (result["success"]==false){
@@ -80,6 +82,7 @@ userRouter.post("/signin",async (req:Request,res:Response,next:NextFunction)=>{
     }
 })
 
+//CHECKED
 userRouter.get("/vieworders",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     try{
        
@@ -90,7 +93,14 @@ userRouter.get("/vieworders",authMiddlewareuser,async (req:CustomRequest,res:Res
             include:{
                 items:{
                     select:{
-                        quantity:true,itemId:true
+                        quantity:true,itemId:true,
+                        item:{
+                            select:{
+                                amount:true,
+                                title:true,
+                                
+                            }
+                        }
                     }
                 }
             }
@@ -101,6 +111,7 @@ userRouter.get("/vieworders",authMiddlewareuser,async (req:CustomRequest,res:Res
     }
 })
 
+//CHECKED
 userRouter.post("/addaddress",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     // need some  limit on address count 
     let result=address.safeParse(req.body);
@@ -124,6 +135,7 @@ userRouter.post("/addaddress",authMiddlewareuser,async (req:CustomRequest,res:Re
     }
 })
 
+//CHECKED
 userRouter.get("/getaddresses",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     let email:string=req.email as string;
     try{
@@ -146,8 +158,13 @@ userRouter.get("/getaddresses",authMiddlewareuser,async (req:CustomRequest,res:R
     }
 })
 
+//CHECKED
 userRouter.get("/viewmenu",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     let storeId:string=req.query.storeId as string;
+    if (storeId===undefined){
+        res.status(400).json({"message":"No store selected"})
+        return;
+    }
     try{
         let result1=await prisma.menu.findMany({
             where:{
@@ -168,6 +185,7 @@ userRouter.get("/viewmenu",authMiddlewareuser,async (req:CustomRequest,res:Respo
     }
 })
 
+//CHECKED
 userRouter.get("/viewreviews",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     let id:number=parseInt(req.query.itemId as string);
     try{
@@ -177,9 +195,14 @@ userRouter.get("/viewreviews",authMiddlewareuser,async (req:CustomRequest,res:Re
             },
             select:{
                 id:true,
-                email:true,
                 description:true,
-                rating:true
+                rating:true,
+                user:{
+                    select:{
+                        firstName:true,
+                        lastName:true
+                    }
+                }
             }
         });
         res.json({"reviews":result1});
@@ -188,6 +211,7 @@ userRouter.get("/viewreviews",authMiddlewareuser,async (req:CustomRequest,res:Re
     }
 })
 
+//CHECKED
 userRouter.post("/dropreview",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     let result=review.safeParse(req.body);
     if (result["success"]===false){
@@ -210,8 +234,9 @@ userRouter.post("/dropreview",authMiddlewareuser,async (req:CustomRequest,res:Re
     }
 })
 
+//CHECKED
 userRouter.delete("/deletereview",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
-    let id:number=parseInt(req.query.id as string);
+    let id:number=parseInt(req.query.reviewId as string);
     try{
         await prisma.reviews.delete({
             where:{
@@ -227,7 +252,7 @@ userRouter.delete("/deletereview",authMiddlewareuser,async (req:CustomRequest,re
 
 
 
-
+//CHECKED ===> NORMAL , VISIBILITY , PRICE UDPATION
 userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     
     let result =checkout.safeParse(req.body);
@@ -254,6 +279,7 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
             email:req.email as string,
             description:req.body.description,
             status:'Unconfirmed',
+            addressId:req.body.addressId,
             items:{
                 create:req.body.items.map((element:Item)=>{
                     return{
@@ -268,8 +294,9 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     } 
 })
+//CHECKED
 userRouter.put("/editreview",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
-    let rev_id:number=parseInt(req.query.id as string);
+    let rev_id:number=parseInt(req.query.reviewId as string);
     let email:string=req.email as string;
     let result=editreview.safeParse(req.body);
     if (result["success"]===false){
@@ -290,7 +317,7 @@ userRouter.put("/editreview",authMiddlewareuser,async (req:CustomRequest,res:Res
     }
 })
 
-
+//CHECKED 
 userRouter.put("/editprofile",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     let email:string=req.email as string;
     let result=editUser.safeParse(req.body);
@@ -303,7 +330,15 @@ userRouter.put("/editprofile",authMiddlewareuser,async (req:CustomRequest,res:Re
             where:{
                 email:email
             },
-            data:req.body
+            data:req.body,
+            select:{
+                id:true,
+                email:true,
+                firstName:true,
+                lastName:true,
+                contactNo:true,
+                
+            }
         });
         res.json({"message":"Profile updated successfully","profile":result1});
     }catch(err){
@@ -312,6 +347,7 @@ userRouter.put("/editprofile",authMiddlewareuser,async (req:CustomRequest,res:Re
 
 })
 
+//CHECKED
 userRouter.put("/editaddress",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     let add_id:number=parseInt(req.query.id as string);
     let result=editaddress.safeParse(req.body);
@@ -334,6 +370,7 @@ userRouter.put("/editaddress",authMiddlewareuser,async (req:CustomRequest,res:Re
     }
 })
 
+//CHECKED
 userRouter.delete("/deleteaddress",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     let id:number=parseInt(req.query.id as string);
     let email:string=req.email as string;
@@ -350,27 +387,3 @@ userRouter.delete("/deleteaddress",authMiddlewareuser,async (req:CustomRequest,r
     }
 })
 
-// userRouter.get("/filteritems:filter",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
-//     let storeId:string=req.query.storeId as string;
-//     let filter:string=req.params.filter as string;
-//     try{
-//         let result1=await prisma.menu.findMany({
-//             where:{
-//                 OR:[
-//                     {title:{contains:filter},storeId:storeId},
-//                     {details:{contains:filter},storeId:storeId}
-//                 ]
-//             },
-//             select:{
-//                 imageUrl:true,
-//                 amount:true,
-//                 discount:true,
-//                 details:true,
-//                 id:true
-//             }
-//         });
-//         res.json({"items":result1});
-//     }catch(err){
-//         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
-//     }
-// })

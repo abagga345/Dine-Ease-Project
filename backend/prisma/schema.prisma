@@ -39,6 +39,7 @@ model Address {
   city        String
   pincode     String
   user        Users   @relation(fields: [email], references: [email])
+  orders      Orders[]
 }
 
 enum status {
@@ -59,6 +60,8 @@ model Orders {
   creationDate   DateTime  @default(now())
   user        Users     @relation(fields: [email], references: [email])
   storeId     String
+  addressId   Int 
+  address     Address @relation(fields:[addressId],references: [id],onDelete: SetNull)
   store       Store @relation(fields: [storeId],references: [storeId])
 }
 

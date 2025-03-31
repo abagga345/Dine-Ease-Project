@@ -26,13 +26,9 @@ function App() {
           <Route path="/profile" element={<UserProfile></UserProfile>}></Route>
           <Route path="/menu" element={<UserMenu></UserMenu>}></Route>
           <Route path="/checkout" element={<Checkout></Checkout>}></Route>
-          <Route path="/admin/signup" element={<AdminSignup></AdminSignup>}></Route>
           <Route path="/admin/signin" element={<AdminSignin></AdminSignin>}></Route>
-          <Route path="/admin/dashboard/" element={<MainScreenHome></MainScreenHome>}>
-            <Route path="admin/dashboard/menu" element={<MainScreenMenu></MainScreenMenu>}></Route>
-          </Route>
-          <Route path="/admin/notfound" element={<ErrorPage link="/admin/signin"></ErrorPage>}></Route>
-          <Route path="/user/notfound" element={<ErrorPage link="/signin"></ErrorPage>}></Route>
+          <Route path="/admin/dashboard/" element={<MainScreenHome></MainScreenHome>}></Route>
+          <Route path="/error" element={<ErrorPage link="/"></ErrorPage>}></Route>
         </Routes>
       </BrowserRouter>
      

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PaletteMode } from '@mui/material';
+
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -10,22 +10,14 @@ import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
-import ToggleColorMode from './ToggleColorMode';
 import FastfoodIcon from '@mui/icons-material/Fastfood';
 import { useNavigate } from 'react-router-dom';
 
-// const logoStyle = {
-//     width: '140px',
-//     height: 'auto',
-//     cursor: 'pointer',
-// };
 
-interface AppAppBarProps {
-    mode: PaletteMode;
-    toggleColorMode: () => void;
-}
 
-function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
+
+
+function AppAppBar() {
     const navigate=useNavigate();
     const [open, setOpen] = React.useState(false);
 
@@ -90,14 +82,7 @@ function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
                                 px: 0,
                             }}
                         >
-                            {/*
-                                <img
-                                src={
-                                    'logolink'
-                                }
-                                style={logoStyle}
-                                alt="logo of sitemark"
-                            /> */}
+                            
                             <h1 className='text-sky-600 font-bold mx-6 text-lg'><FastfoodIcon fontSize="small" />&nbsp;DineEase</h1>
                             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                                 <MenuItem
@@ -125,7 +110,7 @@ function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
                                 alignItems: 'center',
                             }}
                         >
-                            {/* <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} /> */}
+                            
                             <Button
                                 color="primary"
                                 variant="text"
@@ -174,7 +159,7 @@ function AppAppBar({ mode, toggleColorMode }: AppAppBarProps) {
                                             flexGrow: 1,
                                         }}
                                     >
-                                        <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+                                       
                                     </Box>
                                     <MenuItem onClick={() => scrollToSection('features')}>
                                         Features
