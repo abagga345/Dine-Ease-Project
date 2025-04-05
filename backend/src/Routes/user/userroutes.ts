@@ -5,7 +5,7 @@ import { PrismaClient } from "@prisma/client";
 import { Request,Response} from "express"
 import { JWT_SECRET } from "../../config"
 import { authMiddlewareuser } from "../../Middlewares/authMiddlewareuser";
-import { UserSignin, UserSignup, address, checkout, editUser, editaddress, editreview, review } from "../../zodschema/schema";
+import { UserSignin, UserSignup, address, checkout, editUser, editaddress, editreview, review, visibility } from "../../zodschema/schema";
 
 
 export const userRouter=express.Router();
@@ -387,3 +387,69 @@ userRouter.delete("/deleteaddress",authMiddlewareuser,async (req:CustomRequest,r
     }
 })
 
+//CHECKED
+userRouter.get("/viewmenuitem",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
+    let itemId:number=parseInt(req.query.itemId as string);
+    try{
+        let result=await prisma.menu.findFirst({
+            where:{
+                id:itemId
+            },
+            select:{
+                id:true,
+                imageUrl:true,
+                title:true,
+                amount:true,
+                description:true,
+                storeId:true,
+                visibility:true
+                
+            }
+        })
+        if (result===null){
+            res.status(400).json({"message":"No such item exists"});
+            return;
+        }
+        res.json({"message":"Item fetched successfully",
+            id:result["id"],
+            imageUrl:result["imageUrl"],
+            description:result["description"],
+            visibility:result["visibility"],
+            storeId:result["storeId"],
+            amount:result["amount"],
+            title:result["title"]
+        })
+    }catch(err){
+        res.status(500).json({"message":"Internal server error"})
+    }
+})
+
+//CHECKED
+userRouter.get("/viewprofile",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
+    let email:string=req.email as string;
+    try{
+        let result=await prisma.users.findFirst({
+            where:{
+                "email":email
+            },
+            select:{
+                firstName:true,
+                lastName:true,
+                contactNo:true,
+                email:true,
+                role:true
+            }
+        })
+        if (result===null){
+            throw new Error();
+        }
+        res.json({"message":"Profile fetched successfully",
+            "firstName":result["firstName"],
+            "lastName":result["lastName"],
+            "contactNo":result["contactNo"],
+            "email":result["email"]
+        })
+    }catch(err){
+        res.status(500).json({"message":"Internal Server Error"})
+    }
+})

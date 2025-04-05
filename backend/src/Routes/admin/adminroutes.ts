@@ -10,7 +10,7 @@ import { AdminSignin,status, visibility,additem, AdminSignup } from "../../zodsc
 export const adminRouter=express.Router();
 const prisma=new PrismaClient();
 interface CustomRequest extends Request{
-    username?:string
+    email?:string
     storeId?:string
 }
 
@@ -82,28 +82,7 @@ adminRouter.get("/unconfirmedorders",authMiddlewareadmin,async (req:CustomReques
     }
 })
 
-//CHECKED
-adminRouter.put("/changestatus",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
-    let result=status.safeParse(req.body);
-    if (result["success"]===false){
-        res.status(400).json({"message":"Invalid Status"});
-        return;
-    }
-    try{
-        await prisma.orders.update({
-            where:{
-                id:req.body.orderId,
-                storeId:req.storeId as string
-            },
-            data:{
-                status:req.body.status
-            }
-        })
-        res.json({"message":"Status updated successfully"});
-    }catch(err){
-        res.status(500).json({"message":"Internal Server Error"});
-    }
-})
+
 
 //CHECKED
 adminRouter.get("/allitems",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
@@ -170,71 +149,171 @@ adminRouter.put("/changevisibility",authMiddlewareadmin,async (req:CustomRequest
     }
 })
 
+//CHECKED
+adminRouter.put("/changestatus",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
+    let result=status.safeParse(req.body);
+    if (result["success"]===false){
+        res.status(400).json({"message":"Invalid Status"});
+        return;
+    }
+    try{
+        let previous=await prisma.orders.findFirst({
+            where:{
+                id:req.body.orderId
+            },
+            select:{
+                status:true,
+                amount:true,
+                creationDate:true
+            }
+        })
+        if (previous===null){
+            res.status(400).json({"message":"Invalid Id"});
+            return;
+        }
+        const year = previous.creationDate.getFullYear();
+        const month=previous.creationDate.getMonth()+1;
+        const day=previous.creationDate.getDate();
+        
+        await prisma.$transaction(async (tx)=>{
+            let current=await tx.orders.update({
+                where:{
+                    id:req.body.orderId,
+                    storeId:req.storeId as string
+                },
+                data:{
+                status:req.body.status
+                },
+                select:{
+                    status:true,
+                    amount:true
+                }
+             })
+
+            if (previous["status"]!="Delivered" && current["status"]=="Delivered"){
+                await tx.monthlySales.upsert({
+                    where: { year_month_day: { year, month , day } },
+                    update: { totalSales: { increment: previous["amount"] } },
+                    create:{year,month,day,totalSales:previous["amount"]}
+                });
+            }
+            else if (previous["status"]=="Delivered" && current["status"]!="Delivered"){
+                await tx.monthlySales.update({
+                    where: { year_month_day: { year, month ,day} },
+                    data: { totalSales: { decrement: previous["amount"] } },
+                });
+            }
+        })
+
+
+
+        res.json({"message":"Status updated successfully"});
+    }catch(err){
+        res.status(500).json({"message":"Internal Server Error"});
+    }
+})
+
+//CHECKED
 adminRouter.get("/totaldaysales",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
     const dateobj=new Date();
     let currentYear=dateobj.getFullYear();
-    let currentMonth=dateobj.getMonth();
+    let currentMonth=dateobj.getMonth()+1;
     let currentDay=dateobj.getDate();
+    
     try{
-        const total = await prisma.orders.aggregate({
-            where: {
-              AND: [
-                {
-                  creationDate: {
-                    gte: new Date(currentYear, currentMonth, currentDay), 
-                  },
-                },
-                {
-                  creationDate: {
-                    lt: new Date(currentYear, currentMonth, currentDay+1), 
-                  },
-                },
-              ],
-              status:"Delivered"
-            },
-            _sum:{
-                amount:true
+        let result=await prisma.monthlySales.findFirst({
+            where:{
+                month:currentMonth,
+                day:currentDay,
+                year:currentYear
             }
-        });
-        res.json({"total":total["_sum"]["amount"]});
+        })
+        if (result===null){
+            res.json({"message":"Total day sales fetched successfully",
+                totalSales:0
+            })
+            return;
+        }
+        res.json({"message":"Total day sales fetched successfully","totalSales":result["totalSales"]});
 
     }catch(err){
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 
 })
+
+//CHECKED
 adminRouter.get("/totalmonthlysales",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
     const dateobj=new Date();
     let currentYear=dateobj.getFullYear();
-    let currentMonth=dateobj.getMonth(); 
+    let currentMonth=dateobj.getMonth()+1; 
     let currentDay=dateobj.getDate();
     try{ 
-        const total = await prisma.orders.aggregate({
-            where: {
-              AND: [
-                {
-                  creationDate: {
-                    gte: new Date(currentYear, currentMonth-1, currentDay+1), 
-                  },
-                },
-                {
-                  creationDate: {
-                    lt: new Date(currentYear, currentMonth, currentDay+1), 
-                  },
-                },
-              ],
-              status:"Delivered"
+        let result=await prisma.monthlySales.aggregate({
+            where:{
+                month:currentMonth,
+                year:currentYear
             },
             _sum:{
-                amount:true
+                totalSales:true
             }
-        });
-        res.json({"total":total["_sum"]["amount"]});
-
+        })
+        if (result===null){
+            res.json({"message":"Total monthly sales fetched successfully","total":0})
+            return;
+        }
+        res.json({"message":"Total monthly sales fetched successfully","total":result["_sum"]["totalSales"]===null?0:result["_sum"]["totalSales"]})
     }catch(err){
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
+
+//CHECKED
+adminRouter.get("/chartdata",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
+    try{
+        let total_sales = await prisma.monthlySales.aggregate({
+            _sum: {
+              totalSales: true,
+            },
+          });
+        let avg_reviews = await prisma.reviews.aggregate({
+            _avg: {
+              rating: true,
+            },
+            _count:{
+                id:true
+            }
+          });
+      
+        let visible_items = await prisma.menu.aggregate({
+            where: {
+              visibility: true
+            },
+            _count: {
+              id: true,
+            },
+        });
+        
+        let salestable=await prisma.monthlySales.groupBy({
+            by: ['month'], // Must be an actual scalar field
+            _sum: {
+              totalSales: true
+            },
+            orderBy: {
+              month: 'desc'
+            }
+        });
+        res.json({"message":"Chart Data fetched successfully",
+            salesData:salestable,
+            avgReview:(avg_reviews["_avg"]['rating']===null?0:avg_reviews["_avg"]['rating']),
+            visibleCount:(visible_items["_count"]["id"]===null?0:visible_items["_count"]["id"]),
+            totalSales:(total_sales["_sum"]["totalSales"]===null?0:total_sales["_sum"]["totalSales"]),
+            totalReviews:(avg_reviews["_count"]['id']===null?0:avg_reviews["_count"]['id'])
+        })
+    }catch(err){
+        res.status(500).json({"message":"INTERNAL SERVER ERROR"});
+    }
+});
 
 
 //CHECKED
@@ -274,3 +353,54 @@ adminRouter.post("/signup",async (req:Request,res:Response)=>{
         res.status(500).json({"message":"Internal Server Error"});
     }
 })
+
+//CHECKED
+adminRouter.get("/viewprofile",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
+    let email:string=req.email as string;
+    let storeId:string=req.storeId as string;
+    try{
+        let result=await prisma.users.findFirst({
+            where:{
+                "email":email,
+                "storeId":storeId
+            },
+            select:{
+                firstName:true,
+                lastName:true,
+                contactNo:true,
+                email:true,
+                role:true,
+                storeId:true,
+                store:{
+                    select:{
+                        storeStreet:true,
+                        city:true,
+                        pincode:true
+                    }
+                }
+            }
+        })
+        if (result===null){
+            throw new Error();
+        }
+        res.json({"message":"Profile fetched successfully",
+            "firstName":result["firstName"],
+            "lastName":result["lastName"],
+            "contactNo":result["contactNo"],
+            "email":result["email"],
+            "storeId":result["storeId"],
+            "role":result["role"],
+            "store":result["store"]
+        })
+    }catch(err){
+        res.status(500).json({"message":"Internal Server Error"})
+    }
+})
+
+
+
+// ROUTE FOR IMAGE UPLOAD
+
+
+
+// ROUTE FOR IMAGE DELETION

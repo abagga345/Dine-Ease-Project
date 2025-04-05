@@ -109,3 +109,11 @@ model Store {
   menu        Menu[]
   orders      Orders[]
 }
+
+model MonthlySales {
+  month Int
+  year Int                               
+  totalSales Int  
+  day Int                                
+  @@id([year, month,day])  
+}
