@@ -74,6 +74,34 @@ adminRouter.get("/unconfirmedorders",authMiddlewareadmin,async (req:CustomReques
             },
             orderBy:{
                 creationDate:"desc"
+            },
+            select:{
+                email:true,
+                id:true,
+                amount:true,
+                description:true,
+                status:true,
+                creationDate:true,
+                items:{
+                   select:{
+                    itemId:true,
+                    quantity:true,
+                    item:{
+                        select:{
+                            title:true,
+                            amount:true
+                        }
+                    }
+                   } 
+
+                },
+                address:{
+                    select:{
+                        houseStreet:true,
+                        city:true,
+                        pincode:true
+                    }
+                }
             }
         });
         res.json({"orders":result});

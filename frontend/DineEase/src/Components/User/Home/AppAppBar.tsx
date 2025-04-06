@@ -42,7 +42,7 @@ function AppAppBar() {
     return (
         <div>
             <AppBar
-                position="fixed"
+                position="static"
                 sx={{
                     boxShadow: 0,
                     bgcolor: 'transparent',

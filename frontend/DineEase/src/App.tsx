@@ -1,19 +1,16 @@
 import {BrowserRouter,Routes,Route} from "react-router-dom"
-import {UserSignup} from "./Components/User/UserSignup"
-import {UserSignin} from "./Components/User/UserSignin"
-import UserHome from "./Components/User/UserHome"
-import {UserCart} from "./Components/User/UserCart"
-import {UserProfile} from "./Components/User/UserProfile"
-import {UserMenu} from "./Components/User/UserMenu"
-import { AdminSignin } from "./Components/Admin/AdminSignin"
-import {AdminSignup} from "./Components/Admin/AdminSignup"
+
 // import {AdminDashboard} from "./Components/Admin/AdminDashboard"
 import './App.css'
-import { MainScreenHome } from "./Components/Admin/MainScreenHome"
-import { MainScreenMenu } from "./Components/Admin/MainScreenMenu"
+import {AdminSignin} from "./Components/Admin/SignIn/AdminSignin"
+import {UserSignin} from "./Components/User/SignIn/UserSignin"
+import {UserSignup} from "./Components/User/SignUp/UserSignup"
+import {UserHome} from "./Components/User/Home/UserHome"
 import { ErrorPage } from "./Components/common/errorpage"
-import Checkout from "./Components/User/Checkout/Checkout"
-
+import { Dashboard } from "./Components/Admin/Dashboard/Dashboard"
+import { Profile } from "./Components/User/Profile/Profile"
+import { Checkout } from "./Components/User/checkout/Checkout"
+import { Menu } from "./Components/User/Menu/menu"
 function App() {
   return (
     <>
@@ -23,11 +20,11 @@ function App() {
           <Route path="/signup" element={<UserSignup></UserSignup>}></Route>
           <Route path="/signin" element={<UserSignin></UserSignin>}></Route>
           <Route path="/home" element={<UserHome></UserHome>}></Route>
-          <Route path="/profile" element={<UserProfile></UserProfile>}></Route>
-          <Route path="/menu" element={<UserMenu></UserMenu>}></Route>
+          <Route path="/profile" element={<Profile></Profile>}></Route>
+          <Route path="/menu" element={<Menu></Menu>}></Route>
           <Route path="/checkout" element={<Checkout></Checkout>}></Route>
           <Route path="/admin/signin" element={<AdminSignin></AdminSignin>}></Route>
-          <Route path="/admin/dashboard/" element={<MainScreenHome></MainScreenHome>}></Route>
+          <Route path="/admin/dashboard/" element={<Dashboard></Dashboard>}></Route>
           <Route path="/error" element={<ErrorPage link="/"></ErrorPage>}></Route>
         </Routes>
       </BrowserRouter>
