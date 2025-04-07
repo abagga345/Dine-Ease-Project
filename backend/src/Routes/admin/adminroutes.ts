@@ -55,9 +55,66 @@ adminRouter.get("/allorders",authMiddlewareadmin,async (req:CustomRequest,res:Re
             },
             orderBy:{
                 creationDate:"desc"
+            },
+            select:{
+                id:true,
+                amount:true,
+                status:true,
+                email:true,
+                creationDate:true,
+                description:true,
+                address:{
+                    select:{
+                        houseStreet:true,
+                        pincode:true,
+                        city:true
+                    }
+                }
             }
         });
         res.json({"orders":result});
+    }catch(err){
+        res.status(500).json({"message":"Internal Server Error"});
+    }
+})
+
+
+//CHECKED
+adminRouter.get("/vieworderitems",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
+    let orderId=parseInt(req.query.orderId as string);
+    if (orderId===null || orderId===undefined){
+        res.status(400).json({"message":"Invalid Inputs"});
+    }
+    try{
+        let result=await prisma.orders.findFirst({
+            where:{
+                id:orderId
+            },
+            select:{
+                items:{
+                    select:{
+                        itemId:true,
+                        quantity:true,
+                        item:{
+                            select:{
+                                title:true,
+                                amount:true,
+                            }
+                        }
+
+                    }
+
+                }
+            }
+        })
+        if (result===null){
+            res.status(400).json({"message":"Invalid Order Id"});
+            return;
+        }
+
+        res.json({"message":"Items fetched successfully","items":result["items"]})
+
+
     }catch(err){
         res.status(500).json({"message":"Internal Server Error"});
     }
