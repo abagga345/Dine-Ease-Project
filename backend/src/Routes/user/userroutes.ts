@@ -342,6 +342,7 @@ userRouter.put("/editprofile",authMiddlewareuser,async (req:CustomRequest,res:Re
         });
         res.json({"message":"Profile updated successfully","profile":result1});
     }catch(err){
+        console.log(err);
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 

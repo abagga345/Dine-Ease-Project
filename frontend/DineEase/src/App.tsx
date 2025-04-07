@@ -11,9 +11,11 @@ import { Dashboard } from "./Components/Admin/Dashboard/Dashboard"
 import { Profile } from "./Components/User/Profile/Profile"
 import { Checkout } from "./Components/User/checkout/Checkout"
 import { Menu } from "./Components/User/Menu/menu"
+import { Toaster } from "react-hot-toast"
 function App() {
   return (
     <>
+      <Toaster position="top-center" />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<UserHome></UserHome>}></Route>

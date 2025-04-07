@@ -41,7 +41,7 @@ interface Order {
 export const PendingOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate=useNavigate()
   const statusOptions = [
     "Unconfirmed",
@@ -50,6 +50,48 @@ export const PendingOrders = () => {
     "Dispatched",
     "Delivered",
   ];
+
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
+    const toastId = toast.loading("Changing Status...");
+    try {
+        let token=localStorage.getItem("token");
+        if (token===null){
+            setError("Unauthorized , Please signin again");
+            toast.error(`Error: ${"Unauthorized , Please Signin again"}`, { id: toastId });
+            navigate("/admin/signin");
+            return;
+        }
+
+
+      const response = await fetch("http://localhost:3000/api/v1/admin/changestatus", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:token
+        },
+        body: JSON.stringify({
+          orderId: orderId,
+          status: newStatus,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch orders");
+      }
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+      toast.dismiss(toastId);
+      toast.success("Orders loaded successfully!", { id: toastId });
+    } catch (error: any) {
+      setError(error.message);
+      toast.dismiss(toastId);
+      toast.error(`Error: ${error.message}`, { id: toastId });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -113,7 +155,9 @@ export const PendingOrders = () => {
                 <h2 className="text-2xl font-semibold text-gray-800">
                   Order #{order.id}
                 </h2>
-                <span
+                <select
+                  value={order.status}
+                  onChange={(e) => handleStatusChange(order.id, e.target.value)}
                   className={`px-3 py-1 rounded-full text-sm font-medium ${
                     order.status === "Unconfirmed"
                       ? "bg-yellow-100 text-yellow-800"
@@ -128,8 +172,12 @@ export const PendingOrders = () => {
                       : ""
                   }`}
                 >
-                  {order.status}
-                </span>
+                  {statusOptions.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
               </div>
               <hr className="my-4" />
               <div className="mb-4">
