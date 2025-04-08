@@ -50,6 +50,7 @@ userRouter.post("/signup",async (req:Request,res:Response,next:NextFunction)=>{
         let token=jwt.sign({email:result1["email"]},JWT_SECRET);
         res.json({"message":"Successful sign up","token":"Bearer "+token});
     }catch(err){
+        console.log(err);
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -258,6 +259,7 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
     let result =checkout.safeParse(req.body);
     if (result["success"]===false){
         res.status(400).json({"message":"INVALID INPUTS"});
+        return;
     }
     try{
         let total=0;
@@ -280,6 +282,7 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
             description:req.body.description,
             status:'Unconfirmed',
             addressId:req.body.addressId,
+            paymentMethod: req.body.paymentMethod,
             items:{
                 create:req.body.items.map((element:Item)=>{
                     return{

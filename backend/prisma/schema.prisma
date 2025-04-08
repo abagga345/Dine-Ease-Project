@@ -17,6 +17,13 @@ enum roletype {
   User
 }
 
+enum paymentMethods {
+  COD
+  UPI
+  StorePayment
+}
+
+
 model Users {
   id          Int          @id @default(autoincrement())
   email       String       @unique
@@ -63,6 +70,7 @@ model Orders {
   addressId   Int 
   address     Address @relation(fields:[addressId],references: [id],onDelete: SetNull)
   store       Store @relation(fields: [storeId],references: [storeId])
+  paymentMethod paymentMethods @default(COD)
 }
 
 model OrderItems {
@@ -93,6 +101,7 @@ model Menu {
   amount      Int
   description     String
   visibility  Boolean @default(true)
+  available   Boolean @default(true)
   storeId     String
   store       Store   @relation(fields: [storeId], references: [storeId])
   orders      OrderItems[]

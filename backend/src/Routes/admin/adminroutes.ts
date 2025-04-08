@@ -5,7 +5,7 @@ import { PrismaClient } from "@prisma/client";
 import { JWT_SECRET } from "../../config"
 import jwt from "jsonwebtoken"
 import { authMiddlewareadmin } from "../../Middlewares/authMiddlewareadmin";
-import { AdminSignin,status, visibility,additem, AdminSignup } from "../../zodschema/schema";
+import { AdminSignin,status, visibility,additem, AdminSignup,deleteitem } from "../../zodschema/schema";
 
 export const adminRouter=express.Router();
 const prisma=new PrismaClient();
@@ -63,6 +63,7 @@ adminRouter.get("/allorders",authMiddlewareadmin,async (req:CustomRequest,res:Re
                 email:true,
                 creationDate:true,
                 description:true,
+                paymentMethod:true,
                 address:{
                     select:{
                         houseStreet:true,
@@ -139,6 +140,7 @@ adminRouter.get("/unconfirmedorders",authMiddlewareadmin,async (req:CustomReques
                 description:true,
                 status:true,
                 creationDate:true,
+                paymentMethod:true,
                 items:{
                    select:{
                     itemId:true,
@@ -175,7 +177,8 @@ adminRouter.get("/allitems",authMiddlewareadmin,async (req:CustomRequest,res:Res
     try{
         let result1=await prisma.menu.findMany({
             where:{
-                storeId:storeId
+                storeId:storeId,
+                available: true
             },
             select:{
                 id:true,
@@ -233,6 +236,35 @@ adminRouter.put("/changevisibility",authMiddlewareadmin,async (req:CustomRequest
         res.status(500).json({"message":"Internal Server Error"});
     }
 })
+
+adminRouter.put("/deleteitem", authMiddlewareadmin, async (req: CustomRequest, res: Response) => {
+    let storeId:string=req.storeId as string;
+    const result = deleteitem.safeParse(req.body);
+  
+    if (!result.success) {
+      return res.status(400).json({ message: "Invalid Status" });
+    }
+  
+    try {
+      let id:number=req.body.id;
+      const updatedItem = await prisma.menu.update({
+        where: {
+          id:id,
+          storeId:storeId,
+        },
+        data: {
+          available: false,
+          visibility: false,
+        },
+      });
+  
+      return res.json({ message: "Menu Item deleted successfully" });
+    } catch (error) {
+      console.error(error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+  });
+  
 
 //CHECKED
 adminRouter.put("/changestatus",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{

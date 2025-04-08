@@ -1,3 +1,4 @@
+import { paymentMethods } from '@prisma/client'
 import {z} from 'zod'
 
 export const UserSignup=z.object({
@@ -65,6 +66,10 @@ export const visibility=z.object({
     visibility:z.boolean()
 })
 
+export const deleteitem=z.object({
+    id:z.number().int(),
+})
+
 export const checkout=z.object({
     description:z.string().max(75),
     storeId:z.string(),
@@ -73,7 +78,8 @@ export const checkout=z.object({
         quantity:z.number().int()
     })),
     amount:z.number(),
-    addressId:z.number()
+    addressId:z.number(),
+    paymentMethod:z.literal("COD").or(z.literal("UPI")).or(z.literal("StorePayment"))
 })
 
 
