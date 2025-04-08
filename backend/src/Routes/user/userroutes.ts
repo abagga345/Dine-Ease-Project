@@ -91,7 +91,7 @@ userRouter.get("/vieworders",authMiddlewareuser,async (req:CustomRequest,res:Res
             where:{
                 email:req.email as string
             },
-            include:{
+            select:{
                 items:{
                     select:{
                         quantity:true,itemId:true,
@@ -103,7 +103,20 @@ userRouter.get("/vieworders",authMiddlewareuser,async (req:CustomRequest,res:Res
                             }
                         }
                     }
-                }
+                },
+                address:{
+                    select:{
+                        houseStreet:true,
+                        city:true,
+                        pincode:true
+                    }
+                },
+                id:true,
+                email:true,
+                status:true,
+                creationDate:true,
+                description:true
+
             }
         });
         res.json({"orders":result1});
@@ -160,7 +173,7 @@ userRouter.get("/getaddresses",authMiddlewareuser,async (req:CustomRequest,res:R
 })
 
 //CHECKED
-userRouter.get("/viewmenu",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
+userRouter.get("/viewmenu",async (req:CustomRequest,res:Response)=>{
     let storeId:string=req.query.storeId as string;
     if (storeId===undefined){
         res.status(400).json({"message":"No store selected"})
@@ -169,15 +182,16 @@ userRouter.get("/viewmenu",authMiddlewareuser,async (req:CustomRequest,res:Respo
     try{
         let result1=await prisma.menu.findMany({
             where:{
-                storeId:storeId,
-                visibility:true
+                storeId:storeId
+                
             },
             select:{
                 imageUrl:true,
                 amount:true,
                 description:true,
                 id:true,
-                title:true
+                title:true,
+                visibility:true
             }
         });
         res.json({"items":result1});

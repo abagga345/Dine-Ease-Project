@@ -432,6 +432,21 @@ adminRouter.get("/chartdata",authMiddlewareadmin,async (req:CustomRequest,res:Re
     }
 });
 
+//CHECKED
+adminRouter.get("/ordercounts",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
+    try{
+        let result=await prisma.orders.groupBy({
+            by:['status'],
+            _count:{
+                id:true
+            }
+        })
+        res.json({"message":"Order counts fetched successfully ",orderCounts:result});
+    }catch(err){
+        res.status(500).json({"message":"INTERNAL SERVER ERROR"});
+    }
+});
+
 
 //CHECKED
 adminRouter.post("/signup",async (req:Request,res:Response)=>{
