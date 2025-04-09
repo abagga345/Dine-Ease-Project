@@ -147,11 +147,11 @@ export function SignupCard() {
                 <input {...register('email', {
                   minLength: {
                     value: 4,
-                    message: "USERNAME TOO SHORT"
+                    message: "email TOO SHORT"
                   },
                   maxLength: {
                     value: 30,
-                    message: "USERNAME TOO LARGE"
+                    message: "email TOO LARGE"
                   }
                 })}
                   id="email"

@@ -23,7 +23,7 @@ interface OrderItem {
 
 interface Address{
     houseStreet:String;
-    city:String;
+    state:String;
     pincode:String;
 }
 
@@ -193,7 +193,7 @@ export const PendingOrders = () => {
                 </div>
                 <div className="flex items-center">
                   <MapPin className="w-5 h-5 mr-2 text-green-600" />
-                  <span className="text-gray-600 w-full">{`${order.address.houseStreet}, ${order.address.city}, ${order.address.pincode}`}</span>
+                  <span className="text-gray-600 w-full">{`${order.address.houseStreet}, ${order.address.state}, ${order.address.pincode}`}</span>
                 </div>
                 {/* <div className="flex items-center">
                   <Wallet className="w-5 h-5 mr-2 text-green-600" />

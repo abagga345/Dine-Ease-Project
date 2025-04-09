@@ -74,11 +74,11 @@ export function SigninCard(){
                     <input {...register('email',{
                         minLength:{
                             value:4,
-                            message:"USERNAME TOO SHORT"
+                            message:"Email TOO SHORT"
                         },
                         maxLength:{
                             value:30,
-                            message:"USERNAME TOO LARGE"
+                            message:"Email TOO LARGE"
                         }
                     })}
                       id="email"

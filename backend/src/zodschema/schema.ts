@@ -2,25 +2,25 @@ import { paymentMethods } from '@prisma/client'
 import {z} from 'zod'
 
 export const UserSignup=z.object({
-    email:z.string().min(4,{"message":"Username length is very short"}).max(30,{"message":"Username length is very large"}),
+    email:z.string().min(4,{"message":"Email length is very short"}).max(30,{"message":"Email length is very large"}),
     firstName:z.string({message:"FirstName should be a string"}),
     lastName:z.string({message:"LastName should be a string"}),
     contactNo:z.string().length(10,{"message":"ContactNo not of 10 digits"}),
-    password:z.string({message:"Password should be a string"}).min(5,{"message":"Username length is very short"}).max(30,{"message":"Password length is very large"})
+    password:z.string({message:"Password should be a string"}).min(5,{"message":"Email length is very short"}).max(30,{"message":"Password length is very large"})
 }).required()
 
 export const AdminSignup=z.object({
-    email:z.string().min(4,{"message":"Username length is very short"}).max(30,{"message":"Username length is very large"}),
+    email:z.string().min(4,{"message":"Email length is very short"}).max(30,{"message":"Email length is very large"}),
     firstName:z.string({message:"FirstName should be a string"}),
     lastName:z.string({message:"LastName should be a string"}),
     contactNo:z.string().length(10,{"message":"ContactNo not of 10 digits"}),
-    password:z.string({message:"Password should be a string"}).min(5,{"message":"Username length is very short"}).max(30,{"message":"Password length is very large"}),
+    password:z.string({message:"Password should be a string"}).min(5,{"message":"Email length is very short"}).max(30,{"message":"Password length is very large"}),
     storeId:z.string().max(50)
 }).required()
 
 export const UserSignin=z.object({
     email:z.string().min(4,{"message":"Email length is very short"}).max(100,{"message":"Email length is very large"}),
-    password:z.string({message:"Password should be a string"}).min(5,{"message":"Username length is very short"}).max(30,{"message":"Password length is very large"})
+    password:z.string({message:"Password should be a string"}).min(5,{"message":"Email length is very short"}).max(30,{"message":"Password length is very large"})
 }).required()
 
 export const AdminSignin=z.object({
@@ -30,7 +30,7 @@ export const AdminSignin=z.object({
 
 export const address=z.object({
     houseStreet:z.string().max(60),
-    city:z.string().max(30),
+    state:z.string().max(30),
     pincode:z.string().min(6).max(7)
 }).required()
 
@@ -85,7 +85,7 @@ export const checkout=z.object({
 
 export const editaddress=z.object({
     houseStreet:z.string().max(60).optional(),
-    city:z.string().max(30).optional(),
+    state:z.string().max(30).optional(),
     pincode:z.string().min(6).max(7).optional()
 })
 

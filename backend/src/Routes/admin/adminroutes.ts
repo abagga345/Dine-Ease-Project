@@ -36,7 +36,7 @@ adminRouter.post("/signin",async (req:Request,res:Response)=>{
             res.status(401).json({"message":"Unauthorised "});
             return;
         }
-        let token:string=jwt.sign({username:result1["username"],storeId:result1["storeId"]},JWT_SECRET);
+        let token:string=jwt.sign({email:result1["email"],storeId:result1["storeId"]},JWT_SECRET);
         res.json({"message":"Successful sign in","token":"Bearer "+token});
     }
     catch(err){
@@ -68,7 +68,7 @@ adminRouter.get("/allorders",authMiddlewareadmin,async (req:CustomRequest,res:Re
                     select:{
                         houseStreet:true,
                         pincode:true,
-                        city:true
+                        state:true
                     }
                 }
             }
@@ -157,7 +157,7 @@ adminRouter.get("/unconfirmedorders",authMiddlewareadmin,async (req:CustomReques
                 address:{
                     select:{
                         houseStreet:true,
-                        city:true,
+                        state:true,
                         pincode:true
                     }
                 }
@@ -478,7 +478,7 @@ adminRouter.post("/signup",async (req:Request,res:Response)=>{
                 contactNo:req.body.contactNo
             }
         });
-        let token=jwt.sign({username:req.body.username,storeId:req.body.storeId},JWT_SECRET);
+        let token=jwt.sign({email:req.body.email,storeId:req.body.storeId},JWT_SECRET);
         res.json({"message":"Successful sign up","token":"Bearer "+token});
     }catch(err){
         console.log(err);
@@ -506,7 +506,7 @@ adminRouter.get("/viewprofile",authMiddlewareadmin,async (req:CustomRequest,res:
                 store:{
                     select:{
                         storeStreet:true,
-                        city:true,
+                        state:true,
                         pincode:true
                     }
                 }

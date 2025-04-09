@@ -107,7 +107,7 @@ userRouter.get("/vieworders",authMiddlewareuser,async (req:CustomRequest,res:Res
                 address:{
                     select:{
                         houseStreet:true,
-                        city:true,
+                        state:true,
                         pincode:true
                     }
                 },
@@ -138,7 +138,7 @@ userRouter.post("/addaddress",authMiddlewareuser,async (req:CustomRequest,res:Re
         await prisma.address.create({
             data:{
                 houseStreet:req.body.houseStreet,
-                city:req.body.city,
+                state:req.body.state,
                 pincode:req.body.pincode,
                 email:email
             }
@@ -160,7 +160,7 @@ userRouter.get("/getaddresses",authMiddlewareuser,async (req:CustomRequest,res:R
             },
             select:{
                 id:true,
-                city:true,
+                state:true,
                 pincode:true,
                 houseStreet:true
             }

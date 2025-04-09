@@ -25,7 +25,7 @@ interface OrderItem{
     address:{
         houseStreet:string;
         pincode:string;
-        city:string;
+        state:string;
     }
 }
 
@@ -229,7 +229,7 @@ export const AllOrders = () => {
               value={order.address.houseStreet}
             />
             {/* <OrderDetail icon={MapPin} label="Landmark" value={order.landmark} /> */}
-            <OrderDetail icon={MapPin} label="City" value={order.address.city} />
+            <OrderDetail icon={MapPin} label="State" value={order.address.state} />
             <OrderDetail icon={MapPin} label="Pincode" value={order.address.pincode} />
             <OrderDetail
               icon={Clock}

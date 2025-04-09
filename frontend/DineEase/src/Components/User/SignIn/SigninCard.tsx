@@ -9,7 +9,7 @@ interface SigninresultSuccess{
 }
 
 interface FormFields{
-    username:string,
+    email:string,
     password:string
 }
 
@@ -23,7 +23,7 @@ export function SigninCard(){
         let result=await fetch("http://localhost:3000/api/v1/user/signin",{
             method:"POST",
             body:JSON.stringify({
-                username:data.username,
+                email:data.email,
                 password:data.password
             }),
             headers:{
@@ -68,31 +68,31 @@ export function SigninCard(){
               
         <form onSubmit={handleSubmit(submithandler)}>
               <div>
-                  <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
-                    Username
+                  <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+                    Email
                   </label>
                   <div className="mt-2">
-                    <input {...register('username',{
+                    <input {...register('email',{
                         minLength:{
                             value:4,
-                            message:"USERNAME TOO SHORT"
+                            message:"Email TOO SHORT"
                         },
                         maxLength:{
                             value:30,
-                            message:"USERNAME TOO LARGE"
+                            message:"email TOO LARGE"
                         }
                     })}
-                      id="username"
-                      name="username"
+                      id="email"
+                      name="email"
                       type="text"
                       required
-                      autoComplete="username"
+                      autoComplete="email"
                       className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
                 <div className="mt-2 ">
-                    {(errors.username)?<div style={{color:"#e53e3e"}} >{errors.username?.message}</div>:""}
+                    {(errors.email)?<div style={{color:"#e53e3e"}} >{errors.email?.message}</div>:""}
                 </div>
     
                 <div>

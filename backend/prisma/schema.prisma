@@ -43,7 +43,7 @@ model Address {
   id          Int    @id @default(autoincrement())
   email       String
   houseStreet String
-  city        String
+  state        String
   pincode     String
   user        Users   @relation(fields: [email], references: [email])
   orders      Orders[]
@@ -70,7 +70,7 @@ model Orders {
   addressId   Int 
   address     Address @relation(fields:[addressId],references: [id],onDelete: SetNull)
   store       Store @relation(fields: [storeId],references: [storeId])
-  paymentMethod paymentMethods @default(COD)
+  paymentMethod paymentMethods 
 }
 
 model OrderItems {
@@ -112,7 +112,7 @@ model Store {
   id          Int       @id @default(autoincrement())
   storeId     String    @unique
   storeStreet String
-  city        String
+  state        String   
   pincode     String
   admins      Users[]
   menu        Menu[]
