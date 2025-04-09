@@ -9,7 +9,7 @@ import {UserHome} from "./Components/User/Home/UserHome"
 import { ErrorPage } from "./Components/common/errorpage"
 import { Dashboard } from "./Components/Admin/Dashboard/Dashboard"
 import { Profile } from "./Components/User/Profile/Profile"
-import { Checkout } from "./Components/User/Checkout/Checkout"
+import { Checkout } from "./Components/User/checkout/Checkout"
 import { Menu } from "./Components/User/Menu/menu"
 import { Toaster } from "react-hot-toast"
 function App() {

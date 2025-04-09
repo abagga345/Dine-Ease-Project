@@ -4,6 +4,22 @@ import {PendingOrders} from "./PendingOrders"
 import { Setting } from "./Settings"
 import { MyOrders } from "./MyOrders"
 import { Analytics } from "./Analytics"
+
+// checkout - user , menu - user 
+
+
+// add item - admin , menu - admin 
+
+
+
+
+// cloudinary ===> image upload , image delete 
+
+// available ====> menu , paymentMethod ===> orders
+
+
+
+
 export function Dashboard(){
     return (
         
@@ -15,6 +31,8 @@ export function Dashboard(){
             {/* <Setting></Setting> */}
             {/* <MyOrders></MyOrders> */}
             {/* <Analytics></Analytics> */}
+            
+            
 
         </>
     )
