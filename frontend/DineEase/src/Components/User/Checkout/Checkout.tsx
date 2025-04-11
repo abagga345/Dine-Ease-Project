@@ -91,7 +91,7 @@ export function Checkout() {
   const [outOfStockModal, setOutOfStockModal] = useState(false);
   const [outOfStockItems, setOutOfStockItems] = useState<OutItem[]>([]);
   const [buttonstate, setbuttonstate] = useState(true);
-  const [addressform,setAddressForm]=useState(false);
+  
 
 
 
@@ -214,19 +214,16 @@ export function Checkout() {
         setError("Unauthorized please signin again");
         return;
     }
-
-
-    fetch("http://localhost:3000/api/v1/user/checkout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization:token
-      },
-      body: JSON.stringify({
-        addressId:data.addressId,
+    const temp=data;
+    temp.addressId=Number(temp.addressId);
+    console.log(temp);
+    try{
+    
+    let response=await axios.post("http://localhost:3000/api/v1/user/checkout", {
+        addressId:temp.addressId,
         storeId:"FlyHigher", // change later
-        description: data.description,
-        paymentMethod: data.paymentMethod,
+        description: temp.description,
+        paymentMethod: temp.paymentMethod,
         amount: Math.round(
           subtotal +
             (method === "COD" ? codcharges : 0) +
@@ -234,13 +231,16 @@ export function Checkout() {
             tax
         ),
         items: items.map((item) => ({
-          itemId: item.id,
+          id: item.id,
           quantity: item.quantity,
         })),
-      }),
-    })
-      .then(async (data) => {
-        let body = await data.json();
+      },{
+        headers:{
+            Authorization:token
+        }
+      })
+      
+        let body = response.data;
         if (body.message === "Order Created successfully") {
           const id = body.id;
           toast.success(`Order placed successfully! Order ID: ${id}`, {
@@ -253,10 +253,9 @@ export function Checkout() {
           setError("Unable to place order");
         }
         //ORDER PLACED SUCCESSFULLY TOAST
-      })
-      .catch((err) => {
+    }catch(err){
         setError("Unable to place order");
-      });
+    }
      // setbuttonstate(true);
   }
 
@@ -405,6 +404,8 @@ export function Checkout() {
                 Complete your order by providing your shipping details.
               </p>
 
+
+              <div className="mt-3 grid gap-3">
               {addresses.map((item)=>{
                 return (
                     <div key={item.id}>
@@ -414,7 +415,7 @@ export function Checkout() {
                             id={`radio_addr_${item.id}`}
                             type="radio"
                             value={item.id}
-                            {...register("addressId")}
+                            {...register("addressId", { required:true })}
                             />
                             <span className="peer-checked:border-green-600 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
                             <label
@@ -434,22 +435,12 @@ export function Checkout() {
                     </div>
                 )
               })}
+              </div>
               
-              { !addressform && 
+               <AddAddress navigate={navigate} setError={setError} setAddresses={setAddresses}></AddAddress> 
         
-            <div className="flex justify-center">
-                <button
-                    onClick={()=>{
-                        setAddressForm(true);
-                    }}
-                    type="button"
-                    className={`mt-6 mb-8  rounded-md px-6 py-3 font-medium text-white
-                   bg-green-600 hover:bg-green-700`}
-                >
-                    Add New Address
-                 </button>
-            </div>
-            }
+            
+            
                
 
               {/* <div className="relative">
@@ -585,9 +576,22 @@ export function Checkout() {
 
 
 function AddAddress({setAddresses,navigate,setError}){
+    const [houseStreet,setHouseStreet]=useState("");
+    const [state,setState]=useState("Delhi");
+    const [pincode,setPincode]=useState("");
+    const [addressform,setAddressForm]=useState(false);
+    const [invalid,setInvalid]=useState(false);
+
+    useEffect(()=>{
+        if (houseStreet==="" || pincode ===""){
+            setInvalid(true);
+        }
+        else if (invalid){
+            setInvalid(false);
+        }
+    },[houseStreet,pincode])
     
-    const { register, handleSubmit, watch } = useForm<subformfields>({});
-    async function submithandler(data:subformfields){
+    async function submithandler(){
         let token=localStorage.getItem("token");
         if (token===null || token===undefined){
             setError("Unauthorized , Please signin again");
@@ -595,9 +599,9 @@ function AddAddress({setAddresses,navigate,setError}){
         }
         try{
         let result=await axios.post("http://localhost:3000/api/v1/user/addaddress",{
-            houseStreet:data.houseStreet,
-            state:data.state,
-            pincode:data.pincode
+            houseStreet:houseStreet,
+            state:state,
+            pincode:pincode
         },{
             headers:{
                 Authorization:token
@@ -605,23 +609,43 @@ function AddAddress({setAddresses,navigate,setError}){
         })
         console.log(result);
         setAddresses((initial:Address[])=> [...initial,result.data.address]);
+        setAddressForm(false);
         }
         catch(err){
+            console.log(err);
             setError("Internal Server Error");
         }
 
     }
+    if (!addressform){
+        return (
+        <div className="flex justify-center">
+                <button
+                    onClick={()=>{
+                        setAddressForm(true);
+                    }}
+                    type="button"
+                    className={`mt-6 mb-8  rounded-md px-6 py-3 font-medium text-white
+                   bg-green-600 hover:bg-green-700`}
+                >
+                    Add New Address
+                 </button>
+            </div>
+        )
+    }
     
     return (
         <div className="mt-5">
-            <form onSubmit={handleSubmit(submithandler)}>
+            <div>
             <div>
                <div className="flex flex-col gap-3 sm:flex-row">
                   <div className="relative flex-shrink-0 sm:w-7/12">
                     <input
                       type="text"
                       id="billing-address"
-                      {...register("houseStreet", { required: true })}
+                      onChange={(e)=>{
+                        setHouseStreet(e.target.value);
+                      }}
                       className="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-green-500 focus:ring-green-500"
                       placeholder="Street Address"
                     />
@@ -634,10 +658,12 @@ function AddAddress({setAddresses,navigate,setError}){
                     </div>
                   </div>
                   <select
-                    {...register("state", { required: true })}
+                     onChange={(e)=>{
+                        setState(e.target.value);
+                      }}
                     className="w-full rounded-md border bg-white border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:z-10 focus:border-green-500 focus:ring-green-500"
                   >
-                    <option>Delhi</option>
+                    <option selected>Delhi</option>
                     <option>Andhra Pradesh</option>
                     <option>Arunachal Pradesh</option>
                     <option>Assam</option>
@@ -676,11 +702,19 @@ function AddAddress({setAddresses,navigate,setError}){
                   </select>
                   <input
                     type="text"
-                    {...register("pincode", { required: true })}
+                    onChange={(e)=>{
+                        setPincode(e.target.value);
+                      }}
                     className="flex-shrink-0 rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none sm:w-1/6 focus:z-10 focus:border-green-500 focus:ring-green-500"
-                    placeholder="Post Code"
+                    placeholder="Pin Code"
                   />
                 </div>
+
+                {invalid && 
+                    <div className="flex justify-center">
+                        <div className="text-red-600">Please Fill Required fields</div>
+                    </div>
+                }
 
 
                 {/* <label
@@ -719,14 +753,15 @@ function AddAddress({setAddresses,navigate,setError}){
                 </div>
                 <div className="flex justify-center">
                 <button
-                    type="submit"
+                    type="button"
+                    onClick={submithandler}
                     className={`mt-6 mb-8  rounded-md px-6 py-3 font-medium text-white
                    bg-green-600 hover:bg-green-700`}
                 >
                     Save address
                  </button>
             </div>
-        </form>
+        </div>
     </div>
     )
 }
