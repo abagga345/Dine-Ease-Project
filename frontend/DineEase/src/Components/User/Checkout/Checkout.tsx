@@ -241,19 +241,20 @@ export function Checkout() {
       })
       
         let body = response.data;
-        if (body.message === "Order Created successfully") {
+        if (body.message === "Order placed successfully") {
           const id = body.id;
           toast.success(`Order placed successfully! Order ID: ${id}`, {
             duration: 5000,
           });
           setTimeout(() => {
-            navigate("/admin/dashboard") // change later 
+            navigate("/home") // change later 
           }, 1000);
         } else {
           setError("Unable to place order");
         }
         //ORDER PLACED SUCCESSFULLY TOAST
     }catch(err){
+        console.log(err)
         setError("Unable to place order");
     }
      // setbuttonstate(true);
