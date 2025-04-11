@@ -71,7 +71,7 @@ export const deleteitem=z.object({
 })
 
 export const checkout=z.object({
-    description:z.string().max(75),
+    description:z.string().max(75).optional(),
     storeId:z.string(),
     items:z.array(z.object({
         id:z.number().int(),

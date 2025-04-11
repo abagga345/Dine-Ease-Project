@@ -135,15 +135,21 @@ userRouter.post("/addaddress",authMiddlewareuser,async (req:CustomRequest,res:Re
     }
     let email:string=req.email as string;
     try{
-        await prisma.address.create({
+        let result=await prisma.address.create({
             data:{
                 houseStreet:req.body.houseStreet,
                 state:req.body.state,
                 pincode:req.body.pincode,
                 email:email
+            },
+            select:{
+                houseStreet:true,
+                pincode:true,
+                id:true,
+                state:true
             }
         });
-        res.json({"message":"Address Added successfully"});
+        res.json({"message":"Address Added successfully","address":result});
     }catch(err){
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
@@ -269,9 +275,10 @@ userRouter.delete("/deletereview",authMiddlewareuser,async (req:CustomRequest,re
 
 //CHECKED ===> NORMAL , VISIBILITY , PRICE UDPATION
 userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
-    
+    console.log(req.body);
     let result =checkout.safeParse(req.body);
     if (result["success"]===false){
+        
         res.status(400).json({"message":"INVALID INPUTS"});
         return;
     }
