@@ -292,6 +292,16 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
             }
             total+=(price["amount"])*req.body.items[i].quantity;
         }
+        //console.log(total);
+        const shipping = parseInt(process.env.SHIPPING_COST || "0");
+        const codcharges = parseInt(process.env.COD || "0");
+        const taxRate = parseInt(process.env.TAX_RATE || "0");
+
+        total += shipping + (req.body.paymentMethod === "COD" ? codcharges : 0);
+        //console.log(total);
+        const tax = Math.round(total * (taxRate / 100));
+        total+=tax;
+        //console.log(total)
         if (total!==req.body.amount){
             res.status(400).json({"message":"Price updated,Please retry"});
             return;
