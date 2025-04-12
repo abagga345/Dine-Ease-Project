@@ -578,7 +578,7 @@ adminRouter.post(
     "/imageupload",
     authMiddlewareadmin,
     upload.single("file"), // Expecting a file field with name 'file'
-    async (req: Request, res: Response) => {
+    async (req: any, res: Response) => {
       try {
         const file = req.file;
         const { folder = "default_folder", height, quality } = req.body;
