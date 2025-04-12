@@ -250,7 +250,7 @@ export function Checkout() {
       
         let body = response.data;
         if (body.message === "Order placed successfully") {
-          const id = body.id;
+          const id = body.orderId;
           toast.success(`Order placed successfully! Order ID: ${id}`, {
             duration: 5000,
           });

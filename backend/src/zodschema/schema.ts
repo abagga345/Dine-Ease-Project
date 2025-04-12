@@ -75,7 +75,7 @@ export const checkout=z.object({
     storeId:z.string(),
     items:z.array(z.object({
         id:z.number().int(),
-        quantity:z.number().int()
+        quantity:z.number().int().min(1, { message: 'Quantity must be a positive integer' })
     })),
     amount:z.number(),
     addressId:z.number(),
