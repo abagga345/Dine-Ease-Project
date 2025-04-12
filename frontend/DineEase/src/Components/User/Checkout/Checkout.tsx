@@ -91,11 +91,13 @@ export function Checkout() {
   const [outOfStockModal, setOutOfStockModal] = useState(false);
   const [outOfStockItems, setOutOfStockItems] = useState<OutItem[]>([]);
   const [buttonstate, setbuttonstate] = useState(true);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<fields>({});
   
-
-
-
-  const { register, handleSubmit, watch } = useForm<fields>({});
   const method = watch("paymentMethod");
   const shipping = parseInt(import.meta.env.VITE_SHIPPING_COST as string);
   const codcharges = parseInt(import.meta.env.VITE_COD as string);
@@ -105,7 +107,7 @@ export function Checkout() {
     setLoading(true);
     
     const itemstemp = localStorage.getItem("cart");
-    if (!itemstemp) {
+    if (!itemstemp || Object.keys(JSON.parse(itemstemp)).length === 0) {
       setError("No Items Added to Cart");
       setLoading(false);
       return;
@@ -116,7 +118,7 @@ export function Checkout() {
     const itemsarr: Item[] = [];
     const outOfStock: OutItem[] = [];
     let temp = 0;
-
+    let invalid=0;
     let token=localStorage.getItem("token");
     if (token===null || token===undefined){
         navigate("/signin");
@@ -153,7 +155,12 @@ export function Checkout() {
         temp1.quantity = quantity;
         temp1.title = body.data.title;
         temp1.visibility = body.data.visibility;
-        if (temp1.visibility) {
+        if (temp1.quantity<=0) {
+          delete itemsbody[key];
+          localStorage.setItem("cart", JSON.stringify(itemsbody));
+          invalid++;
+        }
+        else if (temp1.visibility) {
           itemsarr.push(temp1);
           temp += temp1.price * temp1.quantity;
         } else {
@@ -173,7 +180,7 @@ export function Checkout() {
             setLoading(false);
             return;
         }
-        if (itemsarr.length != n) {
+        if (itemsarr.length + invalid != n) {
             //DISPLAY A MODAL THAT SOME ITEMS ARE NOT AVAILABLE
             setOutOfStockItems(outOfStock);
             setOutOfStockModal(true);
@@ -190,6 +197,7 @@ export function Checkout() {
         setTax(Math.round(total * (parseInt(import.meta.env.VITE_TAX_RATE as string) / 100)));
         setLoading(false);
       }catch(err){
+        console.log(err)
         setError("Internal server Error , Please try again later");
       }
     });
@@ -241,13 +249,13 @@ export function Checkout() {
       })
       
         let body = response.data;
-        if (body.message === "Order Created successfully") {
+        if (body.message === "Order placed successfully") {
           const id = body.id;
           toast.success(`Order placed successfully! Order ID: ${id}`, {
             duration: 5000,
           });
           setTimeout(() => {
-            navigate("/admin/dashboard") // change later 
+            navigate("/home") // change later 
           }, 1000);
         } else {
           setError("Unable to place order");
@@ -416,6 +424,7 @@ export function Checkout() {
                             type="radio"
                             value={item.id}
                             {...register("addressId", { required:true })}
+                            
                             />
                             <span className="peer-checked:border-green-600 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
                             <label
@@ -556,15 +565,19 @@ export function Checkout() {
               <button
                 type="submit"
                 disabled={!buttonstate}
-                className={`mt-6 mb-8 w-full rounded-md px-6 py-3 font-medium text-white
+                className={`mt-6 mb-2 w-full rounded-md px-6 py-3 font-medium text-white
                   ${buttonstate ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'}`}
               >
                 Place Order
+                
               </button>
+              {errors.addressId && (<p className="text-red-500 text-sm mt-2 text-center">Please select a shipping address</p>)}
             </div>
+            
           </div>
         </div>
       </form>
+      
       <OutOfStockModal
         isOpen={outOfStockModal}
         onClose={() => setOutOfStockModal(false)}
