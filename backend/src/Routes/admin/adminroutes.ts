@@ -1,11 +1,54 @@
 import express from "express"
 import { Request,Response} from "express"
+import multer from "multer"
 import bcrypt from "bcrypt"
 import { PrismaClient } from "@prisma/client";
 import { JWT_SECRET } from "../../config"
 import jwt from "jsonwebtoken"
 import { authMiddlewareadmin } from "../../Middlewares/authMiddlewareadmin";
 import { AdminSignin,status, visibility,additem, AdminSignup,deleteitem } from "../../zodschema/schema";
+import { connect } from "./cloudinary";
+
+const cloudinary = require("cloudinary").v2;
+connect();
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+const uploadImageToCloudinary = (
+  fileBuffer: Buffer,
+  folder: string,
+  height?: number,
+  quality?: number
+): Promise<any> => {
+  const options: any = { folder, resource_type: "auto" };
+  if (height) options.height = height;
+  if (quality) options.quality = quality;
+
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      options,
+      (error, result) => {
+        if (error) {
+          return reject(error);
+        }
+        resolve(result); // This will return the result of the upload
+      }
+    );
+    uploadStream.end(fileBuffer); // Send the file buffer here
+  });
+};
+
+const deletePicture = async (imageURL:any) => {
+    const publicIdImage = imageURL
+      .split("/")
+      .pop()
+      .replace(/\.[^/.]+$/, "");
+  
+    return cloudinary.uploader.destroy(`default_folder/${publicIdImage}`, {
+      type: "upload",
+      resource_type: "image",
+    });
+  };
 
 export const adminRouter=express.Router();
 const prisma=new PrismaClient();
@@ -528,6 +571,64 @@ adminRouter.get("/viewprofile",authMiddlewareadmin,async (req:CustomRequest,res:
         res.status(500).json({"message":"Internal Server Error"})
     }
 })
+
+
+//NOT CHECKED
+adminRouter.post(
+    "/imageupload",
+    authMiddlewareadmin,
+    upload.single("file"), // Expecting a file field with name 'file'
+    async (req: Request, res: Response) => {
+      try {
+        const file = req.file;
+        const { folder = "default_folder", height, quality } = req.body;
+  
+        if (!file) {
+          return res.status(400).json({ message: "File is required" });
+        }
+  
+        const fileBuffer = file.buffer;
+  
+        const uploadResult = await uploadImageToCloudinary(
+          fileBuffer,
+          folder,
+          height,
+          quality
+        );
+  
+        return res.json({
+          message: "Image uploaded successfully",
+          url: uploadResult.secure_url,
+        });
+      } catch (error) {
+        console.error("Error uploading to Cloudinary:", error);
+        return res.status(500).json({ message: "Upload failed" });
+      }
+    }
+  );
+  
+
+  // NOT CHECKED
+  adminRouter.delete(
+    "/deleteimage",
+    authMiddlewareadmin,
+    async (req: Request, res: Response) => {
+      try {
+        const { file } = req.body;
+  
+        if (!file) {
+          return res.status(400).json({ message: "File is required" });
+        }
+  
+        await deletePicture(file);
+  
+        return res.json({ message: "Image Deleted Successfully" });
+      } catch (error) {
+        console.error("Error deleting from Cloudinary:", error);
+        return res.status(500).json({ message: "Delete failed" });
+      }
+    }
+  );
 
 
 

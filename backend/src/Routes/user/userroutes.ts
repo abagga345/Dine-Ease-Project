@@ -188,7 +188,8 @@ userRouter.get("/viewmenu",async (req:CustomRequest,res:Response)=>{
     try{
         let result1=await prisma.menu.findMany({
             where:{
-                storeId:storeId
+                storeId:storeId,
+                available:true
                 
             },
             select:{
@@ -285,9 +286,9 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
     try{
         let total=0;
         for(let i=0;i<req.body.items.length;i++){
-            let price =await prisma.menu.findFirst({where:{id:req.body.items[i].id,storeId:req.body.storeId,visibility:true}}) ;
+            let price =await prisma.menu.findFirst({where:{id:req.body.items[i].id,storeId:req.body.storeId,visibility:true,available:true}}) ;
             if (price===null){
-                res.status(400).json({"message":"Some items are out of stock"});
+                res.status(400).json({"message":"Some items are out of stock or not available"});
                 return;
             }
             total+=(price["amount"])*req.body.items[i].quantity;
@@ -437,7 +438,8 @@ userRouter.get("/viewmenuitem",authMiddlewareuser,async (req:CustomRequest,res:R
                 amount:true,
                 description:true,
                 storeId:true,
-                visibility:true
+                visibility:true,
+                available:true
                 
             }
         })
@@ -449,7 +451,7 @@ userRouter.get("/viewmenuitem",authMiddlewareuser,async (req:CustomRequest,res:R
             id:result["id"],
             imageUrl:result["imageUrl"],
             description:result["description"],
-            visibility:result["visibility"],
+            visibility:result["visibility"] && result["available"],
             storeId:result["storeId"],
             amount:result["amount"],
             title:result["title"]
