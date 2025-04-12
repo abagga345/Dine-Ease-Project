@@ -9,9 +9,10 @@ import {UserHome} from "./Components/User/Home/UserHome"
 import { ErrorPage } from "./Components/common/errorpage"
 import { Dashboard } from "./Components/Admin/Dashboard/Dashboard"
 
-import { Checkout } from "./Components/User/Checkout/Checkout"
+
 import { Menu } from "./Components/User/Menu/menu"
 import { Toaster } from "react-hot-toast"
+import { Checkout } from "./Components/User/checkout/Checkout"
 function App() {
   return (
     <>

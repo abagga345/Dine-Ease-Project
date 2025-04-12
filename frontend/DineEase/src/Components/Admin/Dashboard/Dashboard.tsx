@@ -4,6 +4,8 @@ import {PendingOrders} from "./PendingOrders"
 import { Setting } from "./Settings"
 import { MyOrders } from "./MyOrders"
 import { Analytics } from "./Analytics"
+import { AddItem } from "./AddItem"
+import {Menu} from "./Menu"
 
 // checkout - user , menu - user 
 
@@ -31,7 +33,8 @@ export function Dashboard(){
             {/* <Setting></Setting> */}
             {/* <MyOrders></MyOrders> */}
             {/* <Analytics></Analytics> */}
-            
+            {/* <AddItem></AddItem> */}
+            <Menu></Menu>
             
 
         </>

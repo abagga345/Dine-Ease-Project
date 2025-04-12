@@ -1,0 +1,238 @@
+import React, { useState, useEffect } from "react";
+import { Loader2, Trash2 } from "lucide-react";
+
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+
+interface MenuItem {
+  id: number;
+  title: string;
+  description: string;
+  amount: number;
+  imageUrl: string;
+  visibility: boolean;
+  loading?:boolean;
+}
+
+export const Menu: React.FC = () => {
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate=useNavigate();
+
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        
+        let token=localStorage.getItem("token");
+      if (token===undefined || token===null){
+        setError("Unauthorized please signin again");
+        navigate("/admin/signin");
+        return;
+      }
+        
+        const response = await fetch("http://localhost:3000/api/v1/admin/allitems",{
+            headers:{
+                Authorization:token
+            }
+        });
+
+
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch menu items");
+        }
+        const data = await response.json();
+        setMenuItems(
+          data.items.map((item: MenuItem) => ({ ...item, loading: false }))
+        );
+        setLoading(false);
+      } catch (err) {
+        setError("An error occurred while fetching menu items");
+        setLoading(false);
+      }
+    };
+    fetchMenuItems();
+  }, []);
+
+  const toggleOutOfStock = async (index: number) => {
+    setMenuItems((prevItems) => {
+      const updatedItems = [...prevItems];
+      updatedItems[index].loading = true;
+      return updatedItems;
+    });
+
+    const toastId = toast.loading("Changing Status...");
+    try {
+      const item = menuItems[index];
+      
+      let token=localStorage.getItem("token");
+      if (token===undefined || token===null){
+        toast.error("Unauthorized please signin again");
+        navigate("/admin/signin");
+        return;
+      }
+      
+      
+      const response = await fetch(`http://localhost:3000/api/v1/admin/changevisibility`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:token
+        },
+        body: JSON.stringify({
+          id: item.id,
+          visibility: !item.visibility,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to change visibility");
+      }
+
+      setMenuItems((prevItems) => {
+        const updatedItems = [...prevItems];
+        updatedItems[index] = {
+          ...updatedItems[index],
+          visibility: !prevItems[index].visibility,
+          loading: false,
+        };
+        return updatedItems;
+      });
+      toast.dismiss(toastId);
+      toast.success("Status changed successfully!", { id: toastId });
+    } catch (error) {
+      console.error("Failed to update visibility:", error);
+      toast.dismiss(toastId);
+      toast.error("Failed to change status", { id: toastId });
+      setMenuItems((prevItems) => {
+        const updatedItems = [...prevItems];
+        updatedItems[index].loading = false;
+        return updatedItems;
+      });
+    }
+  };
+
+  const deleteMenuItem = async (id: number, imageUrl: string) => {
+    const toastId = toast.loading("Deleting item...");
+    try {
+        let token=localStorage.getItem("token");
+        if (token===undefined || token===null){
+          toast.error("Unauthorized please signin again");
+          navigate("/admin/signin");
+          return;
+        }
+      
+      
+    const deleteItemResponse = await fetch(`http://localhost:3000/api/v1/admin/deleteitem?id=${id}`, {
+        method: "PUT",
+        headers:{
+            Authorization:token
+        }
+      });
+
+      if (!deleteItemResponse.ok) {
+        throw new Error("Failed to delete item");
+      }
+      const formData = new FormData();
+      formData.append("file", imageUrl);
+
+      const deleteImageResponse = await fetch("/api/imageDelete", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!deleteImageResponse.ok) {
+        console.warn("Failed to delete image from Cloudinary");
+      }
+      setMenuItems((prevItems) => prevItems.filter((item) => item.id !== id));
+      toast.dismiss(toastId);
+      toast.success("Item deleted successfully!", { id: toastId });
+    } catch (error) {
+      console.error("Failed to delete item:", error);
+      toast.dismiss(toastId);
+      toast.error("Failed to delete item", { id: toastId });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="w-10 h-10 animate-spin text-green-600" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen text-red-500">
+        {error}
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-8 text-center">Our Menu</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {menuItems.map((item, index) => (
+          <div
+            key={index}
+            className={`bg-white rounded-lg shadow-md overflow-hidden ${item.visibility == false ? "opacity-50" : ""
+              }`}
+          >
+            {item.imageUrl != "www.whiterosepearora.com" &&
+              item.imageUrl != "www.aroranerd.com" &&
+              item.imageUrl != "www.triptiarora.com" ? (
+              <img
+                src={item.imageUrl}
+                alt={item.title}
+                width={400}
+                height={200}
+                className="w-full h-48 object-cover"
+              />
+            ) : (
+              ""
+            )}
+
+            <div className="p-5">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold mb-2">{item.title}</h2>
+                <span className="text-lg font-bold">
+                  ₹{item.amount.toFixed(2)}
+                </span>
+              </div>
+              <p className="text-gray-600 mb-4">{item.description}</p>
+              <div className="flex justify-between gap-2">
+                <button
+                  disabled={item.loading}
+                  onClick={() => toggleOutOfStock(index)}
+                  className={`font-semibold text-gray-100 py-2 px-4 flex-grow rounded 
+                    ${item.loading
+                      ? "bg-gray-400 text-gray-600 cursor-not-allowed"
+                      : item.visibility
+                        ? "bg-green-600 hover:bg-green-700 cursor-pointer"
+                        : "bg-red-500 hover:bg-red-600 cursor-pointer"
+                    }`}
+                >
+                  {item.visibility == false
+                    ? "Mark In Stock"
+                    : "Mark Out of Stock"}
+                </button>
+                <button
+                  onClick={() => deleteMenuItem(item.id, item.imageUrl)}
+                  className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
+                >
+                  <Trash2 size={20} />
+                </button>
+              </div>
+              {item.visibility == false && (
+                <p className="text-red-500 font-bold text-center mt-3">Out of Stock</p>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
