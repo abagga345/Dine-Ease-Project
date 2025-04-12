@@ -8,8 +8,8 @@ import {UserSignup} from "./Components/User/SignUp/UserSignup"
 import {UserHome} from "./Components/User/Home/UserHome"
 import { ErrorPage } from "./Components/common/errorpage"
 import { Dashboard } from "./Components/Admin/Dashboard/Dashboard"
-import { Profile } from "./Components/User/Profile/Profile"
-import { Checkout } from "./Components/User/Checkout/Checkout"
+
+import { Checkout } from "./Components/User/checkout/Checkout"
 import { Menu } from "./Components/User/Menu/menu"
 import { Toaster } from "react-hot-toast"
 function App() {
@@ -22,7 +22,6 @@ function App() {
           <Route path="/signup" element={<UserSignup></UserSignup>}></Route>
           <Route path="/signin" element={<UserSignin></UserSignin>}></Route>
           <Route path="/home" element={<UserHome></UserHome>}></Route>
-          <Route path="/profile" element={<Profile></Profile>}></Route>
           <Route path="/menu" element={<Menu></Menu>}></Route>
           <Route path="/checkout" element={<Checkout></Checkout>}></Route>
           <Route path="/admin/signin" element={<AdminSignin></AdminSignin>}></Route>
