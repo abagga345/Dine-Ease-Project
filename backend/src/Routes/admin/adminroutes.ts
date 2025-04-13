@@ -38,17 +38,19 @@ const uploadImageToCloudinary = (
   });
 };
 
-const deletePicture = async (imageURL:any) => {
-    const publicIdImage = imageURL
-      .split("/")
-      .pop()
-      .replace(/\.[^/.]+$/, "");
-  
+const deletePicture = async (imageURL: any) => {
+    const segments = imageURL.split("/");
+    const fileNameWithExtension = segments[segments.length - 1];
+
+    const publicIdImage = fileNameWithExtension.replace(/\.[^/.]+$/, "");
+
+    
     return cloudinary.uploader.destroy(`default_folder/${publicIdImage}`, {
       type: "upload",
       resource_type: "image",
     });
   };
+  
 
 export const adminRouter=express.Router();
 const prisma=new PrismaClient();

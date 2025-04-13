@@ -136,7 +136,7 @@ export const Menu: React.FC = () => {
         throw new Error("Failed to delete item");
       }
 
-      const deleteImageResponse = await fetch("/api/v1/admin/deleteimage", {
+      const deleteImageResponse = await fetch("http://localhost:3000/api/v1/admin/deleteimage", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -147,6 +147,7 @@ export const Menu: React.FC = () => {
       
 
       if (!deleteImageResponse.ok) {
+        console.log(deleteImageResponse)
         console.warn("Failed to delete image from Cloudinary");
       }
       setMenuItems((prevItems) => prevItems.filter((item) => item.id !== id));
