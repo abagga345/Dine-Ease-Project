@@ -12,7 +12,8 @@ import { Dashboard } from "./Components/Admin/Dashboard/Dashboard"
 
 import { Menu } from "./Components/User/Menu/menu"
 import { Toaster } from "react-hot-toast"
-import { Checkout } from "./Components/User/checkout/Checkout"
+import { Checkout } from "./Components/User/Checkout/Checkout"
+import { AddItem } from "./Components/Admin/Dashboard/AddItem"
 function App() {
   return (
     <>
@@ -28,6 +29,7 @@ function App() {
           <Route path="/admin/signin" element={<AdminSignin></AdminSignin>}></Route>
           <Route path="/admin/dashboard/" element={<Dashboard></Dashboard>}></Route>
           <Route path="/error" element={<ErrorPage link="/"></ErrorPage>}></Route>
+          <Route path="/addItem" element={<AddItem></AddItem>}></Route>
         </Routes>
       </BrowserRouter>
      

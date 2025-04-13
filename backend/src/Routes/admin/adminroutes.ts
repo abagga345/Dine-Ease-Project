@@ -247,6 +247,9 @@ adminRouter.post("/additem",authMiddlewareadmin,async (req:CustomRequest,res:Res
         return;
     }
     let storeId:string=req.storeId as string;
+    if (!storeId) {
+    return res.status(400).json({ message: "Store ID is required" });
+    }
     try{
         req.body.storeId=storeId;
         let result1=await prisma.menu.create({data:req.body});
