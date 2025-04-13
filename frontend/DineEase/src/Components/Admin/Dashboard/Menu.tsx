@@ -14,7 +14,7 @@ interface MenuItem {
   loading?:boolean;
 }
 
-export const Menu: React.FC = () => {
+export const MenuItems: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

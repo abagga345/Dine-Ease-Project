@@ -17,6 +17,8 @@ import Loader from "../../common/Loader";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoIosSettings } from "react-icons/io";
 import { IoCloseOutline } from "react-icons/io5";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const navItems = [
   { href: "/", label: "Home", icon: IoHome, role: "All" },
@@ -40,6 +42,18 @@ const navItems = [
   },
   { href: "/dashboard/additem", label: "Add Item", icon: MdAdd, role: "Admin" },
   {
+    href: "/dashboard/menu",
+    label: "Menu",
+    icon: MdOutlineMenuBook,
+    role: "Admin",
+  },
+  {
+    href: "/dashboard/myOrders",
+    label: "My Orders",
+    icon: FaCartArrowDown,
+    role: "User",
+  },
+  {
     href: "/dashboard/profile",
     label: "My Profile",
     icon: ImProfile,
@@ -50,32 +64,22 @@ const navItems = [
     label: "Settings",
     icon: IoIosSettings,
     role: "All",
-  },
-  {
-    href: "/dashboard/menu",
-    label: "Menu",
-    icon: MdOutlineMenuBook,
-    role: "Admin",
-  },
-  {
-    href: "/dashboard/myOrders",
-    label: "My Orders",
-    icon: FaCartArrowDown,
-    role: "All",
-  },
+  }
 ];
 
-const SidePanel = () => {
+export const SidePanel = () => {
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [confirmationModal, setConfirmationModal] = useState(null);
-  const pathname = usePathname();
+  const navigate=useNavigate();
+  
+  const location=useLocation();
   const handleLogout = async () => {
     const toastId = toast.loading("Loading...");
     try {
-      await signOut();
-      window.location.href = "/login";
+      localStorage.setItem("token","");
+      navigate("/");
       toast.dismiss(toastId);
       toast.success("Logged out successfully");
     } catch (error: any) {
@@ -83,14 +87,38 @@ const SidePanel = () => {
       toast.error(error.message);
     }
   };
-  const { data: session } = useSession();
+  
 
   useEffect(() => {
-    if (session) {
-      setRole(session.user?.role);
-      setLoading(false);
+    setLoading(true);
+    let id=toast.loading("Loading");
+    async function rolefetcher(){
+        let token=localStorage.getItem("token");
+        if (token===undefined || token===null){
+            toast.error("Unauthorized , please signin again");
+            navigate("/");
+        }
+        try{
+            let result=await axios.get("http://localhost:3000/api/v1/user/verifyrole",{
+                headers:{
+                    Authorization:token
+                }
+            })
+            if (result.data.verified==true && (result.data.role=="User" || result.data.role=="Admin") ){
+                setRole(result.data.role);
+            }
+            else{
+                throw new Error();
+            }
+        }catch(err){
+            toast.error("Please try again later");
+            navigate("/");
+        }
+        setLoading(false);
+        toast.dismiss(id);
     }
-  }, [session]);
+    rolefetcher();
+}, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -134,9 +162,9 @@ const SidePanel = () => {
                   (item.role === role || item.role === "All") && (
                     <Link
                       key={item.href}
-                      href={item.href}
+                      to={item.href}
                       className={`flex flex-row gap-2 items-center px-4 py-2 mb-2 rounded hover:bg-green-300 ${
-                        pathname === item.href ? "bg-green-300" : ""
+                        location.pathname === item.href ? "bg-green-300" : ""
                       }`}
                       onClick={() => {
                         setIsCollapsed(true);
