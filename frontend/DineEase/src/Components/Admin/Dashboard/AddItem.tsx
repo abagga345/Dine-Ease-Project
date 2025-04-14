@@ -166,8 +166,19 @@ export const AddItem = () => {
           <input
             type="number"
             id="amount"
+            min="1"
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === "" || Number(value) > 0) {
+                setAmount(value);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (["e", "E", "+", "-"].includes(e.key)) {
+                e.preventDefault();
+              }
+            }}
             className="mt-1 p-2 block w-full rounded-md border-gray-300 border shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             required
           />

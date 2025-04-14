@@ -43,7 +43,7 @@ export const review=z.object({
 export const additem=z.object({
     imageUrl:z.string().url(),
     title:z.string().max(60),
-    amount:z.number().int(),
+    amount:z.number().int().min(1),
     description:z.string().max(200),
     visibility:z.boolean().optional()
 })
