@@ -125,127 +125,117 @@ export const AddItem = () => {
     }
     setbuttonstate(true);
   };
-
-  return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
-        Add Menu Item
-      </h2>
-      <hr className="mb-6" />
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="title" className="block text-gray-700">
-            Title
-          </label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm border focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="description" className="block text-gray-700">
-            Description
-          </label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows={3}
-            className="mt-1 p-2 block w-full rounded-md border-gray-300 border shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            required
-          ></textarea>
-        </div>
-        <div>
-          <label htmlFor="amount" className="block text-gray-700">
-            Amount
-          </label>
-          <input
-            type="number"
-            id="amount"
-            min="1"
-            value={amount}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value === "" || Number(value) > 0) {
-                setAmount(value);
-              }
-            }}
-            onKeyDown={(e) => {
-              if (["e", "E", "+", "-"].includes(e.key)) {
-                e.preventDefault();
-              }
-            }}
-            className="mt-1 p-2 block w-full rounded-md border-gray-300 border shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="image" className="block text-gray-700">
-            Image
-          </label>
-          <div className="mt-1 flex items-center">
-            <label className="w-full flex justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              <ImageIcon className="mr-2 h-5 w-5 text-gray-400" />
-              <span>{image ? "Change Image" : "Upload Image"}</span>
+    return (
+      <div className="flex justify-center items-start w-full px-4">
+          <div className="max-w-md w-full mt-10 p-6 bg-white rounded-lg shadow-lg">
+          <h2 className="text-3xl font-semibold text-center text-gray-900 mb-6">
+            Add Menu Item
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Title */}
+            <div>
+              <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                Title
+              </label>
               <input
-                type="file"
-                id="image"
-                ref={fileInputRef}
-                onChange={handleImageChange}
-                className="sr-only"
-                accept="image/*"
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 required
+                className="w-full mt-1 px-3 py-2 text-gray-700 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
-            </label>
-          </div>
-          {image && (
-            <div className="mt-2">
-              <div className="flex items-center justify-between p-2 bg-gray-100 rounded">
-                <span className="text-sm text-gray-500 truncate">
-                  {image.name}
-                </span>
-                <button
-                  type="button"
-                  onClick={handleRemoveImage}
-                  className="ml-2 text-sm text-red-600 hover:text-red-800"
+            </div>
+    
+            {/* Description */}
+            <div>
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                Description
+              </label>
+              <textarea
+                id="description"
+                rows={3}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+                className="w-full mt-1 px-3 py-2 text-gray-700 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+              />
+            </div>
+    
+            {/* Amount */}
+            <div>
+              <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
+                Amount
+              </label>
+              <input
+                type="number"
+                id="amount"
+                min="1"
+                value={amount}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === "" || Number(value) > 0) setAmount(value);
+                }}
+                onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()}
+                required
+                className="w-full mt-1 px-3 py-2 text-gray-700 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+    
+            {/* Image Upload */}
+            <div>
+              <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+                Image
+              </label>
+              <div className="mt-1">
+                <label
+                  htmlFor="image"
+                  className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-200"
                 >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-              <div className="mt-2">
-                <img
-                  src={URL.createObjectURL(image)}
-                  alt="Preview"
-                  width={100}
-                  height={150}
-                  className="mt-2 rounded-md"
-                />
+                  <ImageIcon className="w-5 h-5 text-gray-600" />
+                  <span className="text-sm text-gray-700">
+                    {image ? "Change Image" : "Upload Image"}
+                  </span>
+                  <input
+                    type="file"
+                    id="image"
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                    accept="image/*"
+                    className="sr-only"
+                    required
+                  />
+                </label>
+                {image && (
+                  <div className="mt-3 space-y-2">
+                    <div className="flex items-center justify-between bg-gray-100 rounded p-2">
+                      <span className="text-sm text-gray-600 truncate">{image.name}</span>
+                      <button type="button" onClick={handleRemoveImage} className="text-red-600 hover:text-red-800">
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt="Preview"
+                      className="w-full max-h-60 object-contain rounded-md"
+                    />
+                  </div>
+                )}
               </div>
             </div>
-          )}
+    
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={!buttonstate || loading}
+              className={`w-full flex justify-center items-center gap-2 text-white font-medium py-2 px-4 rounded-lg shadow transition-all duration-200 
+                ${buttonstate && !loading ? "bg-green-600 hover:bg-green-700" : "bg-gray-400 cursor-not-allowed"}
+              `}
+            >
+              <PlusCircle className="h-5 w-5" />
+              <span>{loading ? "Adding..." : "Add Item"}</span>
+            </button>
+          </form>
         </div>
-
-        <div>
-          <button
-            type="submit"
-            disabled={!buttonstate}
-            className={`w-full flex text-white justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm 
-              ${
-                buttonstate
-                  ? "bg-green-600 hover:bg-green-700 focus:ring-indigo-500"
-                  : "bg-gray-400 cursor-not-allowed"
-              }`}
-          >
-            <PlusCircle className="mr-2 h-5 w-5" />
-            <p>Add Item</p>
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-};
+      </div>
+    );    }
