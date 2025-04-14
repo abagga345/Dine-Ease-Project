@@ -124,18 +124,16 @@ export const MenuItems: React.FC = () => {
         }
       
       
-    const deleteItemResponse = await fetch("http://localhost:3000/api/v1/admin/deleteitem", {
+    const deleteItemResponse = await fetch("http://localhost:3000/api/v1/admin/deleteitem?id=${id}", {
       method: "PUT",
       headers: {
         Authorization: token,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id }),
-      });
+    });
       if (!deleteItemResponse.ok) {
         throw new Error("Failed to delete item");
       }
-
       const deleteImageResponse = await fetch("http://localhost:3000/api/v1/admin/deleteimage", {
         method: "DELETE",
         headers: {
