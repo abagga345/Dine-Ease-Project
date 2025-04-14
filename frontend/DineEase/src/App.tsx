@@ -45,6 +45,7 @@ function App() {
               <Route path="myOrders" element={<MyOrders></MyOrders>}></Route>
           </Route>
           <Route path="/error" element={<ErrorPage link="/"></ErrorPage>}></Route>
+          <Route path="/addItem" element={<AddItem></AddItem>}></Route>
         </Routes>
       </BrowserRouter>
      

@@ -124,25 +124,30 @@ export const MenuItems: React.FC = () => {
         }
       
       
-    const deleteItemResponse = await fetch(`http://localhost:3000/api/v1/admin/deleteitem?id=${id}`, {
-        method: "PUT",
-        headers:{
-            Authorization:token
-        }
+    const deleteItemResponse = await fetch("http://localhost:3000/api/v1/admin/deleteitem", {
+      method: "PUT",
+      headers: {
+        Authorization: token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id }),
       });
-
       if (!deleteItemResponse.ok) {
         throw new Error("Failed to delete item");
       }
-      const formData = new FormData();
-      formData.append("file", imageUrl);
 
-      const deleteImageResponse = await fetch("/api/imageDelete", {
-        method: "POST",
-        body: formData,
+      const deleteImageResponse = await fetch("http://localhost:3000/api/v1/admin/deleteimage", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+        body: JSON.stringify({ file: imageUrl }),
       });
+      
 
       if (!deleteImageResponse.ok) {
+        console.log(deleteImageResponse)
         console.warn("Failed to delete image from Cloudinary");
       }
       setMenuItems((prevItems) => prevItems.filter((item) => item.id !== id));

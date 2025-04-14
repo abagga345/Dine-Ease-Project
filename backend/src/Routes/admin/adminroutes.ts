@@ -38,17 +38,19 @@ const uploadImageToCloudinary = (
   });
 };
 
-const deletePicture = async (imageURL:any) => {
-    const publicIdImage = imageURL
-      .split("/")
-      .pop()
-      .replace(/\.[^/.]+$/, "");
-  
+const deletePicture = async (imageURL: any) => {
+    const segments = imageURL.split("/");
+    const fileNameWithExtension = segments[segments.length - 1];
+
+    const publicIdImage = fileNameWithExtension.replace(/\.[^/.]+$/, "");
+
+    
     return cloudinary.uploader.destroy(`default_folder/${publicIdImage}`, {
       type: "upload",
       resource_type: "image",
     });
   };
+  
 
 export const adminRouter=express.Router();
 const prisma=new PrismaClient();
@@ -247,6 +249,9 @@ adminRouter.post("/additem",authMiddlewareadmin,async (req:CustomRequest,res:Res
         return;
     }
     let storeId:string=req.storeId as string;
+    if (!storeId) {
+    return res.status(400).json({ message: "Store ID is required" });
+    }
     try{
         req.body.storeId=storeId;
         let result1=await prisma.menu.create({data:req.body});
