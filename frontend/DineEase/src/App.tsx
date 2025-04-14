@@ -12,7 +12,7 @@ import { Dashboard } from "./Components/Admin/Dashboard/Dashboard"
 
 import { Menu } from "./Components/User/Menu/menu"
 import { Toaster } from "react-hot-toast"
-import { Checkout } from "./Components/User/Checkout/Checkout"
+import { Checkout } from "./Components/User/checkout/Checkout"
 import { AllOrders } from "./Components/Admin/Dashboard/AllOrders"
 import { PendingOrders } from "./Components/Admin/Dashboard/PendingOrders"
 import { Analytics } from "./Components/Admin/Dashboard/Analytics"
@@ -23,7 +23,7 @@ import { Setting } from "./Components/Admin/Dashboard/Settings"
 import { MyOrders } from "./Components/Admin/Dashboard/MyOrders"
 function App() {
   return (
-    <div className="w-screen h-screen">
+    <div>
       <Toaster position="top-center" />
       <BrowserRouter>
         <Routes>
