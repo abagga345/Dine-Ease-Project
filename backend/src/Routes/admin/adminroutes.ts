@@ -6,7 +6,7 @@ import { PrismaClient } from "@prisma/client";
 import { JWT_SECRET } from "../../config"
 import jwt from "jsonwebtoken"
 import { authMiddlewareadmin } from "../../Middlewares/authMiddlewareadmin";
-import { AdminSignin,status, visibility,additem, AdminSignup,deleteitem } from "../../zodschema/schema";
+import { AdminSignin,status, visibility,additem, AdminSignup } from "../../zodschema/schema";
 import { connect } from "./cloudinary";
 
 const cloudinary = require("cloudinary").v2;
@@ -267,6 +267,7 @@ adminRouter.put("/changevisibility",authMiddlewareadmin,async (req:CustomRequest
     let result=visibility.safeParse(req.body);
     if (result["success"]===false){
         res.status(400).json({"message":"Invalid Inputs"});
+        return;
     }
     try{
         let id:number=req.body.id;
@@ -286,15 +287,14 @@ adminRouter.put("/changevisibility",authMiddlewareadmin,async (req:CustomRequest
 })
 
 adminRouter.put("/deleteitem", authMiddlewareadmin, async (req: CustomRequest, res: Response) => {
-    let storeId:string=req.storeId as string;
-    const result = deleteitem.safeParse(req.body);
-  
-    if (!result.success) {
-      return res.status(400).json({ message: "Invalid Status" });
-    }
-  
+    let storeId=req.storeId;
+    
     try {
-      let id:number=req.body.id;
+      let id=parseInt(req.query.id as string);
+      if (id===undefined){
+        res.status(400).json({ message: "Invalid Inputs" });
+        return;
+      }
       const updatedItem = await prisma.menu.update({
         where: {
           id:id,

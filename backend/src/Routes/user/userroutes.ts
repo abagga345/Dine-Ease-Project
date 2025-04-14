@@ -6,6 +6,7 @@ import { Request,Response} from "express"
 import { JWT_SECRET } from "../../config"
 import { authMiddlewareuser } from "../../Middlewares/authMiddlewareuser";
 import { UserSignin, UserSignup, address, checkout, editUser, editaddress, editreview, review, visibility } from "../../zodschema/schema";
+import { rolegetter } from "../../Middlewares/rolegetter";
 
 
 export const userRouter=express.Router();
@@ -490,3 +491,6 @@ userRouter.get("/viewprofile",authMiddlewareuser,async (req:CustomRequest,res:Re
         res.status(500).json({"message":"Internal Server Error"})
     }
 })
+
+
+userRouter.get("/verifyrole",rolegetter);

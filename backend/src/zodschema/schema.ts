@@ -66,9 +66,7 @@ export const visibility=z.object({
     visibility:z.boolean()
 })
 
-export const deleteitem=z.object({
-    id:z.number().int(),
-})
+
 
 export const checkout=z.object({
     description:z.string().max(75).optional(),
