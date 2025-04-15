@@ -255,7 +255,7 @@ export function Checkout() {
             duration: 5000,
           });
           setTimeout(() => {
-            navigate("/home") // change later 
+            navigate("dashboard/myOrders") // change later 
           }, 1000);
         } else {
           setError("Unable to place order");
