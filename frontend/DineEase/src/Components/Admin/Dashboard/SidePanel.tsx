@@ -179,7 +179,9 @@ export const SidePanel = () => {
             )}
           </nav>
         </div>
-        <div className="flex flex-row gap-2 items-center px-4 py-2 mb-2 hover:bg-green-300 rounded">
+        <div className="sticky bottom-0 bg-green-200 py-4">
+           <div className="flex flex-row gap-2 items-center px-4 py-2 hover:bg-green-300 rounded">
+
           <button
             onClick={() =>
               setConfirmationModal({
@@ -197,6 +199,7 @@ export const SidePanel = () => {
               <span>Logout</span>
             </div>
           </button>
+        </div>
         </div>
         {confirmationModal && (
           <ConfirmationModal modalData={confirmationModal} />

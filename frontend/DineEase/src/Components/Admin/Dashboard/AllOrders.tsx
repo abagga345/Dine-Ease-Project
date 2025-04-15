@@ -141,37 +141,38 @@ export const AllOrders = () => {
           All Orders
         </h1>
         <div className="overflow-x-auto rounded-lg mb-10">
-          <table className="min-w-full bg-white border rounded-lg">
-            <thead>
-              <tr className="bg-green-600 text-white">
-                <th className="px-4 py-2">Order ID</th>
-                <th className="px-4 py-2">Amount</th>
-                <th className="px-4 py-2">Email</th>
-                <th className="px-4 py-2">Status</th>
-                <th className="px-4 py-2">Creation Date</th>
-                {/* <th className="px-4 py-2">Payment Method</th> */}
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => (
-                <tr
-                  key={order.id}
-                  className="border-b hover:bg-gray-100 cursor-pointer"
-                  onClick={() => handleOrderClick(order)}
-                >
-                  <td className="px-4 py-2 text-center">{order.id}</td>
-                  <td className="px-4 py-2">₹ {order.amount}</td>
-                  <td className="px-4 py-2">{order.email}</td>
-                  <td className="px-4 py-2">{order.status}</td>
-                  <td className="px-4 py-2">
-                    {new Date(order.creationDate).toLocaleString()}
-                  </td>
-                  {/* <td className="px-4 py-2">{order.paymentMethod}</td> */}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+  <table className="min-w-full bg-white border rounded-lg">
+    <thead>
+      <tr className="bg-green-600 text-white text-left">
+        <th className="px-4 py-2 text-left">Order ID</th>
+        <th className="px-4 py-2 text-left">Amount</th>
+        <th className="px-4 py-2 text-left">Email</th>
+        <th className="px-4 py-2 text-left">Status</th>
+        <th className="px-4 py-2 text-left">Creation Date</th>
+        {/* <th className="px-4 py-2">Payment Method</th> */}
+      </tr>
+    </thead>
+    <tbody>
+      {orders.map((order) => (
+        <tr
+          key={order.id}
+          className="border-b hover:bg-gray-100 cursor-pointer"
+          onClick={() => handleOrderClick(order)}
+        >
+          <td className="px-4 py-2 text-left">{order.id}</td>
+          <td className="px-4 py-2 text-left">₹ {order.amount}</td>
+          <td className="px-4 py-2 text-left">{order.email}</td>
+          <td className="px-4 py-2 text-left">{order.status}</td>
+          <td className="px-4 py-2 text-left">
+            {new Date(order.creationDate).toLocaleString()}
+          </td>
+          {/* <td className="px-4 py-2">{order.paymentMethod}</td> */}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
         {selectedOrder && (
           <OrderModal
             order={selectedOrder}
