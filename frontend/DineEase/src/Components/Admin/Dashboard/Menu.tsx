@@ -124,7 +124,7 @@ export const MenuItems: React.FC = () => {
         }
       
       
-    const deleteItemResponse = await fetch("http://localhost:3000/api/v1/admin/deleteitem?id=${id}", {
+    const deleteItemResponse = await fetch(`http://localhost:3000/api/v1/admin/deleteitem?id=${id}`, {
       method: "PUT",
       headers: {
         Authorization: token,
@@ -173,7 +173,6 @@ export const MenuItems: React.FC = () => {
       </div>
     );
   }
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 text-center">Our Menu</h1>
@@ -181,61 +180,71 @@ export const MenuItems: React.FC = () => {
         {menuItems.map((item, index) => (
           <div
             key={index}
-            className={`bg-white rounded-lg shadow-md overflow-hidden ${item.visibility == false ? "opacity-50" : ""
-              }`}
+            className={`bg-white rounded-lg shadow-md overflow-hidden flex flex-col ${
+              !item.visibility ? "opacity-50" : ""
+            }`}
           >
-            {item.imageUrl != "www.whiterosepearora.com" &&
-              item.imageUrl != "www.aroranerd.com" &&
-              item.imageUrl != "www.triptiarora.com" ? (
-              <img
-                src={item.imageUrl}
-                alt={item.title}
-                width={400}
-                height={200}
-                className="w-full h-48 object-cover"
-              />
-            ) : (
-              ""
+            {/* Image Section */}
+            {item.imageUrl !== "www.whiterosepearora.com" &&
+             item.imageUrl !== "www.aroranerd.com" &&
+             item.imageUrl !== "www.triptiarora.com" && (
+               <img
+                 src={item.imageUrl}
+                 alt={item.title}
+                 width={400}
+                 height={200}
+                 className="w-full h-48 object-cover"
+               />
             )}
-
-            <div className="p-5">
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold mb-2">{item.title}</h2>
-                <span className="text-lg font-bold">
-                  ₹{item.amount.toFixed(2)}
-                </span>
+  
+            {/* Content + Buttons */}
+            <div className="p-5 flex flex-col flex-1 justify-between">
+              {/* Text Content */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <h2 className="text-xl font-semibold">{item.title}</h2>
+                  <span className="text-lg font-bold">
+                    ₹{item.amount.toFixed(2)}
+                  </span>
+                </div>
+                <p className="text-gray-600 mb-4">{item.description}</p>
               </div>
-              <p className="text-gray-600 mb-4">{item.description}</p>
-              <div className="flex justify-between gap-2">
-                <button
-                  disabled={item.loading}
-                  onClick={() => toggleOutOfStock(index)}
-                  className={`font-semibold text-gray-100 py-2 px-4 flex-grow rounded 
-                    ${item.loading
-                      ? "bg-gray-400 text-gray-600 cursor-not-allowed"
-                      : item.visibility
-                        ? "bg-green-600 hover:bg-green-700 cursor-pointer"
-                        : "bg-red-500 hover:bg-red-600 cursor-pointer"
+  
+              {/* Buttons at the Bottom */}
+              <div>
+                <div className="flex items-center gap-2">
+                  <button
+                    disabled={item.loading}
+                    onClick={() => toggleOutOfStock(index)}
+                    className={`flex-grow font-semibold text-white py-2 px-4 rounded ${
+                      item.loading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : item.visibility
+                        ? "bg-green-600 hover:bg-green-700"
+                        : "bg-red-500 hover:bg-red-600"
                     }`}
-                >
-                  {item.visibility == false
-                    ? "Mark In Stock"
-                    : "Mark Out of Stock"}
-                </button>
-                <button
-                  onClick={() => deleteMenuItem(item.id, item.imageUrl)}
-                  className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-                >
-                  <Trash2 size={20} />
-                </button>
+                  >
+                    {item.visibility ? "Mark Out of Stock" : "Mark In Stock"}
+                  </button>
+                  <button
+                    onClick={() => deleteMenuItem(item.id, item.imageUrl)}
+                    className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded flex-shrink-0"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                </div>
+                {!item.visibility && (
+                  <p className="text-red-500 font-bold text-center mt-3">
+                    Out of Stock
+                  </p>
+                )}
               </div>
-              {item.visibility == false && (
-                <p className="text-red-500 font-bold text-center mt-3">Out of Stock</p>
-              )}
             </div>
           </div>
         ))}
       </div>
     </div>
   );
-};
+  
+  
+}  

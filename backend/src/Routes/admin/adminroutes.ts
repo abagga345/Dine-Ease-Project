@@ -291,14 +291,13 @@ adminRouter.put("/deleteitem", authMiddlewareadmin, async (req: CustomRequest, r
     
     try {
       let id=parseInt(req.query.id as string);
-      if (id===undefined){
+      if (isNaN(id)){
         res.status(400).json({ message: "Invalid Inputs" });
         return;
       }
       const updatedItem = await prisma.menu.update({
         where: {
           id:id,
-          storeId:storeId,
         },
         data: {
           available: false,
