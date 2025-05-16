@@ -326,14 +326,20 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
                 })
             }
         }})
+        res.json({"message":"Order placed successfully","orderId":result1["id"]});
+        let address=await prisma.address.findFirst({
+            where:{
+                id:result1.addressId
+            }
+        })
+        if ( address===null ) throw new Error();
         await sendOrderConfirmationEmail(
             req.email as string,
             result1.id,
             total,
-            "customm",
-            new Date().getTime()
-          );
-        res.json({"message":"Order placed successfully","orderId":result1["id"]});
+            address.houseStreet + " , " + address.state + " , " + address.pincode,
+            result1.creationDate.toLocaleDateString()
+        );
     }catch(err){
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     } 

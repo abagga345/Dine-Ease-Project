@@ -14,21 +14,14 @@ if (!mailjetPublic || !mailjetPrivate) {
 
 const mailjetClient = mailjet.apiConnect(mailjetPublic, mailjetPrivate);
 
-
-export const sendOrderConfirmationEmail = async (
+export const sendOTP = async (
   recipientEmail: string,
-  orderId: number,
-  amount: number,
-  address: string,
-  orderDate : string
+  otp: string,
 ) => {
 
   console.log("Sending Mailjet email with variables:", {
-    order_id: orderId,
-    amount,
-    address,
-    order_date: orderDate,
-  });
+    otp: otp,
+ });
 
   try {
     const request = await mailjetClient
@@ -46,21 +39,17 @@ export const sendOrderConfirmationEmail = async (
               }
             ],
             Subject: 'Order Confirmation',
-            TemplateID: 6992419, 
+            TemplateID: 6992974, 
             TemplateLanguage: true,
             Variables: {
-              orderId: orderId,
-              amount,
-              address,
-              orderDate: orderDate
+              otp: otp,
             }
           }
         ]
       });
-
-    console.log("Email sent successfully:", request.body);
+    return true;
   } catch (err: any) {
-    console.error("Mailjet error:", err.statusCode, err.message);
+    return false;
   }
 };
 
