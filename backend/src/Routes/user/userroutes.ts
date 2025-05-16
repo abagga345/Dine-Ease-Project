@@ -7,6 +7,7 @@ import { JWT_SECRET } from "../../config"
 import { authMiddlewareuser } from "../../Middlewares/authMiddlewareuser";
 import { UserSignin, UserSignup, address, checkout, editUser, editaddress, editreview, review, visibility } from "../../zodschema/schema";
 import { rolegetter } from "../../Middlewares/rolegetter";
+import { sendOrderConfirmationEmail } from "./automail";
 
 
 export const userRouter=express.Router();
@@ -325,6 +326,13 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
                 })
             }
         }})
+        await sendOrderConfirmationEmail(
+            req.email as string,
+            result1.id,
+            total,
+            "customm",
+            new Date().getTime()
+          );
         res.json({"message":"Order placed successfully","orderId":result1["id"]});
     }catch(err){
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
