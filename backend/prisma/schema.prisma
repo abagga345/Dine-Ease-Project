@@ -126,3 +126,12 @@ model MonthlySales {
   day Int                                
   @@id([year, month,day])  
 }
+
+model OtpStatus {
+  email String
+  id Int @id @default(autoincrement())
+  otp String
+  creationDate DateTime
+  expirationDate DateTime
+  verified Boolean
+}
