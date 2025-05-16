@@ -8,7 +8,7 @@ import {UserSignup} from "./Components/User/SignUp/UserSignup"
 import {UserHome} from "./Components/User/Home/UserHome"
 import { ErrorPage } from "./Components/common/errorpage"
 import { Dashboard } from "./Components/Admin/Dashboard/Dashboard"
-
+import { OtpHandler } from "./Components/User/SignIn/OtpInput"
 
 import { Menu } from "./Components/User/Menu/menu"
 import { Toaster } from "react-hot-toast"
@@ -30,6 +30,7 @@ function App() {
           <Route path="/" element={<UserHome></UserHome>}></Route>
           <Route path="/signup" element={<UserSignup></UserSignup>}></Route>
           <Route path="/signin" element={<UserSignin></UserSignin>}></Route>
+          <Route path="/verifyotp" element={<OtpHandler></OtpHandler>}></Route>
           <Route path="/home" element={<UserHome></UserHome>}></Route>
           <Route path="/menu" element={<Menu></Menu>}></Route>
           <Route path="/checkout" element={<Checkout></Checkout>}></Route>
