@@ -98,3 +98,12 @@ export const editreview=z.object({
     rating:z.literal(0).or(z.literal(1)).or(z.literal(2)).or(z.literal(3)).or(z.literal(4)).or(z.literal(5)).optional(),
     description:z.string().min(1).max(70).optional(),
 })
+
+export const otpEmail=z.object({
+    email:z.string()
+})
+
+export const otpVerifyEmail=z.object({
+    email:z.string(),
+    otp:z.string().length(6)
+})

@@ -16,6 +16,15 @@ interface FormFields {
   password: string
 }
 
+function sendOtpHandler(){
+
+
+}
+
+function verifyOtpHandler(){
+  
+}
+
 export function SignupCard() {
   const [error, setError] = useState("");
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormFields>();

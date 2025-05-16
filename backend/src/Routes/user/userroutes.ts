@@ -8,6 +8,7 @@ import { authMiddlewareuser } from "../../Middlewares/authMiddlewareuser";
 import { UserSignin, UserSignup, address, checkout, editUser, editaddress, editreview, review, visibility } from "../../zodschema/schema";
 import { rolegetter } from "../../Middlewares/rolegetter";
 import { sendOrderConfirmationEmail } from "./automail";
+import { otpEmail,otpVerifyEmail } from "../../zodschema/schema";
 
 
 export const userRouter=express.Router();
@@ -508,3 +509,66 @@ userRouter.get("/viewprofile",authMiddlewareuser,async (req:CustomRequest,res:Re
 
 
 userRouter.get("/verifyrole",rolegetter);
+
+userRouter.post("/generateotp",(req:Request,res:Response)=>{
+    let result =otpEmail.safeParse(req.body);
+    if (result["success"]===false){
+        res.status(400).json({"message":"INVALID INPUTS"});
+        return;
+    }
+    try{
+        // create random otp
+
+        // check if already present if yes update otp
+
+        // else create new otp record 
+
+
+        //send updated otp
+
+
+    }catch(err){
+        res.status(500).json({"message":"Internal Server Error"})
+    }
+
+})
+
+userRouter.put("/verifyotp",async (req:Request,res:Response)=>{
+    let result =otpVerifyEmail.safeParse(req.body);
+    if (result["success"]===false){
+        res.status(400).json({"message":"INVALID INPUTS"});
+        return;
+    }
+    let email:string=req.body.email;
+    let inputotp:string=req.body.otp;
+    try{
+        let result=await prisma.otpStatus.findFirst({
+            where:{
+                email:email
+            }
+        })
+        if (result===null){
+            res.status(400).json({"message":"INVALID EMAIL"});
+            return;
+        }
+        if (result.otp===inputotp || result.verified){
+            await prisma.otpStatus.update({
+                where:{
+                    id:result.id
+                },
+                data:{
+                    verified:true
+                }
+            })
+            res.json({"message":"User Verified Successfully"});
+        }
+        else{
+            res.status(400).json({"message":"Invalid Otp"})
+        }
+    }catch(err){
+        res.status(500).json({"message":"Internal Server Error"})
+    }
+})
+
+
+
