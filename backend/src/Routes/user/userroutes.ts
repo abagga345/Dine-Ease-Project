@@ -37,6 +37,15 @@ userRouter.post("/signup",async (req:Request,res:Response,next:NextFunction)=>{
             res.status(400).json({"message":"User already exists"});
             return;
         }
+        let verification=await prisma.otpStatus.findFirst({
+            where:{
+                email:req.body.email
+            }
+        })
+        if (verification===null || verification.verified===false){
+            res.status(400).json({"message":"Email not verified"});
+            return;
+        }
         let temp=await bcrypt.hash(req.body.password,5);
         let result1=await prisma.users.create({
             data:{
@@ -80,8 +89,14 @@ userRouter.post("/signin",async (req:Request,res:Response,next:NextFunction)=>{
             res.status(401).json({"message":"Unauthorised"});
             return;
         }
-        let token:string=jwt.sign({email:result1["email"]},JWT_SECRET);
-        res.json({"message":"Successful sign in","token":"Bearer "+token});
+        if (result1.role==="User"){
+            let token:string=jwt.sign({email:result1["email"]},JWT_SECRET);
+            res.json({"message":"Successful sign in","token":"Bearer "+token});
+        }
+        else{
+            let token:string=jwt.sign({email:result1["email"],storeId:result1["storeId"]},JWT_SECRET);
+            res.json({"message":"Successful sign in","token":"Bearer "+token});
+        }
     }catch(err){
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
@@ -546,6 +561,8 @@ userRouter.post("/generateotp",async (req:Request,res:Response)=>{
                 expirationDate
             }
         })
+        console.log("email"+req.body.email);
+        console.log("otp"+otp);
         await sendOTP(req.body.email,otp);
         res.json({"message":"Otp Generated Successfully"});
     }catch(err){

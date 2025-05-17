@@ -20,6 +20,7 @@ export function rolegetter(req:Request,res:Response,next:NextFunction){
             role:tempRole,
             verified:tempVerified
         })
+        console.log(tempRole);
     }catch(err){
         res.status(401).json({"message":"Unauthorized",role:"",verified:false})
     }

@@ -210,6 +210,7 @@ adminRouter.get("/unconfirmedorders",authMiddlewareadmin,async (req:CustomReques
         });
         res.json({"orders":result});
     }catch(err){
+        
         res.status(500).json({"message":"Internal Server Error"});
     }
 })
