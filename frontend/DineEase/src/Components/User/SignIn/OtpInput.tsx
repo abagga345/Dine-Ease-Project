@@ -8,7 +8,7 @@ export const OtpHandler = () => {
   }
 
   return (
-    <div className='h-8 w-1/4 flex flex-col'>
+    <div className='h-12 flex flex-col mt-2'>
       <MuiOtpInput
         value={value}
         onChange={handleChange}
