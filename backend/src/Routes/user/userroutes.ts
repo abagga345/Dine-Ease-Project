@@ -571,6 +571,18 @@ userRouter.put("/verifyotp",async (req:Request,res:Response)=>{
             res.status(400).json({"message":"INVALID EMAIL"});
             return;
         }
+        if (result.verified){
+            await prisma.otpStatus.update({
+                where:{
+                    id:result.id
+                },
+                data:{
+                    verified:true
+                }
+            })
+            res.json({"message":"User Verified Successfully"});
+            return;
+        }
         let cur=new Date();
         let expiry=result.expirationDate;
         if (expiry<cur){
