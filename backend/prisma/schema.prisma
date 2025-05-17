@@ -128,7 +128,7 @@ model MonthlySales {
 }
 
 model OtpStatus {
-  email String
+  email String @unique
   id Int @id @default(autoincrement())
   otp String
   creationDate DateTime

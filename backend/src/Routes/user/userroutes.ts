@@ -9,6 +9,7 @@ import { UserSignin, UserSignup, address, checkout, editUser, editaddress, editr
 import { rolegetter } from "../../Middlewares/rolegetter";
 import { sendOrderConfirmationEmail } from "./automail";
 import { otpEmail,otpVerifyEmail } from "../../zodschema/schema";
+import { sendOTP } from "./otp";
 
 
 export const userRouter=express.Router();
@@ -510,27 +511,46 @@ userRouter.get("/viewprofile",authMiddlewareuser,async (req:CustomRequest,res:Re
 
 userRouter.get("/verifyrole",rolegetter);
 
-userRouter.post("/generateotp",(req:Request,res:Response)=>{
+
+
+
+
+
+userRouter.post("/generateotp",async (req:Request,res:Response)=>{
     let result =otpEmail.safeParse(req.body);
     if (result["success"]===false){
         res.status(400).json({"message":"INVALID INPUTS"});
         return;
     }
     try{
-        // create random otp
-
-        // check if already present if yes update otp
-
-        // else create new otp record 
-
-
-        //send updated otp
-
-
+        //extra otp computation is better than additional db call to check for verified 
+        let otp=Math.floor(100000 + Math.random() * 900000).toString();
+        const creationDate = new Date();                       
+        const expirationDate = new Date(
+            creationDate.getTime() + 15 * 60_000     
+        );
+        let result=await prisma.otpStatus.upsert({
+            where:{
+                email:req.body.email
+            },
+            update:{
+                otp:otp,
+                creationDate:creationDate,
+                expirationDate:expirationDate
+            },
+            create:{
+                email:req.body.email,
+                otp:otp,
+                verified:false,
+                creationDate,
+                expirationDate
+            }
+        })
+        await sendOTP(req.body.email,otp);
+        res.json({"message":"Otp Generated Successfully"});
     }catch(err){
         res.status(500).json({"message":"Internal Server Error"})
     }
-
 })
 
 userRouter.put("/verifyotp",async (req:Request,res:Response)=>{
@@ -549,6 +569,12 @@ userRouter.put("/verifyotp",async (req:Request,res:Response)=>{
         })
         if (result===null){
             res.status(400).json({"message":"INVALID EMAIL"});
+            return;
+        }
+        let cur=new Date();
+        let expiry=result.expirationDate;
+        if (expiry<cur){
+            res.status(400).json({"message":"Otp Expired"});
             return;
         }
         if (result.otp===inputotp || result.verified){

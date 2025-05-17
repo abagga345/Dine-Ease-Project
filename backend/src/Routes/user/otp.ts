@@ -38,7 +38,7 @@ export const sendOTP = async (
                 Email: recipientEmail,
               }
             ],
-            Subject: 'Order Confirmation',
+            Subject: 'OTP Verification DineEase',
             TemplateID: 6992974, 
             TemplateLanguage: true,
             Variables: {
