@@ -13,6 +13,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import FastfoodIcon from '@mui/icons-material/Fastfood';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 
 
@@ -22,6 +23,21 @@ function AppAppBar() {
     const navigate=useNavigate();
     const [open, setOpen] = React.useState(false);
     const [logged,setLogged]=useState(false);
+    const [confirmationModal, setConfirmationModal] = useState(null);
+
+    const handleLogout = async () => {
+        const toastId = toast.loading("Loading...",{id:"load-toast"});
+        try {
+          localStorage.setItem("token","");
+          setLogged(false);
+          setConfirmationModal(null);
+          toast.dismiss(toastId);
+          toast.success("Logged out successfully",{id:"logout-toast"});
+        } catch (error: any) {
+          toast.dismiss(toastId);
+          toast.error(error.message);
+        }
+    };
 
     useEffect(()=>{
         let result=localStorage.getItem("token");
@@ -170,7 +186,27 @@ function AppAppBar() {
                                 target="_blank"
                             >
                                 Sign up
-                            </Button></div>:""}
+                            </Button></div>:<div>
+                                <Button
+                                    color="primary"
+                                    variant="contained"
+                                    size="small"
+                                    component="a"
+                                    onClick={() =>
+                                        setConfirmationModal({
+                                          text1: "Are you sure?",
+                                          text2: "You will be logged out of your account.",
+                                          btn1Text: "Logout",
+                                          btn2Text: "Cancel",
+                                          btn1Handler: handleLogout,
+                                          btn2Handler: () => setConfirmationModal(null),
+                                        })
+                                    }
+                                    target="_blank"
+                                >
+                                Logout
+                                </Button>
+                            </div>}
                         </Box>
                         <Box sx={{ display: { sm: '', md: 'none' } }}>
                             <Button
@@ -252,8 +288,39 @@ function AppAppBar() {
                     </Toolbar>
                 </Container>
             </AppBar>
+            {confirmationModal && (
+            <ConfirmationModal modalData={confirmationModal} />
+            )}
         </div>
     );
 }
+
+const ConfirmationModal = ({ modalData }) => {
+    const { text1, text2, btn1Text, btn2Text, btn1Handler, btn2Handler } =
+      modalData;
+  
+    return (
+      <div className="fixed inset-0 flex flex-col gap-8 items-center justify-center z-50 backdrop-blur-sm">
+        <div className="md:w-[25%] p-4 rounded-lg shadow-lg flex flex-col gap-2 bg-green-600">
+          <p className="text-xl text-white font-semibold">{text1}</p>
+          <p className="text-white text-sm">{text2}</p>
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={btn1Handler}
+              className="px-4 py-2 bg-yellow-50 font-inter text-black rounded-md hover:bg-green-100 mr-2 font-semibold"
+            >
+              {btn1Text}
+            </button>
+            <button
+              onClick={btn2Handler}
+              className="px-4 py-2 text-white rounded-md "
+            >
+              {btn2Text}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+};
 
 export default AppAppBar;

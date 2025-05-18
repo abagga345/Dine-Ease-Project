@@ -21,6 +21,7 @@ import { MenuItems } from "./Components/Admin/Dashboard/Menu"
 import { Profile } from "./Components/Admin/Dashboard/Profile"
 import { Setting } from "./Components/Admin/Dashboard/Settings"
 import { MyOrders } from "./Components/Admin/Dashboard/MyOrders"
+import { DashboardHome } from "./Components/Admin/Dashboard/DashboardHome"
 function App() {
   return (
     <div>
@@ -36,6 +37,7 @@ function App() {
           <Route path="/checkout" element={<Checkout></Checkout>}></Route>
           <Route path="/admin/signin" element={<AdminSignin></AdminSignin>}></Route>
           <Route path="/dashboard" element={<Dashboard></Dashboard>}>
+              <Route path="" element={<DashboardHome></DashboardHome>}></Route>
               <Route path="allorders" element={<AllOrders></AllOrders>}></Route>
               <Route path="pendingorders" element={<PendingOrders></PendingOrders>}></Route>
               <Route path="analytics" element={<Analytics></Analytics>}></Route>

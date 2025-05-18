@@ -144,6 +144,7 @@ export const SidePanel = () => {
         {isCollapsed ? <GiHamburgerMenu /> : <IoCloseOutline />}
       </button>
 
+      
       <div
         className={` min-h-screen bg-green-200 text-black px-6 py-8 flex flex-col justify-between transition-all duration-300 
         ${isCollapsed ? "hidden lg:flex min-w-64" : "w-full fixed z-40"}`}
