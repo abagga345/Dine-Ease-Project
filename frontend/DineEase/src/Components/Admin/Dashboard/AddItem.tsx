@@ -22,7 +22,7 @@ export const AddItem = () => {
       if (file.type.startsWith("image/")) {
         setImage(file);
       } else {
-        toast.error("Please upload a valid image file.");
+        toast.error("Please upload a valid image file.",{id:"invalid-image-toast"});
         e.target.value = "";
       }
     }
@@ -41,7 +41,7 @@ export const AddItem = () => {
 
       let token=localStorage.getItem("token");
       if (token===undefined || token===null){
-        toast.error("Unauthorized please signin again");
+        toast.error("Unauthorized please signin again",{id:"unauth-error-toast"});
         navigate("/admin/signin");
         return;
       }
@@ -75,7 +75,7 @@ export const AddItem = () => {
     e.preventDefault();
     setbuttonstate(false);
     setLoading(true);
-    const toastId = toast.loading("Adding Item...");
+    const toastId = toast.loading("Adding Item...",{id:"add-item-toast"});
     try {
       if (!image) {
         throw new Error("Please enter an image URL");
@@ -84,7 +84,7 @@ export const AddItem = () => {
 
       let token=localStorage.getItem("token");
       if (token===undefined || token===null){
-        toast.error("Unauthorized please signin again");
+        toast.error("Unauthorized please signin again",{id:"unauth-error"});
         navigate("/admin/signin");
         return;
       }
@@ -113,7 +113,7 @@ export const AddItem = () => {
       setImageUrl("");
       handleRemoveImage();
       toast.dismiss(toastId);
-      toast.success("Menu item added successfully!");
+      toast.success("Menu item added successfully!",{id:"item-success-toast"});
     } catch (error) {
       console.error("Error adding menu item:", error);
       toast.dismiss(toastId);

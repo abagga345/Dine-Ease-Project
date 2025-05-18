@@ -26,7 +26,7 @@ export const Setting = () => {
   const navigate=useNavigate()
   useEffect(() => {
     setLoading(true);
-    const toastId = toast.loading("Loading Profile..");
+    const toastId = toast.loading("Loading Profile..",{id:"profile-load-toast"});
     let token=localStorage.getItem("token");
       if (token===null || token===undefined){
         setError("Unauthorized , Please signin again");
@@ -65,7 +65,7 @@ export const Setting = () => {
   const { register, handleSubmit } = useForm();
 
   const handleProfileSubmit = async (data: any) => {
-    const id = toast.loading("Saving...");
+    const id = toast.loading("Saving...",{id:"save-toast"});
     let token=localStorage.getItem("token");
       if (token===null || token===undefined){
         setError("Unauthorized , Please signin again");
@@ -88,11 +88,11 @@ export const Setting = () => {
         }
       );
       toast.dismiss(id);
-      toast.success("Profile updated successfully!");
+      toast.success("Profile updated successfully!",{id:"profile-update-toast"});
     } catch (error: any) {
       toast.dismiss(id);
       console.error("ERROR MESSAGE - ", error.message);
-      toast.error("Error updating profile");
+      toast.error("Error updating profile",{id:"profile-error-toast"});
     }
   };
 

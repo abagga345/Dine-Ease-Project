@@ -19,7 +19,7 @@ export const Profile = () => {
   
     useEffect(() => {
       setLoading(true);
-      const toastId = toast.loading("Loading Profile..");
+      const toastId = toast.loading("Loading Profile..",{id:"profile-load-toast"});
       let token=localStorage.getItem("token");
       if (token===null || token===undefined){
         setError("Unauthorized , Please signin again");

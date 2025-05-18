@@ -54,10 +54,10 @@ export const MyOrders = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const toastId = toast.loading("Loading orders...");
+      const toastId = toast.loading("Loading orders...",{id:"load-order-toast"});
       let token=localStorage.getItem("token")
       if (token===null || token===undefined){
-        toast.error("Unauthorized , Please Signin again");
+        toast.error("Unauthorized , Please Signin again",{id:"auth-error-toast"});
         setError("Unauthorized , Please signin again");
         navigate("./user/signin")
         return;
@@ -77,7 +77,7 @@ export const MyOrders = () => {
         const data = await response.json();
         // console.log(data.orders);
         if (data.orders.length == 0) {
-          toast.error("No Orders Placed Yet");
+          toast.error("No Orders Placed Yet",{id:"no-order-toast"});
         } else {
           toast.success("Orders loaded successfully!", { id: toastId });
         }

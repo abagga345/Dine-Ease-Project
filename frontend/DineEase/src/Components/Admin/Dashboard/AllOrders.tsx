@@ -50,7 +50,7 @@ export const AllOrders = () => {
   
     useEffect(() => {
       const fetchOrders = async () => {
-        const toastId = toast.loading("Loading orders...");
+        const toastId = toast.loading("Loading orders...",{id:"load-order-toast"});
         try {
           let token=localStorage.getItem("token");
           if (token===null){

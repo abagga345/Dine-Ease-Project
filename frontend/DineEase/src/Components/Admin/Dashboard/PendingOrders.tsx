@@ -52,7 +52,7 @@ export const PendingOrders = () => {
   ];
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
-    const toastId = toast.loading("Changing Status...");
+    const toastId = toast.loading("Changing Status...",{id:"change-status-toast"});
     try {
         let token=localStorage.getItem("token");
         if (token===null){
@@ -95,7 +95,7 @@ export const PendingOrders = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const toastId = toast.loading("Loading orders...");
+      const toastId = toast.loading("Loading orders...",{id:"load-order-toast"});
       try {
         let token=localStorage.getItem("token");
         if (token===undefined || token===null){
@@ -114,7 +114,7 @@ export const PendingOrders = () => {
         const data = await response.json();
         // console.log(data.orders);
         if (data.orders.length == 0) {
-          toast.error("No Orders Placed Yet");
+          toast.error("No Orders Placed Yet",{id:"no-order-toast"});
         } else {
           toast.success("Orders loaded successfully!", { id: toastId });
         }

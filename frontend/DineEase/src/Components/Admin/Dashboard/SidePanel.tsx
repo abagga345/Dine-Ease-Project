@@ -76,12 +76,12 @@ export const SidePanel = () => {
   
   const location=useLocation();
   const handleLogout = async () => {
-    const toastId = toast.loading("Loading...");
+    const toastId = toast.loading("Loading...",{id:"load-toast"});
     try {
       localStorage.setItem("token","");
       navigate("/");
       toast.dismiss(toastId);
-      toast.success("Logged out successfully");
+      toast.success("Logged out successfully",{id:"logout-toast"});
     } catch (error: any) {
       toast.dismiss(toastId);
       toast.error(error.message);
@@ -91,11 +91,11 @@ export const SidePanel = () => {
 
   useEffect(() => {
     setLoading(true);
-    let id=toast.loading("Loading");
+    let id=toast.loading("Loading",{id:"load-toast"});
     async function rolefetcher(){
         let token=localStorage.getItem("token");
         if (token===undefined || token===null){
-            toast.error("Unauthorized , please signin again");
+            toast.error("Unauthorized , please signin again",{id:"unauth-error-toast"});
             navigate("/");
         }
         try{
@@ -111,7 +111,7 @@ export const SidePanel = () => {
                 throw new Error();
             }
         }catch(err){
-            toast.error("Please try again later");
+            toast.error("Please try again later",{id:"try-later-toast"});
             navigate("/");
         }
         setLoading(false);

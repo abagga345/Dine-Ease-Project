@@ -110,6 +110,12 @@ export function Checkout() {
     if (!itemstemp || Object.keys(JSON.parse(itemstemp)).length === 0) {
       setError("No Items Added to Cart");
       setLoading(false);
+      toast.error("Redirecting to menu...",{id: "redirect-toast",duration:3000});
+
+      setTimeout(() => {
+      navigate("../menu")
+      }, 3000);
+
       return;
     }
 
@@ -217,7 +223,7 @@ export function Checkout() {
     setbuttonstate(false);
     let token=localStorage.getItem("token");
     if (token===null || token===undefined){
-        toast.error("Unauthorized please signin again");
+        toast.error("Unauthorized please signin again",{id:"auth-error-toast"});
         navigate("/signin");
         setError("Unauthorized please signin again");
         return;
@@ -253,10 +259,11 @@ export function Checkout() {
           const id = body.orderId;
           toast.success(`Order placed successfully! Order ID: ${id}`, {
             duration: 5000,
+            id : "order-success-toast"
           });
           localStorage.setItem("cart","{}");
           setTimeout(() => {
-            navigate("/dashboard/myOrders") // change later 
+            navigate("/dashboard") // change later 
           }, 1000);
         } else {
           setError("Unable to place order");

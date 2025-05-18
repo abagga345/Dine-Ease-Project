@@ -62,13 +62,13 @@ export const MenuItems: React.FC = () => {
       return updatedItems;
     });
 
-    const toastId = toast.loading("Changing Status...");
+    const toastId = toast.loading("Changing Status...",{id:"change-status-toast"});
     try {
       const item = menuItems[index];
       
       let token=localStorage.getItem("token");
       if (token===undefined || token===null){
-        toast.error("Unauthorized please signin again");
+        toast.error("Unauthorized please signin again",{id:"unauth-error-toast"});
         navigate("/admin/signin");
         return;
       }
@@ -114,11 +114,11 @@ export const MenuItems: React.FC = () => {
   };
 
   const deleteMenuItem = async (id: number, imageUrl: string) => {
-    const toastId = toast.loading("Deleting item...");
+    const toastId = toast.loading("Deleting item...",{id:"delete-item-toast"});
     try {
         let token=localStorage.getItem("token");
         if (token===undefined || token===null){
-          toast.error("Unauthorized please signin again");
+          toast.error("Unauthorized please signin again",{id:"unauth-error-toast"});
           navigate("/admin/signin");
           return;
         }
