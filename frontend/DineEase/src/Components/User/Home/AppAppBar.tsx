@@ -278,7 +278,7 @@ function AppAppBar() {
                                               }}
                                             variant="contained"
                                             component="a"
-                                            href="/material-ui/getting-started/templates/sign-up/"
+                                            onClick={() => navigate("/signup")}
                                             target="_blank"
                                             
                                         >
@@ -296,7 +296,7 @@ function AppAppBar() {
                                               }}
                                             variant="outlined"
                                             component="a"
-                                            href="/material-ui/getting-started/templates/sign-in/"
+                                            onClick={() => navigate("/signin")}
                                             target="_blank"
                                             
                                         >
