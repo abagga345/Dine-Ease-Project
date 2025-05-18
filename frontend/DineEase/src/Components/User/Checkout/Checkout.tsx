@@ -136,52 +136,62 @@ export function Checkout() {
     }
 
 
-    const fetchItems = Object.keys(itemsbody).map(async (key) => {
-      try {
-        const temp1: Item = {
-          id: 0,
-          quantity: 0,
-          title: "",
-          imageUrl: "",
-          price: 0,
-          visibility: true,
-        };
-        const id = parseInt(key);
-        const quantity = itemsbody[key];
-        
-        
-        const body = await axios.get(
-          `http://localhost:3000/api/v1/user/viewmenuitem?itemId=${id}`
-        ,{
-            headers:{
-                Authorization:token
-            }
-        });
+const fetchItems = Object.keys(itemsbody).map(async (key) => {
+  try {
+    const temp1: Item = {
+      id: 0,
+      quantity: 0,
+      title: "",
+      imageUrl: "",
+      price: 0,
+      visibility: true,
+    };
+    const id = parseInt(key);
+    const quantity = itemsbody[key];
 
-        temp1.id = id;
-        temp1.price = body.data.amount;
-        temp1.imageUrl = body.data.imageUrl;
-        temp1.quantity = quantity;
-        temp1.title = body.data.title;
-        temp1.visibility = body.data.visibility;
-        if (temp1.quantity<=0) {
-          delete itemsbody[key];
-          localStorage.setItem("cart", JSON.stringify(itemsbody));
-          invalid++;
+    let response;
+
+    try {
+      response = await axios.get(
+        `http://localhost:3000/api/v1/user/viewmenuitem?itemId=${id}`,
+        {
+          headers: {
+            Authorization: token,
+          },
         }
-        else if (temp1.visibility) {
-          itemsarr.push(temp1);
-          temp += temp1.price * temp1.quantity;
-        } else {
-          outOfStock.push({ id: temp1.id, title: temp1.title });
-          delete itemsbody[key];
-          localStorage.setItem("cart", JSON.stringify(itemsbody));
-        }
-      } catch (err) {
-        delete itemsbody[key];
-        localStorage.setItem("cart", JSON.stringify(itemsbody));
-      }
-    });
+      );
+    } catch (error) {
+      toast.error("Signin to proceed", { id: "auth-failed-toast" });
+      navigate("/signin");
+      return;
+    }
+
+    const body = response.data;
+
+    temp1.id = id;
+    temp1.price = body.amount;
+    temp1.imageUrl = body.imageUrl;
+    temp1.quantity = quantity;
+    temp1.title = body.title;
+    temp1.visibility = body.visibility;
+
+    if (temp1.quantity <= 0) {
+      delete itemsbody[key];
+      localStorage.setItem("cart", JSON.stringify(itemsbody));
+      invalid++;
+    } else if (temp1.visibility) {
+      itemsarr.push(temp1);
+      temp += temp1.price * temp1.quantity;
+    } else {
+      outOfStock.push({ id: temp1.id, title: temp1.title });
+      delete itemsbody[key];
+      localStorage.setItem("cart", JSON.stringify(itemsbody));
+    }
+  } catch (err) {
+    delete itemsbody[key];
+    localStorage.setItem("cart", JSON.stringify(itemsbody));
+  }
+});
     Promise.all(fetchItems).then(async () => {
       try{
         if (itemsarr.length === 0) {
