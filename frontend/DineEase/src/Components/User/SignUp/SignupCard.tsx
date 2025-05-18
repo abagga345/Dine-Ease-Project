@@ -319,11 +319,7 @@ export function SignupCard() {
               {(errors.email) ? <div style={{ color: "#e53e3e" }} >{errors.email?.message}</div> : ""}
             </div>
             <div className="mt-2 ">
-<<<<<<< Updated upstream
-              {(Otpmsg!="" && !verified) ? <div className=" flex items-center justify-center" style={{ color: "#e53e3e" }} >{Otpmsg}</div> : ""}
-=======
-              {(Otpmsg!="" && !verified && Otpphase) ? <div style={{ color: "#e53e3e" }} >{Otpmsg}</div> : ""}
->>>>>>> Stashed changes
+              {(Otpmsg!="" && !verified && Otpphase) ? <div className=" flex items-center justify-center" style={{ color: "#e53e3e" }} >{Otpmsg}</div> : ""}
             </div>
 
            {(!Otpphase || verified) ?<div>
