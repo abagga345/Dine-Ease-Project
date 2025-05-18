@@ -2,7 +2,7 @@ import {BrowserRouter,Routes,Route} from "react-router-dom"
 
 // import {AdminDashboard} from "./Components/Admin/AdminDashboard"
 import './App.css'
-import {AdminSignin} from "./Components/Admin/SignIn/AdminSignin"
+
 import {UserSignin} from "./Components/User/SignIn/UserSignin"
 import {UserSignup} from "./Components/User/SignUp/UserSignup"
 import {UserHome} from "./Components/User/Home/UserHome"
@@ -35,7 +35,6 @@ function App() {
           <Route path="/home" element={<UserHome></UserHome>}></Route>
           <Route path="/menu" element={<Menu></Menu>}></Route>
           <Route path="/checkout" element={<Checkout></Checkout>}></Route>
-          <Route path="/admin/signin" element={<AdminSignin></AdminSignin>}></Route>
           <Route path="/dashboard" element={<Dashboard></Dashboard>}>
               <Route path="" element={<DashboardHome></DashboardHome>}></Route>
               <Route path="allorders" element={<AllOrders></AllOrders>}></Route>

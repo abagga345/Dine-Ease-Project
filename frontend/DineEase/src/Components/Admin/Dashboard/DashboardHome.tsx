@@ -18,9 +18,11 @@ export function DashboardHome(){
         let id=toast.loading("Loading",{id:"load-toast"});
         async function rolefetcher(){
             let token=localStorage.getItem("token");
-            if (token===undefined || token===null){
+            if (token===undefined || token===null || token===""){
                 toast.error("Unauthorized , please signin again",{id:"unauth-error-toast"});
-                navigate("/");
+                navigate("/signin");
+                toast.dismiss(id);
+                return;
             }
             try{
                 let result=await axios.get("http://localhost:3000/api/v1/user/verifyrole",{
