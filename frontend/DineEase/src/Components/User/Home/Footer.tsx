@@ -6,6 +6,7 @@ import Link from '@mui/material/Link';
 // import Stack from '@mui/material/Stack';
 // import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { useNavigate } from 'react-router-dom';
 
 // import FacebookIcon from '@mui/icons-material/GitHub';
 // import LinkedInIcon from '@mui/icons-material/LinkedIn';
@@ -27,6 +28,7 @@ function Copyright() {
 }
 
 export default function Footer() {
+    const navigate=useNavigate();
     return (
         <Container
             sx={{
@@ -102,11 +104,17 @@ export default function Footer() {
                     <Typography variant="body2" fontWeight={600}>
                         Product
                     </Typography>
-                    <Link color="text.secondary" href="#">
-                        Features
+                    <Link color="text.secondary" onClick={() => navigate("/")}>
+                        Home
                     </Link>
-                    <Link color="text.secondary" href="#">
-                        Testimonials
+                    <Link color="text.secondary" onClick={() => navigate("/checkout")}>
+                        Checkout
+                    </Link>
+                    <Link color="text.secondary" onClick={() => navigate("/menu")}>
+                        Menu
+                    </Link>
+                    <Link color="text.secondary" onClick={() => navigate("/dashboard")}>
+                        Dashboard
                     </Link>
                 </Box>
                 <Box

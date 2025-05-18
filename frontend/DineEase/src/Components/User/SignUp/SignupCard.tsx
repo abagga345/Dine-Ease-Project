@@ -7,6 +7,7 @@ import axios from "axios";
 import { OtpHandler } from "../SignIn/OtpInput";
 import { CircleCheck, CircleX } from "lucide-react";
 import { MuiOtpInput } from "mui-one-time-password-input";
+import DineEaseImg from "../../../assets/DineEaseImg.png"
 
 interface SignupresultSuccess {
   token: string,
@@ -49,6 +50,7 @@ export function SignupCard() {
 
   async function sendOtpHandler(){
     console.log("request sent");
+    // http://localhost:3000/api/v1/user/generateotp
     let result=await axios.post("http://localhost:3000/api/v1/user/generateotp",{
       email:email
     });
@@ -110,10 +112,20 @@ export function SignupCard() {
     navigate("/signin");
   }
 
+  
 
   return (
-    <div className="w-full h-5/6 flex justify-center items-center ">
-      <div className="mt-10 z-10 bg-white  flex h-full  flex-1 md:flex-none lg:w-5/12 flex-col justify-center px-6 py-12 lg:px-8 md:shadow-xl ">
+    <div className="w-full h-4/6 flex justify-center items-center ">
+      <div className="p-10 md:p-2 rounded-xl border z-10 bg-white  flex h-full  flex-1 md:flex-none w-full md:10/12 lg:w-9/12 xl:w-8/12 2xl:w-7/12 flex-col justify-center  md:shadow-xl ">
+       
+       <div className="flex h-full">
+       
+       
+        <div className="w-1/2 h-full hidden md:block">
+          <img src={DineEaseImg} alt="Welcome Image" className="w-full h-full"></img>
+        </div>
+        
+        <div className="md:w-1/2 flex flex-col justify-center items-center">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           {/* <img
             alt="Your Company"
@@ -307,7 +319,11 @@ export function SignupCard() {
               {(errors.email) ? <div style={{ color: "#e53e3e" }} >{errors.email?.message}</div> : ""}
             </div>
             <div className="mt-2 ">
+<<<<<<< Updated upstream
               {(Otpmsg!="" && !verified) ? <div className=" flex items-center justify-center" style={{ color: "#e53e3e" }} >{Otpmsg}</div> : ""}
+=======
+              {(Otpmsg!="" && !verified && Otpphase) ? <div style={{ color: "#e53e3e" }} >{Otpmsg}</div> : ""}
+>>>>>>> Stashed changes
             </div>
 
            {(!Otpphase || verified) ?<div>
@@ -380,6 +396,8 @@ export function SignupCard() {
               SignIn
             </a>
           </p>
+        </div>
+        </div>
         </div>
       </div>
     </div>

@@ -254,8 +254,9 @@ export function Checkout() {
           toast.success(`Order placed successfully! Order ID: ${id}`, {
             duration: 5000,
           });
+          localStorage.setItem("cart","{}");
           setTimeout(() => {
-            navigate("dashboard/myOrders") // change later 
+            navigate("/dashboard/myOrders") // change later 
           }, 1000);
         } else {
           setError("Unable to place order");

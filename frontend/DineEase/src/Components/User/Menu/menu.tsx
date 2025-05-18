@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import Loader from "../../common/Loader";
 import { FaShoppingCart } from "react-icons/fa";
+import AppAppBar from "../Home/AppAppBar";
+import Footer from "../Home/Footer";
 
 interface MenuItem {
   id: number;
@@ -132,8 +134,11 @@ export const Menu = () => {
       );
     }
   };
-
-  return loading ? (
+  
+  return (
+    <>
+      <AppAppBar></AppAppBar>
+    {(loading) ? (
     <div>
       <div className="font-semibold text-2xl w-full text-center my-4">Menu</div>
       <div className="bg-gray-50 px-10 pt-10 pb-20 mt-6 mb-20 text-white w-[80%] mx-auto rounded-xl border border-gray-100">
@@ -204,5 +209,8 @@ export const Menu = () => {
         )}
       </div>
     </div>
-  );
+    )};
+    <Footer></Footer>
+    </>
+  )
 };

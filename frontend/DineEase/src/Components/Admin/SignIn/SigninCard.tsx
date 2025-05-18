@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import FastfoodIcon from '@mui/icons-material/Fastfood';
+import DineEaseImg from "../../../assets/DineEaseImg.png"
 
 interface SigninresultSuccess{
     token:string,
@@ -47,8 +48,15 @@ export function SigninCard(){
 
 
     return (
-        <div className="w-full h-fit flex justify-center items-center">
-        <div className="mt-10 z-10 bg-white  flex   flex-1 md:flex-none lg:w-5/12 flex-col justify-center px-6 py-12 lg:px-8 md:shadow-xl ">
+        <div className="w-full h-4/6 flex justify-center items-center ">
+        <div className="p-10 md:p-2 rounded-xl border z-10 bg-white  flex h-full  flex-1 md:flex-none w-full md:10/12 lg:w-9/12 xl:w-8/12 2xl:w-7/12 flex-col justify-center  md:shadow-xl ">
+            
+            <div className="flex h-full">
+
+            
+            
+            
+            <div className="md:w-1/2 flex flex-col justify-center items-center">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
               {/* <img
                 alt="Your Company"
@@ -150,6 +158,13 @@ export function SigninCard(){
                   SignUp
                 </a>
               </p>
+            </div>
+            </div>
+
+            <div className="w-1/2 h-full hidden md:block">
+                <img src={DineEaseImg} alt="Welcome Image" className="w-full h-full"></img>
+            </div>
+
             </div>
           </div>
         </div>

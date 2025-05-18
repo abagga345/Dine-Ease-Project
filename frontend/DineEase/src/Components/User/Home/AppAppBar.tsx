@@ -12,6 +12,7 @@ import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import FastfoodIcon from '@mui/icons-material/Fastfood';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 
 
@@ -20,6 +21,14 @@ import { useNavigate } from 'react-router-dom';
 function AppAppBar() {
     const navigate=useNavigate();
     const [open, setOpen] = React.useState(false);
+    const [logged,setLogged]=useState(false);
+
+    useEffect(()=>{
+        let result=localStorage.getItem("token");
+        if (result!==null && result!==""){
+            setLogged(true);
+        }
+    },[])
 
     const toggleDrawer = (newOpen: boolean) => () => {
         setOpen(newOpen);
@@ -86,6 +95,14 @@ function AppAppBar() {
                             <h1 className='text-sky-600 font-bold mx-6 text-lg'><FastfoodIcon fontSize="small" />&nbsp;DineEase</h1>
                             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                                 <MenuItem
+                                    onClick={() => navigate("/")}
+                                    sx={{ py: '6px', px: '12px' }}
+                                >
+                                    <Typography variant="body2" color="text.primary">
+                                        Home
+                                    </Typography>
+                                </MenuItem>
+                                <MenuItem
                                     onClick={() => scrollToSection('features')}
                                     sx={{ py: '6px', px: '12px' }}
                                 >
@@ -101,6 +118,30 @@ function AppAppBar() {
                                         Testimonials
                                     </Typography>
                                 </MenuItem>
+                                <MenuItem
+                                    onClick={() => navigate("/menu")}
+                                    sx={{ py: '6px', px: '12px' }}
+                                >
+                                    <Typography variant="body2" color="text.primary">
+                                        Menu
+                                    </Typography>
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => navigate("/dashboard")}
+                                    sx={{ py: '6px', px: '12px' }}
+                                >
+                                    <Typography variant="body2" color="text.primary">
+                                        Dashboard
+                                    </Typography>
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => navigate("/checkout")}
+                                    sx={{ py: '6px', px: '12px' }}
+                                >
+                                    <Typography variant="body2" color="text.primary">
+                                        Checkout
+                                    </Typography>
+                                </MenuItem>
                             </Box>
                         </Box>
                         <Box
@@ -110,8 +151,7 @@ function AppAppBar() {
                                 alignItems: 'center',
                             }}
                         >
-                            
-                            <Button
+                            {(!logged)?<div><Button
                                 color="primary"
                                 variant="text"
                                 size="small"
@@ -130,7 +170,7 @@ function AppAppBar() {
                                 target="_blank"
                             >
                                 Sign up
-                            </Button>
+                            </Button></div>:""}
                         </Box>
                         <Box sx={{ display: { sm: '', md: 'none' } }}>
                             <Button
@@ -161,20 +201,26 @@ function AppAppBar() {
                                     >
                                        
                                     </Box>
+                                    <MenuItem onClick={() => navigate("/")}>
+                                        Home
+                                    </MenuItem>
                                     <MenuItem onClick={() => scrollToSection('features')}>
                                         Features
                                     </MenuItem>
                                     <MenuItem onClick={() => scrollToSection('testimonials')}>
                                         Testimonials
                                     </MenuItem>
-                                    <MenuItem onClick={() => scrollToSection('highlights')}>
-                                        Highlights
+                                    <MenuItem onClick={() => navigate("/menu")}>
+                                        Menu
                                     </MenuItem>
-                                    <MenuItem onClick={() => scrollToSection('pricing')}>
-                                        Pricing
+                                    <MenuItem onClick={() => navigate("/dashboard")}>
+                                        Dashboard
                                     </MenuItem>
-                                    <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem>
+                                    <MenuItem onClick={() => navigate("/checkout")}>
+                                        Checkout
+                                    </MenuItem>
                                     <Divider />
+                                    {(!logged)?<div>
                                     <MenuItem>
                                         <Button
                                             color="primary"
@@ -199,6 +245,7 @@ function AppAppBar() {
                                             Sign in
                                         </Button>
                                     </MenuItem>
+                                    </div>:""}
                                 </Box>
                             </Drawer>
                         </Box>
