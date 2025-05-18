@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import AppAppBar from "../Home/AppAppBar";
+import Footer from "../Home/Footer";
+
 
 interface fields {
 //   houseStreet: string;
@@ -277,12 +280,18 @@ export function Checkout() {
 
   if (loading) {
     return (
+      <>
+      <AppAppBar></AppAppBar>
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="w-10 h-10 animate-spin text-green-600" />
       </div>
+      <Footer></Footer>
+      </>
     );
   } else if (error != "") {
     return (
+      <>
+      <AppAppBar></AppAppBar>
       <div className="flex items-center justify-center h-screen">
         <div
           className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded"
@@ -292,11 +301,14 @@ export function Checkout() {
           <p>{error}</p>
         </div>
       </div>
+      <Footer></Footer>
+      </>
     );
   }
 
   return (
     <>
+    <AppAppBar></AppAppBar>
       <form onSubmit={handleSubmit(submithandler)}>
         <div className="mb-32 mt-7">
           <div className="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32 gap-8">
@@ -591,6 +603,7 @@ export function Checkout() {
         onClose={() => setOutOfStockModal(false)}
         items={outOfStockItems}
       />
+      <Footer></Footer>
     </>
   );
 }
