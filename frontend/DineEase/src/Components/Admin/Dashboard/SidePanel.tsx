@@ -164,9 +164,9 @@ export const SidePanel = () => {
                     <Link
                       key={item.href}
                       to={item.href}
-                      className={`flex flex-row gap-2 items-center px-4 py-2 mb-2 rounded hover:bg-[#33A8FF]${
-                        location.pathname === item.href ? "bg-[#33A8FF]" : ""
-                      }`}
+                     className={`flex flex-row gap-2 items-center px-4 py-2 mb-2 rounded 
+                     hover:bg-[#33A8FF] ${location.pathname === item.href ? "bg-[#33A8FF] text-white" : ""}`}
+
                       onClick={() => {
                         setIsCollapsed(true);
                       }}
