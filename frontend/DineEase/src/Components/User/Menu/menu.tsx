@@ -116,7 +116,7 @@ export const Menu = () => {
           <span className="text-lg mx-2 w-6 text-center">{quantity}</span>
           <button
             onClick={() => incrementQuantity(item.id)}
-            className="px-4 py-2 bg-green-500 text-white rounded-md"
+            className="px-4 py-2 bg-[#0092FF] hover:bg-[#0073CC] text-white rounded-md"
           >
             +
           </button>
@@ -126,7 +126,7 @@ export const Menu = () => {
       return (
         <button
           onClick={() => addToCart(item.id)}
-          className="py-2 px-4 bg-green-600 text-white rounded-md flex items-center hover:shadow-md"
+          className="py-2 px-4 bg-[#0092FF] hover:bg-[#0073CC] text-white rounded-md flex items-center hover:shadow-md"
         >
           <FaShoppingCart className="mr-2" />
           Add

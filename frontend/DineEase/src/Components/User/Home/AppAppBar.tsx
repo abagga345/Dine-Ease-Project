@@ -178,7 +178,12 @@ function AppAppBar() {
                                 Sign in
                             </Button>
                             <Button
-                                color="primary"
+                                sx={{
+                                    bgcolor: "#0092FF",          // darker than #33A8FF
+                                    "&:hover": {
+                                      bgcolor: "#0073CC",        // darker than #0092FF
+                                    },
+                                }}
                                 variant="contained"
                                 size="small"
                                 component="a"
@@ -188,7 +193,12 @@ function AppAppBar() {
                                 Sign up
                             </Button></div>:<div>
                                 <Button
-                                    color="primary"
+                                    sx={{
+                                        bgcolor: "#0092FF",          // darker than #33A8FF
+                                        "&:hover": {
+                                          bgcolor: "#0073CC",        // darker than #0092FF
+                                        },
+                                      }}
                                     variant="contained"
                                     size="small"
                                     component="a"
@@ -259,29 +269,66 @@ function AppAppBar() {
                                     {(!logged)?<div>
                                     <MenuItem>
                                         <Button
-                                            color="primary"
+                                            sx={{
+                                                bgcolor: "#0092FF",          // darker than #33A8FF
+                                                "&:hover": {
+                                                  bgcolor: "#0073CC",        // darker than #0092FF
+                                                },
+                                                width: '100%' 
+                                              }}
                                             variant="contained"
                                             component="a"
                                             href="/material-ui/getting-started/templates/sign-up/"
                                             target="_blank"
-                                            sx={{ width: '100%' }}
+                                            
                                         >
                                             Sign up
                                         </Button>
                                     </MenuItem>
                                     <MenuItem>
                                         <Button
-                                            color="primary"
+                                            sx={{
+                                                bgcolor: "#0092FF",          // darker than #33A8FF
+                                                "&:hover": {
+                                                  bgcolor: "#0073CC",        // darker than #0092FF
+                                                },
+                                                width: '100%'
+                                              }}
                                             variant="outlined"
                                             component="a"
                                             href="/material-ui/getting-started/templates/sign-in/"
                                             target="_blank"
-                                            sx={{ width: '100%' }}
+                                            
                                         >
                                             Sign in
                                         </Button>
                                     </MenuItem>
-                                    </div>:""}
+                                    </div>:<div>
+                                    <Button
+                                    sx={{
+                                        bgcolor: "#0092FF",          // darker than #33A8FF
+                                        "&:hover": {
+                                          bgcolor: "#0073CC",        // darker than #0092FF
+                                        },
+                                      }}
+                                    variant="contained"
+                                    size="small"
+                                    component="a"
+                                    onClick={() =>
+                                        setConfirmationModal({
+                                          text1: "Are you sure?",
+                                          text2: "You will be logged out of your account.",
+                                          btn1Text: "Logout",
+                                          btn2Text: "Cancel",
+                                          btn1Handler: handleLogout,
+                                          btn2Handler: () => setConfirmationModal(null),
+                                        })
+                                    }
+                                    target="_blank"
+                                >
+                                Logout
+                                </Button>
+                                        </div>}
                                 </Box>
                             </Drawer>
                         </Box>
@@ -301,13 +348,13 @@ const ConfirmationModal = ({ modalData }) => {
   
     return (
       <div className="fixed inset-0 flex flex-col gap-8 items-center justify-center z-50 backdrop-blur-sm">
-        <div className="md:w-[25%] p-4 rounded-lg shadow-lg flex flex-col gap-2 bg-green-600">
+        <div className="md:w-[25%] p-4 rounded-lg shadow-lg flex flex-col gap-2 bg-[#008CFF]">
           <p className="text-xl text-white font-semibold">{text1}</p>
           <p className="text-white text-sm">{text2}</p>
           <div className="flex justify-end mt-4">
             <button
               onClick={btn1Handler}
-              className="px-4 py-2 bg-yellow-50 font-inter text-black rounded-md hover:bg-green-100 mr-2 font-semibold"
+              className="px-4 py-2 bg-yellow-50 font-inter text-black rounded-md hover:bg-blue-100 mr-2 font-semibold"
             >
               {btn1Text}
             </button>
@@ -321,6 +368,6 @@ const ConfirmationModal = ({ modalData }) => {
         </div>
       </div>
     );
-};
+  };
 
 export default AppAppBar;

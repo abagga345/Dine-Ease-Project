@@ -50,7 +50,7 @@ export const ChartOne = () => {
 
   if (loading) {
     return (
-      <Loader2 className="w-10 h-10 animate-spin text-green-600" />
+      <Loader2 className="w-10 h-10 animate-spin text-[#33A8FF]" />
     );
   }
   if (error) return <p>Error: {error}</p>;

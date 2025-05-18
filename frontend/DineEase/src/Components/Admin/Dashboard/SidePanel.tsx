@@ -138,7 +138,7 @@ export const SidePanel = () => {
     <>
       {/* Toggle Button for Small Screens */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 text-white bg-green-500 rounded"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 text-white bg-[#008CFF] rounded"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         {isCollapsed ? <GiHamburgerMenu /> : <IoCloseOutline />}
@@ -146,7 +146,7 @@ export const SidePanel = () => {
 
       
       <div
-        className={` min-h-screen bg-green-200 text-black px-6 py-8 flex flex-col justify-between transition-all duration-300 
+        className={` min-h-screen bg-[#D5F1FF] text-black px-6 py-8 flex flex-col justify-between transition-all duration-300 
         ${isCollapsed ? "hidden lg:flex min-w-64" : "w-full fixed z-40"}`}
       >
         <div>
@@ -164,8 +164,8 @@ export const SidePanel = () => {
                     <Link
                       key={item.href}
                       to={item.href}
-                      className={`flex flex-row gap-2 items-center px-4 py-2 mb-2 rounded hover:bg-green-300 ${
-                        location.pathname === item.href ? "bg-green-300" : ""
+                      className={`flex flex-row gap-2 items-center px-4 py-2 mb-2 rounded hover:bg-[#33A8FF]${
+                        location.pathname === item.href ? "bg-[#33A8FF]" : ""
                       }`}
                       onClick={() => {
                         setIsCollapsed(true);
@@ -180,8 +180,8 @@ export const SidePanel = () => {
             )}
           </nav>
         </div>
-        <div className="sticky bottom-0 bg-green-200 py-4">
-           <div className="flex flex-row gap-2 items-center px-4 py-2 hover:bg-green-300 rounded">
+        <div className="sticky bottom-0 bg-[#D5F1FF] py-4">
+           <div className="flex flex-row gap-2 items-center px-4 py-2 hover:bg-[#33A8FF] rounded">
 
           <button
             onClick={() =>
@@ -225,13 +225,13 @@ const ConfirmationModal = ({ modalData }) => {
   
     return (
       <div className="fixed inset-0 flex flex-col gap-8 items-center justify-center z-50 backdrop-blur-sm">
-        <div className="md:w-[25%] p-4 rounded-lg shadow-lg flex flex-col gap-2 bg-green-600">
+        <div className="md:w-[25%] p-4 rounded-lg shadow-lg flex flex-col gap-2 bg-[#008CFF]">
           <p className="text-xl text-white font-semibold">{text1}</p>
           <p className="text-white text-sm">{text2}</p>
           <div className="flex justify-end mt-4">
             <button
               onClick={btn1Handler}
-              className="px-4 py-2 bg-yellow-50 font-inter text-black rounded-md hover:bg-green-100 mr-2 font-semibold"
+              className="px-4 py-2 bg-yellow-50 font-inter text-black rounded-md hover:bg-blue-100 mr-2 font-semibold"
             >
               {btn1Text}
             </button>

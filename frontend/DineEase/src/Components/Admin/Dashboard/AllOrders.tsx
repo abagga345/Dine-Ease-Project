@@ -116,7 +116,7 @@ export const AllOrders = () => {
     if (loading) {
       return (
         <div className="flex items-center justify-center h-screen">
-          <Loader2 className="w-10 h-10 animate-spin text-green-600" />
+          <Loader2 className="w-10 h-10 animate-spin text-[#33A8FF]" />
         </div>
       );
     }
@@ -143,7 +143,7 @@ export const AllOrders = () => {
         <div className="overflow-x-auto rounded-lg mb-10">
   <table className="min-w-full bg-white border rounded-lg">
     <thead>
-      <tr className="bg-green-600 text-white text-left">
+      <tr className="bg-[#33A8FF] text-white text-left">
         <th className="px-4 py-2 text-left">Order ID</th>
         <th className="px-4 py-2 text-left">Amount</th>
         <th className="px-4 py-2 text-left">Email</th>
@@ -205,7 +205,7 @@ export const AllOrders = () => {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-          <div className="flex justify-between items-center bg-green-600 text-white px-6 py-3 rounded-t-lg">
+          <div className="flex justify-between items-center bg-[#33A8FF] text-white px-6 py-3 rounded-t-lg">
             <h2 className="text-xl font-semibold">Order #{order.id}</h2>
             <button onClick={onClose} className="text-white hover:text-gray-200">
               <X size={24} />
@@ -245,7 +245,7 @@ export const AllOrders = () => {
   
             <div className="mt-6">
               <h3 className="text-lg font-semibold mb-2 mt-6 flex items-center">
-                <ShoppingCart className="w-5 h-5 mr-2 text-green-600" />
+                <ShoppingCart className="w-5 h-5 mr-2 text-[#008CFF]" />
                 <p>Order Items</p>
               </h3>
               <hr className="mb-4" />
@@ -294,7 +294,7 @@ export const AllOrders = () => {
     value: string;
   }) => (
     <div className="flex items-center text-gray-700">
-      <Icon className="w-5 h-5 mr-2 text-green-600 flex-shrink-0" />
+      <Icon className="w-5 h-5 mr-2 text-[#008CFF] flex-shrink-0" />
       <span className="font-medium">{label}:</span>
       <span className="ml-2 break-all">{value}</span>
     </div>

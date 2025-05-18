@@ -229,7 +229,7 @@ export const AddItem = () => {
               type="submit"
               disabled={!buttonstate || loading}
               className={`w-full flex justify-center items-center gap-2 text-white font-medium py-2 px-4 rounded-lg shadow transition-all duration-200 
-                ${buttonstate && !loading ? "bg-green-600 hover:bg-green-700" : "bg-gray-400 cursor-not-allowed"}
+                ${buttonstate && !loading ? "bg-[#0092FF] hover:bg-[#0073CC]" : "bg-gray-400 cursor-not-allowed"}
               `}
             >
               <PlusCircle className="h-5 w-5" />

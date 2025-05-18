@@ -283,7 +283,7 @@ export function Checkout() {
       <>
       <AppAppBar></AppAppBar>
       <div className="flex items-center justify-center h-screen">
-        <Loader2 className="w-10 h-10 animate-spin text-green-600" />
+        <Loader2 className="w-10 h-10 animate-spin text-[#33A8FF]" />
       </div>
       <Footer></Footer>
       </>
@@ -317,11 +317,11 @@ export function Checkout() {
               <p className="text-gray-400">
                 Check your items. And select a suitable shipping method.
               </p>
-              <div className="mt-8 space-y-3 rounded-lg border bg-green-50 px-2 py-4 sm:px-6 border-green-100">
+              <div className="mt-8 space-y-3 rounded-lg border bg-[#EAF8FF] px-2 py-4 sm:px-6 border-gray-300">
                 {items.map((item: Item) => {
                   return (
                     <div
-                      className="flex flex-col rounded-lg bg-green-50 sm:flex-row"
+                      className="flex flex-col rounded-lg bg-[#EAF8FF] sm:flex-row"
                       key={item.id}
                     >
                       <img
@@ -357,9 +357,9 @@ export function Checkout() {
                     {...register("paymentMethod")}
                     defaultChecked
                   />
-                  <span className="peer-checked:border-green-600 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
+                  <span className="peer-checked:border-[#33A8FF] absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
                   <label
-                    className="peer-checked:border peer-checked:border-green-500 peer-checked:bg-green-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
+                    className="peer-checked:border peer-checked:border-[#33A8FF] peer-checked:bg-[#EAF8FF] flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
                     htmlFor="radio_1"
                   >
                     <img
@@ -384,12 +384,12 @@ export function Checkout() {
                     value="COD"
                     {...register("paymentMethod")}
                   />
-                  <span className="peer-checked:border-green-600 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
+                  <span className="peer-checked:border-[#33A8FF] absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
                   <label
-                    className="peer-checked:border peer-checked:border-green-500 peer-checked:bg-green-50 flex items-center cursor-pointer select-none rounded-lg border border-gray-300 p-4"
+                    className="peer-checked:border peer-checked:border-[#33A8FF] peer-checked:bg-[#EAF8FF] flex items-center cursor-pointer select-none rounded-lg border border-gray-300 p-4"
                     htmlFor="radio_2"
                   >
-                    <Banknote className="me-3 ms-4 text-green-600" />
+                    <Banknote className="me-3 ms-4 text-[#33A8FF]" />
                     <div className="ml-5">
                       <span className="mt-2 font-semibold">
                         Cash On Delivery
@@ -426,7 +426,7 @@ export function Checkout() {
               </div>
             </div>
             
-            <div className="mt-10 bg-green-50 px-6 pt-8 lg:mt-0 rounded-lg h-fit border border-green-100">
+            <div className="mt-10 bg-[#EAF8FF] px-6 pt-8 lg:mt-0 rounded-lg h-fit border border-gray-300">
               <p className="text-xl font-medium">Shipping Details</p>
               <p className="text-gray-400">
                 Complete your order by providing your shipping details.
@@ -446,9 +446,9 @@ export function Checkout() {
                             {...register("addressId", { required:true })}
                             
                             />
-                            <span className="peer-checked:border-green-600 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
+                            <span className="peer-checked:border-[#33A8FF] absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
                             <label
-                                className="peer-checked:border peer-checked:border-green-500 peer-checked:bg-green-50 flex items-center cursor-pointer select-none rounded-lg border border-gray-300 p-4"
+                                className="peer-checked:border peer-checked:border-[#33A8FF] peer-checked:bg-[#EAF8FF]  flex items-center cursor-pointer select-none rounded-lg border border-gray-300 p-4"
                                 htmlFor={`radio_addr_${item.id}`}
                             >
                             <div className="ml-5">
@@ -586,7 +586,7 @@ export function Checkout() {
                 type="submit"
                 disabled={!buttonstate}
                 className={`mt-6 mb-2 w-full rounded-md px-6 py-3 font-medium text-white
-                  ${buttonstate ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'}`}
+                  ${buttonstate ? 'bg-[#0092FF] hover:bg-[#0073CC]' : 'bg-gray-400 cursor-not-allowed'}`}
               >
                 Place Order
                 
@@ -660,7 +660,7 @@ function AddAddress({setAddresses,navigate,setError}){
                     }}
                     type="button"
                     className={`mt-6 mb-8  rounded-md px-6 py-3 font-medium text-white
-                   bg-green-600 hover:bg-green-700`}
+                   bg-[#0092FF] hover:bg-[#0073CC]`}
                 >
                     Add New Address
                  </button>
@@ -790,7 +790,7 @@ function AddAddress({setAddresses,navigate,setError}){
                     type="button"
                     onClick={submithandler}
                     className={`mt-6 mb-8  rounded-md px-6 py-3 font-medium text-white
-                   bg-green-600 hover:bg-green-700`}
+                   bg-[#0092FF] hover:bg-[#0073CC]`}
                 >
                     Save address
                  </button>

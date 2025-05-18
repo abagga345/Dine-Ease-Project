@@ -99,7 +99,7 @@ export const Setting = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader2 className="w-10 h-10 animate-spin text-green-600" />
+        <Loader2 className="w-10 h-10 animate-spin text-[#33A8FF]" />
       </div>
     );
   }
@@ -211,7 +211,7 @@ export const Setting = () => {
               Cancel
             </button>
             <button
-              className="text-white bg-green-600 hover:bg-green-700 rounded-lg font-semibold w-[100%] shadow-lg"
+              className="text-white bg-[#0092FF] hover:bg-[#0073CC] rounded-lg font-semibold w-[100%] shadow-lg"
               type="submit"
             >
               Save

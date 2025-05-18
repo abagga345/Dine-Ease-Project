@@ -61,7 +61,7 @@ export const Profile = () => {
     if (loading) {
       return (
         <div className="flex items-center justify-center h-screen">
-          <Loader2 className="w-10 h-10 animate-spin text-green-600" />
+          <Loader2 className="w-10 h-10 animate-spin text-[#33A8FF]" />
         </div>
       );
     }

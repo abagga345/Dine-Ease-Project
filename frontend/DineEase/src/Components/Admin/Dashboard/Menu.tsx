@@ -161,7 +161,7 @@ export const MenuItems: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <Loader2 className="w-10 h-10 animate-spin text-green-600" />
+        <Loader2 className="w-10 h-10 animate-spin text-[#33A8FF]" />
       </div>
     );
   }
@@ -220,7 +220,7 @@ export const MenuItems: React.FC = () => {
                       item.loading
                         ? "bg-gray-400 cursor-not-allowed"
                         : item.visibility
-                        ? "bg-green-600 hover:bg-green-700"
+                        ? "bg-[#0092FF] hover:bg-[#0073CC]"
                         : "bg-red-500 hover:bg-red-600"
                     }`}
                   >
