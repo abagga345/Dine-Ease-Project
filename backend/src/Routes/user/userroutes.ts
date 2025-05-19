@@ -627,4 +627,23 @@ userRouter.put("/verifyotp",async (req:Request,res:Response)=>{
 })
 
 
-
+userRouter.get("/allstores",async (req:Request,res:Response)=>{
+    try{
+        let result=await prisma.store.findMany(
+            {
+                select:{
+                    storeId:true,
+                    storeStreet:true,
+                    state:true,
+                    pincode:true
+                }
+            }
+        );
+        res.json({
+            "message":"Stores fetched successfully",
+            "stores":result
+        })
+    }catch(err){
+        res.status(500).json({"message":"Internal Server Error"})
+    }
+})
