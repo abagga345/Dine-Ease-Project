@@ -12,14 +12,13 @@ import toast from "react-hot-toast";
 import { IoHome } from "react-icons/io5";
 import { VscSignOut } from "react-icons/vsc";
 import { ImProfile } from "react-icons/im";
-import { FaAddressCard, FaCartArrowDown } from "react-icons/fa";
+import { FaCartArrowDown } from "react-icons/fa";
 import Loader from "../../common/Loader";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoIosSettings } from "react-icons/io";
 import { IoCloseOutline } from "react-icons/io5";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-
 
 const navItems = [
   { href: "/", label: "Home", icon: IoHome, role: "All" },
@@ -53,12 +52,6 @@ const navItems = [
     label: "My Orders",
     icon: FaCartArrowDown,
     role: "User",
-  },
-  {
-    href:"/dashboard/addresses",
-    label:"My Address",
-    icon: FaAddressCard,
-    role:"User"
   },
   {
     href: "/dashboard/profile",
