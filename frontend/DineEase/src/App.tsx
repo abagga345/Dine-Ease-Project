@@ -23,6 +23,7 @@ import { Setting } from "./Components/Admin/Dashboard/Settings"
 import { MyOrders } from "./Components/Admin/Dashboard/MyOrders"
 import { DashboardHome } from "./Components/Admin/Dashboard/DashboardHome"
 import { Store } from "./Components/User/Store/store"
+import { Addresses } from "./Components/Admin/Dashboard/Addresses"
 function App() {
   return (
     <div>
@@ -47,6 +48,7 @@ function App() {
               <Route path="profile" element={<Profile></Profile>}></Route>
               <Route path="settings" element={<Setting></Setting>}></Route>
               <Route path="myOrders" element={<MyOrders></MyOrders>}></Route>
+              <Route path="addresses" element={<Addresses></Addresses>}></Route>
           </Route>
           <Route path="/error" element={<ErrorPage link="/"></ErrorPage>}></Route>
         </Routes>
