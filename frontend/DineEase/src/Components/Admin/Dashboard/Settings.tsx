@@ -12,6 +12,7 @@ interface profile {
   lastName: string;
   contactNo: string;
   email: string;
+  storeId:string;
 }
 
 export const Setting = () => {
@@ -20,6 +21,7 @@ export const Setting = () => {
     lastName: "",
     contactNo: "",
     email: "",
+    storeId:""
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,6 +51,7 @@ export const Setting = () => {
           lastName: body.lastName,
           contactNo: body.contactNo,
           email: body.email,
+          storeId:body.storeId
         });
       })
       .catch((err) => {
@@ -131,11 +134,15 @@ export const Setting = () => {
               alt="xyz"
               className="aspect-square w-20 rounded-full object-cover"
             />
-            <div>
+            <div className="flex flex-col">
               <p className="text-lg my-1">
              
                 {globaluser.email}
               </p>
+              {(globaluser.storeId!=="")?<p className="text-lg my-1">
+             
+             {globaluser.storeId}
+           </p>:""}
             </div>
           </div>
         </div>

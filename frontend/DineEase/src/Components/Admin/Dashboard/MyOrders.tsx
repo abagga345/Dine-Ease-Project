@@ -8,6 +8,7 @@ import {
   Info,
   Loader2,
   Wallet,
+  MapPinHouse,
 } from "lucide-react";
 import Loader from "../../common/Loader";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +28,14 @@ interface OrderItem {
       pincode:String;
   }
   
+  interface StoreAddress{
+    storeStreet:string;
+    state:string;
+    pincode:string;
+    storeId:string;
+  }
+
+
   interface Order {
     id: string;
     email: string;
@@ -34,7 +43,8 @@ interface OrderItem {
     creationDate: string;
     items: OrderItem[];
     description?: string;
-    address:Address
+    address:Address;
+    store:StoreAddress;
   //   paymentMethod: string;
   }
 
@@ -139,18 +149,22 @@ export const MyOrders = () => {
               <hr className="my-4" />
               <div className="mb-4">
                 <div className="flex items-center mb-1">
-                  <User className="w-5 h-5 mr-2 text-green-600" />
+                  <User className="w-5 h-5 mr-2 text-[#008CFF]" />
                   <span className="text-gray-600">{order.email}</span>
                 </div>
                 <div className="flex items-center mb-1">
-                  <Clock className="w-5 h-5 mr-2 text-green-600" />
+                  <Clock className="w-5 h-5 mr-2 text-[#008CFF]" />
                   <span className="text-gray-600">
                     {new Date(order.creationDate).toLocaleString()}
                   </span>
                 </div>
                 <div className="flex items-center">
-                  <MapPin className="w-5 h-5 mr-2 text-green-600" />
+                  <MapPinHouse className="w-5 h-5 mr-2 text-[#008CFF]" />
                   <span className="text-gray-600 w-full">{`${order.address.houseStreet}, ${order.address.state},  ${order.address.pincode}`}</span>
+                </div>
+                <div className="flex items-center">
+                <MapPin className="w-5 h-5 mr-2 text-[#008CFF]" />
+                  <span className="text-gray-600 w-full">{`${order.store.storeStreet}, ${order.store.state},  ${order.store.pincode}`}</span>
                 </div>
                 {/* <div className="flex items-center">
                   <Wallet className="w-5 h-5 mr-2 text-green-600" />
@@ -170,7 +184,7 @@ export const MyOrders = () => {
                       className="flex justify-between items-center"
                     >
                       <div className="flex items-center">
-                        <Package className="w-5 h-5 mr-2 text-green-600" />
+                        <Package className="w-5 h-5 mr-2 text-[#008CFF]" />
                         <span className="text-gray-700">{item.item.title}</span>
                       </div>
                       <div className="text-right">
@@ -186,7 +200,7 @@ export const MyOrders = () => {
                 </ul>
               </div>
               {order.description && (
-                <div className="mt-4 p-3 rounded bg-green-100">
+                <div className="mt-4 p-3 rounded bg-[#D5F1FF]">
                   <span className="text-gray-700 font-medium flex items-center">
                     <Info className="w-5 h-5 mr-2 text-gray-500" />
                     Note: {order.description}

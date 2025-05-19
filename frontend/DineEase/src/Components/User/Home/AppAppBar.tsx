@@ -29,11 +29,14 @@ function AppAppBar() {
         const toastId = toast.loading("Loading...",{id:"load-toast"});
         try {
           localStorage.setItem("token","");
+          localStorage.setItem("cart","{}");
+          localStorage.setItem("storeId","");
           setLogged(false);
           setConfirmationModal(null);
+          navigate("/");
           toast.dismiss(toastId);
           toast.success("Logged out successfully",{id:"logout-toast"});
-        } catch (error: any) {
+          } catch (error: any) {
           toast.dismiss(toastId);
           toast.error(error.message);
         }
@@ -135,7 +138,7 @@ function AppAppBar() {
                                     </Typography>
                                 </MenuItem>
                                 <MenuItem
-                                    onClick={() => navigate("/store")}
+                                    onClick={() => navigate("/menu")}
                                     sx={{ py: '6px', px: '12px' }}
                                 >
                                     <Typography variant="body2" color="text.primary">
@@ -156,6 +159,14 @@ function AppAppBar() {
                                 >
                                     <Typography variant="body2" color="text.primary">
                                         Checkout
+                                    </Typography>
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => navigate("/store")}
+                                    sx={{ py: '6px', px: '12px' }}
+                                >
+                                    <Typography variant="body2" color="text.primary">
+                                        Select Store
                                     </Typography>
                                 </MenuItem>
                             </Box>
@@ -264,6 +275,9 @@ function AppAppBar() {
                                     </MenuItem>
                                     <MenuItem onClick={() => navigate("/checkout")}>
                                         Checkout
+                                    </MenuItem>
+                                    <MenuItem onClick={() => navigate("/store")}>
+                                        Select Store
                                     </MenuItem>
                                     <Divider />
                                     {(!logged)?<div>

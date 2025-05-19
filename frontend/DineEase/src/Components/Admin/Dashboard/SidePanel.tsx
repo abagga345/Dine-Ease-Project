@@ -79,9 +79,12 @@ export const SidePanel = () => {
     const toastId = toast.loading("Loading...",{id:"load-toast"});
     try {
       localStorage.setItem("token","");
+      localStorage.setItem("cart","{}");
+      localStorage.setItem("storeId","");
       navigate("/");
       toast.dismiss(toastId);
       toast.success("Logged out successfully",{id:"logout-toast"});
+      
     } catch (error: any) {
       toast.dismiss(toastId);
       toast.error(error.message);

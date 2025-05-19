@@ -19,7 +19,7 @@ export function DashboardHome(){
         async function rolefetcher(){
             let token=localStorage.getItem("token");
             if (token===undefined || token===null || token===""){
-                toast.error("Unauthorized , please signin again",{id:"unauth-error-toast"});
+                toast.error("Signin to proceed",{id:"unauth-error-toast"});
                 navigate("/signin");
                 toast.dismiss(id);
                 return;

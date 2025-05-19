@@ -4,6 +4,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import AppAppBar from "../Home/AppAppBar";
 import Footer from "../Home/Footer";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 interface MenuItem {
   id: number;
@@ -28,19 +29,21 @@ export const Menu = () => {
   const [cart, setCart] = useState<Cart>({});
 
   useEffect(() => {
+    const store = localStorage.getItem("storeId");
+    if (store===null || store===undefined || store==="") {
+        navigate("/store");
+        return;
+    }
     const fetchMenuItems = async () => {
       try {
         const store = localStorage.getItem("storeId");
-
-        if (store===null || store===undefined) {
-          navigate("/store");
-          return;
-        }
         const res = await fetch(`http://localhost:3000/api/v1/user/viewmenu?storeId=${store}`);
         const data = await res.json();
         setMenuItems(data.items);
       } catch (error) {
         console.error("Failed to fetch menu items:", error);
+        toast.error("Failed to fetch menu items")
+        navigate("/");
       } finally {
         setLoading(false);
       }

@@ -9,10 +9,11 @@ interface profile {
     lastName: string;
     contactNo: string;
     email: string;
+    storeId:string;
   }
   
 export const Profile = () => {
-    const [globaluser, setGlobalUser] = useState<profile>({ firstName: "", lastName: "", contactNo: "", email: "" });
+    const [globaluser, setGlobalUser] = useState<profile>({ firstName: "", lastName: "", contactNo: "", email: "" ,storeId:""});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const navigate=useNavigate();
@@ -42,7 +43,8 @@ export const Profile = () => {
             firstName: body.firstName,
             lastName: body.lastName,
             contactNo: body.contactNo,
-            email: body.email
+            email: body.email,
+            storeId:body.storeId
           })
   
         })
@@ -81,7 +83,7 @@ export const Profile = () => {
     }
   
     return (
-      <div className="flex flex-col p-4 md:p-6 gap-6 md:gap-10 w-full md:w-[80%] mx-auto justify-center items-center">
+      <div className="flex flex-col p-4 md:p-6 gap-6 md:gap-10 w-full md:w-[80%] mx-auto  items-center">
         <h1 className="text-black font-semibold text-xl md:text-2xl font-inter">
           My Profile
         </h1>
@@ -100,6 +102,7 @@ export const Profile = () => {
                     {globaluser?.lastName ? globaluser?.lastName : ""}
                   </p>
                   <p className="text-[#838894] text-md">{globaluser?.email}</p>
+                  {(globaluser.storeId!=="")?<p className="text-[#838894] text-md">{globaluser.storeId}</p>:""}
                 </div>
               </div>
              
@@ -114,7 +117,7 @@ export const Profile = () => {
                 <p className="text-xl">Profile Details</p>
                 <button
                   onClick={() => {
-                    window.location.href = "/dashboard/settings";
+                    navigate("/dashboard/settings");
                   }}
                 >
                   <div className="flex flex-row items-center gap-2">

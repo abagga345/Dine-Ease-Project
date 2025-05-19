@@ -12,6 +12,7 @@ import {
   X,
   ShoppingCart,
   Wallet,
+  MapPinHouse,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -229,9 +230,10 @@ export const AllOrders = () => {
               label="House/Street"
               value={order.address.houseStreet}
             />
+             
             {/* <OrderDetail icon={MapPin} label="Landmark" value={order.landmark} /> */}
-            <OrderDetail icon={MapPin} label="State" value={order.address.state} />
-            <OrderDetail icon={MapPin} label="Pincode" value={order.address.pincode} />
+            <OrderDetail icon={MapPinHouse} label="State" value={order.address.state} />
+            <OrderDetail icon={MapPinHouse} label="Pincode" value={order.address.pincode} />
             <OrderDetail
               icon={Clock}
               label="Creation Date"

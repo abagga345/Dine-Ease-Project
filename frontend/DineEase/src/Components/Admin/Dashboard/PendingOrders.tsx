@@ -8,6 +8,7 @@ import {
   Info,
   Loader2,
   Wallet,
+  MapPinHouse,
 } from "lucide-react";
 import Loader from "../../common/Loader";
 import { useNavigate } from "react-router-dom";
@@ -77,10 +78,13 @@ export const PendingOrders = () => {
       if (!response.ok) {
         throw new Error("Failed to fetch orders");
       }
-      setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order.id === orderId ? { ...order, status: newStatus } : order
-        )
+      setOrders(prevOrders =>
+        prevOrders.flatMap(order => {
+          if (order.id !== orderId) return [order];               
+          return (newStatus !== "Delivered" && newStatus !== "Rejected")
+            ? [{ ...order, status: newStatus }]   
+            : [];                                 
+        })
       );
       toast.dismiss(toastId);
       toast.success("Orders loaded successfully!", { id: toastId });
@@ -192,7 +196,7 @@ export const PendingOrders = () => {
                   </span>
                 </div>
                 <div className="flex items-center">
-                  <MapPin className="w-5 h-5 mr-2 text-[#008CFF]" />
+                  <MapPinHouse className="w-5 h-5 mr-2 text-[#008CFF]" />
                   <span className="text-gray-600 w-full">{`${order.address.houseStreet}, ${order.address.state}, ${order.address.pincode}`}</span>
                 </div>
                 {/* <div className="flex items-center">

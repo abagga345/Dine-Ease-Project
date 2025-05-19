@@ -45,6 +45,7 @@ export function Store() {
 
  const onSubmit = (data: FormData) => {
   localStorage.setItem("storeId", data.storeId.toString());
+  localStorage.setItem("cart","{}");
   navigate("/menu");
 };
 
@@ -86,11 +87,12 @@ export function Store() {
                   </div>
                 ))}
               </div>
-
-              {errors.storeId && (
-                <p className="text-red-500 mt-2 text-sm">Please select a store.</p>
-              )}
-
+              <div className="flex flex-col justify-center items-center">
+                {errors.storeId && (
+                  <p className="text-red-500 mt-2 text-lg">Please select a store.</p>
+                )}
+                <p className="text-red-500 mt-2 text-lg">Any items in cart will be cleared</p>
+              </div>
               <div className="w-full text-center mt-6">
                 <button
                   type="submit"

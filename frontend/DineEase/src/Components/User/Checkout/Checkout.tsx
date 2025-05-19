@@ -97,6 +97,7 @@ export function Checkout() {
   const [outOfStockModal, setOutOfStockModal] = useState(false);
   const [outOfStockItems, setOutOfStockItems] = useState<OutItem[]>([]);
   const [buttonstate, setbuttonstate] = useState(true);
+  
   const {
     register,
     handleSubmit,
@@ -131,14 +132,19 @@ export function Checkout() {
     const outOfStock: OutItem[] = [];
     let temp = 0;
     let invalid=0;
-    let currentStoreId: number | null = null;
     let token=localStorage.getItem("token");
     if (token===null || token===undefined){
         navigate("/signin");
         setError("Unauthorized please signin again");
         return;
     }
-
+    let store=localStorage.getItem("storeId");
+    if (store===null || store===undefined || store===""){
+        navigate("/menu");
+        setError("Store unselected");
+        return;
+    }
+    let currentStoreId=store;
 
 const fetchItems = Object.keys(itemsbody).map(async (key) => {
   try {
@@ -173,12 +179,10 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
 
     const body = response.data;
     const itemStoreId = body.storeId;
-    if (currentStoreId === null) {
-      currentStoreId = itemStoreId;
-    }
-    else {
-      localStorage.removeItem("cart");
-      toast.error("Some items are from different store" , {id:"store-mismatch-error"})
+    if (currentStoreId !== itemStoreId) {
+      delete itemsbody[key];
+      localStorage.setItem("cart", JSON.stringify(itemsbody));
+      toast.error("Some items are from different store and are removed" , {id:"store-mismatch-error"})
     }
     temp1.id = id;
     temp1.price = body.amount;
@@ -258,10 +262,17 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
     temp.addressId=Number(temp.addressId);
     console.log(temp);
     try{
+      let store=localStorage.getItem("storeId");
+      if (store===null || store===undefined || store===""){
+        navigate("/menu");
+        setError("Store unselected");
+        return;
+    }
+    let currentStoreId=store;
     
     let response=await axios.post("http://localhost:3000/api/v1/user/checkout", {
         addressId:temp.addressId,
-        storeId:temp.storeId,
+        storeId:currentStoreId,
         description: temp.description,
         paymentMethod: temp.paymentMethod,
         amount: Math.round(
