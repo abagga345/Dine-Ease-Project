@@ -540,6 +540,7 @@ userRouter.post("/generateotp",async (req:Request,res:Response)=>{
     try{
         //extra otp computation is better than additional db call to check for verified 
         let otp=Math.floor(100000 + Math.random() * 900000).toString();
+        let hashedotp = await bcrypt.hash(otp,5);
         const creationDate = new Date();                       
         const expirationDate = new Date(
             creationDate.getTime() + 15 * 60_000     
@@ -549,13 +550,13 @@ userRouter.post("/generateotp",async (req:Request,res:Response)=>{
                 email:req.body.email
             },
             update:{
-                otp:otp,
+                otp:hashedotp,
                 creationDate:creationDate,
                 expirationDate:expirationDate
             },
             create:{
                 email:req.body.email,
-                otp:otp,
+                otp:hashedotp,
                 verified:false,
                 creationDate,
                 expirationDate
@@ -606,7 +607,7 @@ userRouter.put("/verifyotp",async (req:Request,res:Response)=>{
             res.status(400).json({"message":"Otp Expired"});
             return;
         }
-        if (result.otp===inputotp || result.verified){
+        if (await bcrypt.compare(inputotp,result["otp"]) || result.verified){
             await prisma.otpStatus.update({
                 where:{
                     id:result.id

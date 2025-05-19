@@ -65,6 +65,7 @@ export function SignupCard() {
   }
 
   async function verifyOtpHandler(){
+    try {
     let result=await axios.put("http://localhost:3000/api/v1/user/verifyotp",{
       email:email,
       otp:value
@@ -77,6 +78,11 @@ export function SignupCard() {
       setLoading1(false);
       setOtpMsg("Invalid OTP")
     }
+  }
+  catch(error) {
+    setOtpMsg("Invalid OTP");
+    setLoading1(false);
+  }
   }
 
   const handleChange = (newValue: string) => {
