@@ -6,24 +6,26 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 interface storeInterface {
-  storeId: number;
+  storeId: string;
   storeStreet: string;
   state: string;
   pincode: string;
 }
 
 interface FormData {
-  storeId: number;
+  storeId: string;
 }
 
 export function Store() {
   const [Stores, setStores] = useState<storeInterface[]>([]);
   const [loading, setLoading] = useState(true);
+  
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<FormData>();
 
@@ -33,6 +35,11 @@ export function Store() {
         const response = await fetch("http://localhost:3000/api/v1/user/allstores");
         const data = await response.json();
         setStores(data["stores"]);
+        const validStoreIds = data["stores"].map((store:storeInterface) => store.storeId);
+        let store=localStorage.getItem("storeId");
+        if (store!==null && store!=="" && store!==undefined && validStoreIds.includes(store)){
+          setValue("storeId",store);
+        }
       } catch (error) {
         console.error("Failed to fetch Stores: ", error);
       } finally {
@@ -54,7 +61,7 @@ export function Store() {
       <AppAppBar />
       {loading ? (
         <div>
-          <div className="font-semibold text-2xl w-full text-center my-4">Menu</div>
+          <div className="font-semibold text-3xl w-full text-center my-4">Stores</div>
           <div className="bg-gray-50 px-10 pt-10 pb-20 mt-6 mb-20 text-white w-[80%] mx-auto rounded-xl border border-gray-100">
             <Loader />
           </div>

@@ -2,6 +2,7 @@ import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { FaAddressCard } from "react-icons/fa";
 import { ImProfile } from "react-icons/im";
 import { IoIosSettings } from "react-icons/io";
 import { MdAdd, MdAnalytics, MdBorderColor, MdDashboard, MdOutlineMenuBook, MdPendingActions, MdRateReview } from "react-icons/md";
@@ -101,6 +102,13 @@ export function DashboardHome(){
                 <br /> View and customize your entire menu.
               </li>
               </div>:""}
+              <hr className="mb-4" />
+              <li className="text-md mb-4">
+                <span className="font-semibold">
+                  <FaAddressCard className="inline" /> Address
+                </span>
+                <br /> Manage Saved Addresses
+              </li>
               <hr className="mb-4" />
               <li className="text-md mb-4">
                 <span className="font-semibold">
