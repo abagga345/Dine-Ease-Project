@@ -135,7 +135,7 @@ function AppAppBar() {
                                     </Typography>
                                 </MenuItem>
                                 <MenuItem
-                                    onClick={() => navigate("/menu")}
+                                    onClick={() => navigate("/store")}
                                     sx={{ py: '6px', px: '12px' }}
                                 >
                                     <Typography variant="body2" color="text.primary">

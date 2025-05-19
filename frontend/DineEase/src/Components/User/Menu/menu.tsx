@@ -3,6 +3,7 @@ import Loader from "../../common/Loader";
 import { FaShoppingCart } from "react-icons/fa";
 import AppAppBar from "../Home/AppAppBar";
 import Footer from "../Home/Footer";
+import { useNavigate } from "react-router-dom";
 
 interface MenuItem {
   id: number;
@@ -20,6 +21,7 @@ type Cart = {
 export const Menu = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const [expandedItems, setExpandedItems] = useState<{
     [key: number]: boolean;
   }>({});
@@ -28,7 +30,13 @@ export const Menu = () => {
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/v1/user/viewmenu?storeId=FlyHigher");
+        const store = localStorage.getItem("storeId");
+
+        if (store===null || store===undefined) {
+          navigate("/store");
+          return;
+        }
+        const res = await fetch(`http://localhost:3000/api/v1/user/viewmenu?storeId=${store}`);
         const data = await res.json();
         setMenuItems(data.items);
       } catch (error) {

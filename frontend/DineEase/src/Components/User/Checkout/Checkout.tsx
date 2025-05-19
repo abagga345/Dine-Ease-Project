@@ -7,9 +7,11 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import AppAppBar from "../Home/AppAppBar";
 import Footer from "../Home/Footer";
+import { MdBloodtype } from "react-icons/md";
 
 
 interface fields {
+  storeId: any;
 //   houseStreet: string;
 //   landmark: string;
 //   state: string;
@@ -39,6 +41,7 @@ interface Item {
   title: string;
   imageUrl: string;
   visibility: boolean;
+  storeId:string;
 }
 
 interface OutItem {
@@ -128,6 +131,7 @@ export function Checkout() {
     const outOfStock: OutItem[] = [];
     let temp = 0;
     let invalid=0;
+    let currentStoreId: number | null = null;
     let token=localStorage.getItem("token");
     if (token===null || token===undefined){
         navigate("/signin");
@@ -145,6 +149,7 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
       imageUrl: "",
       price: 0,
       visibility: true,
+      storeId:"",
     };
     const id = parseInt(key);
     const quantity = itemsbody[key];
@@ -167,13 +172,21 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
     }
 
     const body = response.data;
-
+    const itemStoreId = body.storeId;
+    if (currentStoreId === null) {
+      currentStoreId = itemStoreId;
+    }
+    else {
+      localStorage.removeItem("cart");
+      toast.error("Some items are from different store" , {id:"store-mismatch-error"})
+    }
     temp1.id = id;
     temp1.price = body.amount;
     temp1.imageUrl = body.imageUrl;
     temp1.quantity = quantity;
     temp1.title = body.title;
     temp1.visibility = body.visibility;
+    temp1.storeId=body.storeId;
 
     if (temp1.quantity <= 0) {
       delete itemsbody[key];
@@ -248,7 +261,7 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
     
     let response=await axios.post("http://localhost:3000/api/v1/user/checkout", {
         addressId:temp.addressId,
-        storeId:"FlyHigher", // change later
+        storeId:temp.storeId,
         description: temp.description,
         paymentMethod: temp.paymentMethod,
         amount: Math.round(
