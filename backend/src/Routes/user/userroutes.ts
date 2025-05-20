@@ -261,7 +261,7 @@ userRouter.post("/dropreview",authMiddlewareuser,async (req:CustomRequest,res:Re
     }
     let email:string=req.email as string;
     try{
-        await prisma.reviews.create({
+        let result = await prisma.reviews.create({
             data:{
                 "email":email,
                 "description":req.body.description,
@@ -269,7 +269,7 @@ userRouter.post("/dropreview",authMiddlewareuser,async (req:CustomRequest,res:Re
                 "itemId":req.body.itemId
             }
         });
-        res.json({"message":"Review added successfully"});
+        res.json({"message":"Review added successfully","review":result});
     }catch(err){
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }

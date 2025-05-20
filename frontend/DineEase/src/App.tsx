@@ -24,6 +24,7 @@ import { MyOrders } from "./Components/Admin/Dashboard/MyOrders"
 import { DashboardHome } from "./Components/Admin/Dashboard/DashboardHome"
 import { Store } from "./Components/User/Store/store"
 import { Addresses } from "./Components/Admin/Dashboard/Addresses"
+import {Review} from "./Components/User/Review/review"
 function App() {
   return (
     <div>
@@ -38,6 +39,7 @@ function App() {
           <Route path="/menu" element={<Menu></Menu>}></Route>
           <Route path="/checkout" element={<Checkout></Checkout>}></Route>
           <Route path="/store" element={<Store></Store>}></Route>
+          <Route path="/review" element={<Review></Review>}></Route>
           <Route path="/dashboard" element={<Dashboard></Dashboard>}>
               <Route path="" element={<DashboardHome></DashboardHome>}></Route>
               <Route path="allorders" element={<AllOrders></AllOrders>}></Route>
