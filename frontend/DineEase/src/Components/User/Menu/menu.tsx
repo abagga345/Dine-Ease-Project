@@ -64,13 +64,6 @@ export const Menu = () => {
     }
   };
 
-  const toggleExpand = (id: number) => {
-    setExpandedItems((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-
   const getShortDescription = (description: string) => {
     const wordLimit = 10;
     const words = description.split(" ");
@@ -178,32 +171,26 @@ export const Menu = () => {
                 />
                 <div className="font-bold text-xl my-2">{item.title}</div>
                 <div className="text-gray-700 mb-4 h-10">
-                  {expandedItems[item.id] ? (
-                    <>
-                      {item.description}
-                      <button
-                        onClick={() => toggleExpand(item.id)}
-                        className="text-blue-500 ml-2"
-                      >
-                        Show Less
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      {getShortDescription(item.description)}
-                      {item.description.split(" ").length > 10 && (
+                  {getShortDescription(item.description)}
+                  {/* {item.description.split(" ").length > 10 && (
                         <button
-                          onClick={() => toggleExpand(item.id)}
+                          onClick={() => navigate(`/menuitem/${item.id}`)}
                           className="text-blue-500 ml-2"
                         >
                           Read More
                         </button>
-                      )}
-                    </>
-                  )}
-                </div>
+                  )} */}
+                  </div>
                 <div className="flex flex-row justify-between items-center w-full text-lg mb-4">
                   <div className="text-gray-500">₹{item.amount}</div>
+                  
+                  <button
+                  onClick={() => navigate(`/menuitem/${item.id}`)}
+                  className="py-2 px-4 bg-[#0092FF] hover:bg-[#0073CC] text-white rounded-md flex items-center hover:shadow-md"
+                  >
+                  View Item
+                  </button>
+
                   {item.visibility ? (
                     <div className="flex flex-row items-center justify-center">
                       {renderCartControls(item)}

@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { AiFillEdit } from "react-icons/ai";
+import { ImBin } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 
 interface Field {
@@ -23,15 +24,45 @@ export function Addresses() {
   const [error, setError] = useState("");
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [open, setOpen] = useState(0);
+  const navigate = useNavigate();
   const [newVal, setNewVal] = useState<Field>({
     houseStreet: "",
     state: "",
     pincode: "",
   });
 
+  async function deletehandler(addressId:number){
+    let token = localStorage.getItem("token");
+    let id = toast.loading("Loading...");
+    if (token === null) {
+      setError("Unauthorized , Please signin again");
+      toast.error(`Error: Unauthorized , Please Signin again`, { id });
+      navigate("/signin");
+      return;
+    }
+    try{
+      const result = await axios.delete(
+        `http://localhost:3000/api/v1/user/deleteaddress?id=${addressId}`,
+        {
+          headers: {
+            Authorization: token,           
+          },
+        }
+      );
+      setAddresses(addresses.filter((item) => item.id !== addressId));
+      toast.success("Address updated successfully!", { id });
+      
+    }catch(error:any){
+      setError(error.message);
+      
+      toast.error(`Error: ${error.message}`, { id });
+    }
+  }
+
   async function submithandler(){
     let token = localStorage.getItem("token");
     let id = toast.loading("Loading...");
+    
     if (token === null) {
       setError("Unauthorized , Please signin again");
       toast.error(`Error: Unauthorized , Please Signin again`, { id });
@@ -58,13 +89,15 @@ export function Addresses() {
       }) )
       setOpen(0);
       toast.success("Address updated successfully!", { id });
+      
     }catch(error:any){
       setError(error.message);
       toast.error(`Error: ${error.message}`, { id });
+      
     }
   }
 
-  const navigate = useNavigate();
+  
 
   useEffect(() => {
     let token = localStorage.getItem("token");
@@ -127,7 +160,7 @@ export function Addresses() {
                         <input
                           type="text"
                           disabled={item.id !== open}
-                          className="mt-2 font-semibold p-1 rounded-lg border border-gray-300"
+                          className="mt-2 font-semibold p-1 rounded-lg border border-gray-300 focus:border-[#33A8FF] focus:ring-[#33A8FF]"
                           value={item.id !== open ? item.houseStreet : newVal.houseStreet}
                           onChange={(e) => {
                             setNewVal((cur) => ({
@@ -140,7 +173,7 @@ export function Addresses() {
                           <input
                             type="text"
                             disabled={item.id !== open}
-                            className="text-slate-500 text-sm leading-6 p-1 rounded-lg border border-gray-300"
+                            className="text-slate-500 text-sm leading-6 p-1 rounded-lg border border-gray-300 focus:border-[#33A8FF] focus:ring-[#33A8FF]"
                             value={item.id !== open ? item.state : newVal.state}
                             onChange={(e) => {
                               setNewVal((cur) => ({
@@ -152,7 +185,7 @@ export function Addresses() {
                           <input
                             type="text"
                             disabled={item.id !== open}
-                            className="text-slate-500 text-sm leading-6 p-1 rounded-lg border border-gray-300"
+                            className="text-slate-500 text-sm leading-6 p-1 rounded-lg border border-gray-300 focus:border-[#33A8FF] focus:ring-[#33A8FF]"
                             value={item.id !== open ? item.pincode : newVal.pincode}
                             onChange={(e) => {
                               setNewVal((cur) => ({
@@ -164,6 +197,7 @@ export function Addresses() {
                         </div>
                       </div>
                       {open !== item.id ? (
+                        <div className="flex gap-6">
                         <button
                           onClick={() => {
                             setOpen(item.id);
@@ -179,6 +213,17 @@ export function Addresses() {
                             Edit
                           </div>
                         </button>
+                        <button
+                          onClick={() => {
+                            deletehandler(item.id);
+                          }}
+                        >
+                          <div className="flex flex-row items-center gap-2">
+                            <ImBin />
+                            
+                          </div>
+                        </button>
+                        </div>
                       ) : (
                         <div className="flex gap-3">
                           <button

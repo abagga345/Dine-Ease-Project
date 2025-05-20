@@ -6,7 +6,8 @@ import './App.css'
 import {UserSignin} from "./Components/User/SignIn/UserSignin"
 import {UserSignup} from "./Components/User/SignUp/UserSignup"
 import {UserHome} from "./Components/User/Home/UserHome"
-import { ErrorPage } from "./Components/common/errorpage"
+import { ErrorPage500 } from "./Components/common/errorpage500"
+import { ErrorPage404 } from "./Components/common/errorpage404"
 import { Dashboard } from "./Components/Admin/Dashboard/Dashboard"
 import { OtpHandler } from "./Components/User/SignIn/OtpInput"
 
@@ -24,7 +25,7 @@ import { MyOrders } from "./Components/Admin/Dashboard/MyOrders"
 import { DashboardHome } from "./Components/Admin/Dashboard/DashboardHome"
 import { Store } from "./Components/User/Store/store"
 import { Addresses } from "./Components/Admin/Dashboard/Addresses"
-import {Review} from "./Components/User/Review/review"
+import {MenuItem} from "./Components/User/MenuItem/MenuItem"
 function App() {
   return (
     <div>
@@ -39,7 +40,7 @@ function App() {
           <Route path="/menu" element={<Menu></Menu>}></Route>
           <Route path="/checkout" element={<Checkout></Checkout>}></Route>
           <Route path="/store" element={<Store></Store>}></Route>
-          <Route path="/review" element={<Review></Review>}></Route>
+          <Route path="/menuitem/:itemId" element={<MenuItem></MenuItem>}></Route>
           <Route path="/dashboard" element={<Dashboard></Dashboard>}>
               <Route path="" element={<DashboardHome></DashboardHome>}></Route>
               <Route path="allorders" element={<AllOrders></AllOrders>}></Route>
@@ -52,7 +53,8 @@ function App() {
               <Route path="myOrders" element={<MyOrders></MyOrders>}></Route>
               <Route path="addresses" element={<Addresses></Addresses>}></Route>
           </Route>
-          <Route path="/error" element={<ErrorPage link="/"></ErrorPage>}></Route>
+          <Route path="/error" element={<ErrorPage500 link="/"></ErrorPage500>}></Route>
+          <Route path="*" element={<ErrorPage404 link="/"></ErrorPage404>}></Route>
         </Routes>
       </BrowserRouter>
      

@@ -1,15 +1,17 @@
 import React from "react"
 import { useNavigate } from "react-router-dom";
 import Footer from "../User/Home/Footer";
+import AppAppBar from "../User/Home/AppAppBar";
 
 interface InputProps{
     link:string;
 }
 
-export function ErrorPage({link}:InputProps) {
+export function ErrorPage500({link}:InputProps) {
     const navigate=useNavigate();
     return (
-      <>
+      <div>
+        <AppAppBar></AppAppBar>
         <main className="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
           <div className="text-center">
             <p className="text-base font-semibold text-indigo-600">500</p>
@@ -32,6 +34,6 @@ export function ErrorPage({link}:InputProps) {
           </div>
           <Footer />
         </main>
-      </>
+      </div>
     )
   }

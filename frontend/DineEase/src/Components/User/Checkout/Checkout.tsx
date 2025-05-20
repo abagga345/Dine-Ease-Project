@@ -164,16 +164,13 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
 
     try {
       response = await axios.get(
-        `http://localhost:3000/api/v1/user/viewmenuitem?itemId=${id}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
+        `http://localhost:3000/api/v1/user/viewmenuitem?itemId=${id}`
       );
     } catch (error) {
-      toast.error("Signin to proceed", { id: "auth-failed-toast" });
-      navigate("/signin");
+      // toast.error("Signin to proceed", { id: "auth-failed-toast" });
+      // navigate("/signin");
+      toast.error("Something went wrong , Please try again later")
+      navigate("/");
       return;
     }
 

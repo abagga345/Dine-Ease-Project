@@ -227,7 +227,7 @@ userRouter.get("/viewmenu",async (req:CustomRequest,res:Response)=>{
 })
 
 //CHECKED
-userRouter.get("/viewreviews",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
+userRouter.get("/viewreviews",async (req:CustomRequest,res:Response)=>{
     let id:number=parseInt(req.query.itemId as string);
     try{
         let result1=await prisma.reviews.findMany({
@@ -267,6 +267,17 @@ userRouter.post("/dropreview",authMiddlewareuser,async (req:CustomRequest,res:Re
                 "description":req.body.description,
                 "rating":req.body.rating,
                 "itemId":req.body.itemId
+            },
+            select:{
+                id:true,
+                description:true,
+                user:{
+                    select:{
+                        firstName:true,
+                        lastName:true
+                    }
+                },
+                rating:true
             }
         });
         res.json({"message":"Review added successfully","review":result});
@@ -456,7 +467,7 @@ userRouter.delete("/deleteaddress",authMiddlewareuser,async (req:CustomRequest,r
 })
 
 //CHECKED
-userRouter.get("/viewmenuitem",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
+userRouter.get("/viewmenuitem",async (req:CustomRequest,res:Response)=>{
     let itemId:number=parseInt(req.query.itemId as string);
     try{
         let result=await prisma.menu.findFirst({
@@ -644,6 +655,7 @@ userRouter.get("/allstores",async (req:Request,res:Response)=>{
             "stores":result
         })
     }catch(err){
+        console.log(err);
         res.status(500).json({"message":"Internal Server Error"})
     }
 })
