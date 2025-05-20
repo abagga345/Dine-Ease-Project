@@ -714,7 +714,7 @@ function AddAddress({setAddresses,navigate,setError}){
                       onChange={(e)=>{
                         setHouseStreet(e.target.value);
                       }}
-                      className="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-green-500 focus:ring-green-500"
+                      className="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-[#33A8FF] focus:ring-[#33A8FF]"
                       placeholder="Street Address"
                     />
                     <div className="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
@@ -729,7 +729,7 @@ function AddAddress({setAddresses,navigate,setError}){
                      onChange={(e)=>{
                         setState(e.target.value);
                       }}
-                    className="w-full rounded-md border bg-white border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:z-10 focus:border-green-500 focus:ring-green-500"
+                    className="w-full rounded-md border bg-white border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:z-10 focus:border-[#33A8FF] focus:ring-[#33A8FF]"
                   >
                     <option selected>Delhi</option>
                     <option>Andhra Pradesh</option>
@@ -773,7 +773,7 @@ function AddAddress({setAddresses,navigate,setError}){
                     onChange={(e)=>{
                         setPincode(e.target.value);
                       }}
-                    className="flex-shrink-0 rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none sm:w-1/6 focus:z-10 focus:border-green-500 focus:ring-green-500"
+                    className="flex-shrink-0 rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none sm:w-1/6 focus:z-10 focus:border-[#33A8FF] focus:ring-[#33A8FF]"
                     placeholder="Pin Code"
                   />
                 </div>
@@ -784,38 +784,6 @@ function AddAddress({setAddresses,navigate,setError}){
                     </div>
                 }
 
-
-                {/* <label
-                  htmlFor="card-holder"
-                  className="mt-4 mb-2 block text-sm font-medium"
-                >
-                  Landmark
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    id="landmark"
-                    {...register("landmark", { required: true })}
-                    className="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-green-500 focus:ring-green-500"
-                    placeholder="Enter landmark"
-                  />
-                  <div className="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 text-gray-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z"
-                      />
-                    </svg>
-                  </div>
-                </div> */}
                 
                 
                 </div>
