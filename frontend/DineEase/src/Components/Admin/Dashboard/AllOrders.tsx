@@ -57,7 +57,7 @@ export const AllOrders = () => {
           if (token===null){
             setError("Unauthorized , Please signin again");
             toast.error(`Error: ${"Unauthorized , Please Signin again"}`, { id: toastId });
-            navigate("/admin/signin");
+            navigate("/signin");
             return;
           }
           const response = await fetch("http://localhost:3000/api/v1/admin/allorders",{
