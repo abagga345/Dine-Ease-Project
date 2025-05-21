@@ -130,13 +130,18 @@ userRouter.get("/vieworders",authMiddlewareuser,async (req:CustomRequest,res:Res
                         pincode:true
                     }
                 },
+                store: {
+                    select: {
+                        storeStreet: true,
+                        state: true,
+                        pincode: true
+                }
+    },
                 id:true,
                 email:true,
                 status:true,
                 creationDate:true,
                 description:true,
-                store:true
-
             }
         });
         res.json({"orders":result1});

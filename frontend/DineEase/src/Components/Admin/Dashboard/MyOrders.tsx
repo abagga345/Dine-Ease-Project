@@ -165,8 +165,8 @@ export const MyOrders = () => {
                 </div>
                 <div className="flex items-center">
                 <MapPin className="w-5 h-5 mr-2 text-[#008CFF]" />
-                {//  <span className="text-gray-600 w-full">{`${order.store.storeStreet}, ${order.store.state},  ${order.store.pincode}`}</span> 
-                }
+                <span className="text-gray-600 w-full">{`${order.store.storeStreet}, ${order.store.state},  ${order.store.pincode}`}</span> 
+                
                 </div>
                 {/* <div className="flex items-center">
                   <Wallet className="w-5 h-5 mr-2 text-green-600" />
