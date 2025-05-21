@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
   Clock,
@@ -6,8 +6,6 @@ import {
   Package,
   User,
   Info,
-  Loader2,
-  Wallet,
   MapPinHouse,
 } from "lucide-react";
 import Loader from "../../common/Loader";
@@ -54,13 +52,6 @@ export const MyOrders = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate=useNavigate();
-  const statusOptions = [
-    "Unconfirmed",
-    "Rejected",
-    "Processing",
-    "Dispatched",
-    "Delivered",
-  ];
 
   useEffect(() => {
     const fetchOrders = async () => {

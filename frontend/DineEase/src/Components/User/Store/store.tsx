@@ -42,6 +42,8 @@ export function Store() {
         }
       } catch (error) {
         console.error("Failed to fetch Stores: ", error);
+        navigate("/error");
+         return;
       } finally {
         setLoading(false);
       }

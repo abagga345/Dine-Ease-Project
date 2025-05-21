@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { MdDashboard } from "react-icons/md";
 import {
   MdBorderColor,
@@ -6,7 +6,6 @@ import {
   MdAnalytics,
   MdAdd,
   MdOutlineMenuBook,
-  MdRateReview,
 } from "react-icons/md";
 import toast from "react-hot-toast";
 import { IoHome } from "react-icons/io5";
@@ -124,7 +123,8 @@ export const SidePanel = () => {
             }
         }catch(err){
             toast.error("Please try again later",{id:"try-later-toast"});
-            navigate("/");
+            navigate("/error");
+            return;
         }
         setLoading(false);
         toast.dismiss(id);

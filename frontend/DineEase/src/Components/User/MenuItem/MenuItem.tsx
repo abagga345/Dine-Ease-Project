@@ -85,7 +85,8 @@ function Item(){
               } catch (error) {
                 console.error("Failed to fetch item", error);
                 toast.error("Failed to fetch menu item")
-                navigate("/");
+                navigate("/error");
+                return;
               } finally {
                 setLoading(false);
               }

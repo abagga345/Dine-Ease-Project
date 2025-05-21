@@ -23,9 +23,6 @@ export const Menu = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const [expandedItems, setExpandedItems] = useState<{
-    [key: number]: boolean;
-  }>({});
   const [cart, setCart] = useState<Cart>({});
 
   useEffect(() => {
@@ -43,7 +40,8 @@ export const Menu = () => {
       } catch (error) {
         console.error("Failed to fetch menu items:", error);
         toast.error("Failed to fetch menu items")
-        navigate("/");
+        navigate("/error");
+        return;
       } finally {
         setLoading(false);
       }

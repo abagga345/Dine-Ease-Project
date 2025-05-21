@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { FaAddressCard } from "react-icons/fa";
 import { ImProfile } from "react-icons/im";
 import { IoIosSettings } from "react-icons/io";
-import { MdAdd, MdAnalytics, MdBorderColor, MdDashboard, MdOutlineMenuBook, MdPendingActions, MdRateReview } from "react-icons/md";
+import { MdAdd, MdAnalytics, MdBorderColor, MdDashboard, MdOutlineMenuBook, MdPendingActions } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 export function DashboardHome(){
@@ -39,7 +39,8 @@ export function DashboardHome(){
                 }
             }catch(err){
                 toast.error("Please try again later",{id:"try-later-toast"});
-                navigate("/");
+                navigate("/error");
+                 return;
             }
             setLoading(false);
             toast.dismiss(id);

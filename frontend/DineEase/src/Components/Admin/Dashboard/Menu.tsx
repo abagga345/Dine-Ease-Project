@@ -50,6 +50,8 @@ export const MenuItems: React.FC = () => {
       } catch (err) {
         setError("An error occurred while fetching menu items");
         setLoading(false);
+        navigate("/error");
+        return;
       }
     };
     fetchMenuItems();

@@ -7,7 +7,6 @@ import Stack from '@mui/material/Stack';
 // import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import FastfoodIcon from '@mui/icons-material/Fastfood';
-import AppAppBar from './AppAppBar';
 
 
 export default function Hero({children}) {

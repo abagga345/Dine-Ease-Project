@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import {
   Loader2,
   Package,
   Mail,
-  CreditCard,
   AlertCircle,
   Home,
-  MapPin,
   Clock,
   X,
   ShoppingCart,
-  Wallet,
   MapPinHouse,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -104,6 +101,8 @@ export const AllOrders = () => {
         setOrderItems(data.items);
       } catch (error: any) {
         toast.error(`Error fetching order items: ${error.message}`);
+        navigate("/error");
+         return;
       } finally {
         setLoadingItems(false);
       }

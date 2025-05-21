@@ -1,13 +1,11 @@
 import axios from "axios";
 import { Banknote, Loader2 } from "lucide-react";
-import { Store } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import AppAppBar from "../Home/AppAppBar";
 import Footer from "../Home/Footer";
-import { MdBloodtype } from "react-icons/md";
 
 
 interface fields {
@@ -28,11 +26,6 @@ interface Address{
     pincode:string;
 }
 
-interface subformfields{
-    state:string;
-    houseStreet:string;
-    pincode:string;
-}
 
 interface Item {
   id: number;
@@ -170,7 +163,7 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
       // toast.error("Signin to proceed", { id: "auth-failed-toast" });
       // navigate("/signin");
       toast.error("Something went wrong , Please try again later")
-      navigate("/");
+      navigate("/error");
       return;
     }
 
@@ -232,6 +225,8 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
       }catch(err){
         console.log(err)
         setError("Internal server Error , Please try again later");
+        navigate("/error");
+        return;
       }
     });
   }, []);
@@ -305,6 +300,8 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
         //ORDER PLACED SUCCESSFULLY TOAST
     }catch(err){
         setError("Unable to place order");
+        navigate("/error");
+        return;
     }
      // setbuttonstate(true);
   }
@@ -679,6 +676,8 @@ function AddAddress({setAddresses,navigate,setError}){
         catch(err){
             console.log(err);
             setError("Internal Server Error");
+            navigate("/error");
+             return;
         }
 
     }

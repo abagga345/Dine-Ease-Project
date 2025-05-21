@@ -41,14 +41,6 @@ export function Addresses() {
       return;
     }
     try {
-      const result = await axios.delete(
-        `http://localhost:3000/api/v1/user/deleteaddress?id=${addressId}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
       setAddresses(addresses.filter((item) => item.id !== addressId));
       toast.success("Address updated successfully!", { id });
     } catch (error: any) {
@@ -353,6 +345,8 @@ function AddAddress({ setAddresses, navigate, setError }) {
     } catch (err) {
       console.log(err);
       setError("Internal Server Error");
+      navigate("/error");
+      return;
     }
   }
   if (!addressform) {

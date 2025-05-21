@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import FastfoodIcon from '@mui/icons-material/Fastfood';
 import axios from "axios";
-import { OtpHandler } from "../SignIn/OtpInput";
 import { CircleCheck, CircleX } from "lucide-react";
 import { MuiOtpInput } from "mui-one-time-password-input";
 import DineEaseImg from "../../../assets/DineEaseImg.png"

@@ -44,6 +44,8 @@ export function Review() {
     } catch (error) {
         toast.error("Couldn't fetch reviews");
         setError("Couldn't fetch reviews");
+        navigate("/error");
+        return;
       } finally {
         setLoading(false);
       }
@@ -104,6 +106,8 @@ export function Review() {
         console.log(error)
         toast.error("Failed to submit review");
         setBtnLoading(false);
+        navigate("/error");
+        return;
     }
   };
 
