@@ -134,7 +134,8 @@ userRouter.get("/vieworders",authMiddlewareuser,async (req:CustomRequest,res:Res
                 email:true,
                 status:true,
                 creationDate:true,
-                description:true
+                description:true,
+                store:true
 
             }
         });

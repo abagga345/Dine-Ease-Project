@@ -19,7 +19,8 @@ interface FormFields {
   lastName: string,
   contactNo: string,
   email: string,
-  password: string
+  password: string,
+  confirmpassword:string
 }
 
 
@@ -90,6 +91,11 @@ export function SignupCard() {
   }
 
   async function submithandler(data: FormFields) {
+
+    if (data.password!=data.confirmpassword) {
+      setError("Password not same as confirm password");
+      return;
+    }
     const result = await fetch("http://localhost:3000/api/v1/user/signup", {
       method: "POST",
       body: JSON.stringify({
@@ -354,6 +360,36 @@ export function SignupCard() {
                 />
               </div>
             </div>:<div></div>}
+
+
+             {(!Otpphase || verified) ?<div>
+              <div className="flex items-center justify-between">
+                <label htmlFor="confirmpassword" className="block text-sm font-medium leading-6 text-gray-900">
+                  Confirm password
+                </label>
+              </div>
+              <div className="mt-2">
+                <input {...register('confirmpassword', {
+                  minLength: {
+                    value: 5,
+                    message: "PASSWORD TOO  SHORT"
+                  },
+                  maxLength: {
+                    value: 30,
+                    message: "PASSWORD TOO LARGE"
+                  }
+                })}
+                  id="confirmpassword"
+                  name="confirmpassword"
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                  className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>:<div></div>}
+
+
             <div className="mt-2 ">
               {(errors.password) ? <div style={{ color: "#e53e3e" }} >{errors.password?.message}</div> : ""}
             </div>
