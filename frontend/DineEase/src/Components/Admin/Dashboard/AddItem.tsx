@@ -11,7 +11,7 @@ export const AddItem = () => {
   const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [buttonstate, setbuttonstate] = useState(true);
 
   const navigate=useNavigate();
