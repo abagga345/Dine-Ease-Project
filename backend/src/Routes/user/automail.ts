@@ -24,11 +24,11 @@ export const sendOrderConfirmationEmail = async (
 ) => {
 
   // console.log("Sending Mailjet email with variables:", {
-    order_id: orderId,
-    amount,
-    address,
-    order_date: orderDate,
-  });
+  //   order_id: orderId,
+  //   amount,
+  //   address,
+  //   order_date: orderDate,
+  // });
 
   try {
     const request = await mailjetClient

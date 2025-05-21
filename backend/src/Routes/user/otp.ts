@@ -19,9 +19,9 @@ export const sendOTP = async (
   otp: string,
 ) => {
 
-  // console.log("Sending Mailjet email with variables:", {
-    otp: otp,
- });
+//   console.log("Sending Mailjet email with variables:", {
+//     otp: otp,
+//  });
 
   try {
     const request = await mailjetClient
