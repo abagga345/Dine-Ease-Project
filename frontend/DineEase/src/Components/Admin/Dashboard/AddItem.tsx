@@ -61,7 +61,7 @@ export const AddItem = () => {
 
       const data = await response.json();
       const url = data.url;
-      console.log(url);
+      // console.log(url);
       setImageUrl(url);
       return url;
     } catch (error) {
@@ -106,7 +106,7 @@ export const AddItem = () => {
       if (!response.ok) {
         throw new Error("Failed to add menu item");
       }
-      console.log({ title, description, amount });
+      // console.log({ title, description, amount });
       setTitle("");
       setDescription("");
       setAmount("");

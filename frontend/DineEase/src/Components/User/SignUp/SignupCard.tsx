@@ -49,7 +49,7 @@ export function SignupCard() {
   }, [timer]);
 
   async function sendOtpHandler(){
-    console.log("request sent");
+    // console.log("request sent");
     // http://localhost:3000/api/v1/user/generateotp
     let result=await axios.post("http://localhost:3000/api/v1/user/generateotp",{
       email:email

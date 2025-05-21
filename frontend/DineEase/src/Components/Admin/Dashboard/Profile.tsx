@@ -36,7 +36,7 @@ export const Profile = () => {
       })
         .then(async (data) => {
           let body = await data.json();
-          console.log(body);
+          // console.log(body);
           toast.dismiss(toastId);
           toast.success("Profile loaded successfully!", { id: toastId });
           setGlobalUser({
@@ -50,7 +50,7 @@ export const Profile = () => {
         })
         .catch((err) => {
           toast.dismiss(toastId);
-          console.log(err);
+          // console.log(err);
           setError(err.message);
           toast.error(`Error: ${err.message}`, { id: toastId });
         })

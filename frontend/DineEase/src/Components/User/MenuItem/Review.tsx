@@ -109,7 +109,7 @@ export function Review() {
       toast.success("Review submitted!");
       setBtnLoading(false);
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         toast.error("Failed to submit review");
         setBtnLoading(false);
         navigate("/error");

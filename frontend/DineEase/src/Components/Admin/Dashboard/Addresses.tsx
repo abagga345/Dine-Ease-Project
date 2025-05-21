@@ -354,11 +354,11 @@ function AddAddress({ setAddresses, navigate, setError }:Props) {
           },
         }
       );
-      console.log(result);
+      // console.log(result);
       setAddresses((initial: Address[]) => [...initial, result.data.address]);
       setAddressForm(false);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       setError("Internal Server Error");
       navigate("/error");
       return;

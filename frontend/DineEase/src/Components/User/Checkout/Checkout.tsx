@@ -60,7 +60,7 @@ const OutOfStockModal = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
         <h2 className="text-xl font-bold mb-4">Out of Stock Items</h2>
-        <div className="bg-green-100 border-l-4 border-green-200 p-4 mb-4">
+        <div className="bg-[#EAF8FF] border-l-4 border-[#0092FF] p-4 mb-4">
           <p className="font-bold">Some items are out of stock</p>
           <p>
             The following items are no longer available and have been removed
@@ -74,7 +74,7 @@ const OutOfStockModal = ({
         </div>
         <button
           onClick={onClose}
-          className="mt-4 w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition duration-200"
+          className="mt-4 w-full  text-white py-2 px-4 rounded bg-[#0092FF] hover:bg-[#0073CC] transition duration-200"
         >
           Close
         </button>
@@ -226,7 +226,7 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
         setTax(Math.round(total * (parseInt(import.meta.env.VITE_TAX_RATE as string) / 100)));
         setLoading(false);
       }catch(err){
-        console.log(err)
+        // console.log(err)
         setError("Internal server Error , Please try again later");
         navigate("/error");
         return;
@@ -255,7 +255,7 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
     }
     const temp=data;
     temp.addressId=Number(temp.addressId);
-    console.log(temp);
+    // console.log(temp);
     try{
       let store=localStorage.getItem("storeId");
       if (store===null || store===undefined || store===""){
@@ -672,12 +672,12 @@ function AddAddress({setAddresses,navigate,setError}:Props){
                 Authorization:token
             }
         })
-        console.log(result);
+        // console.log(result);
         setAddresses((initial:Address[])=> [...initial,result.data.address]);
         setAddressForm(false);
         }
         catch(err){
-            console.log(err);
+            // console.log(err);
             setError("Internal Server Error");
             navigate("/error");
              return;

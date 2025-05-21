@@ -97,7 +97,7 @@ export const AllOrders = () => {
           throw new Error("Failed to fetch order items");
         }
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         setOrderItems(data.items);
       } catch (error: any) {
         toast.error(`Error fetching order items: ${error.message}`);

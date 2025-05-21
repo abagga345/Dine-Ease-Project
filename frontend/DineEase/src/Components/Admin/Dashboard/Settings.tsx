@@ -43,7 +43,7 @@ export const Setting = () => {
     })
       .then(async (data) => {
         let body = await data.json();
-        console.log(body);
+        // console.log(body);
         toast.dismiss(toastId);
         toast.success("Profile loaded successfully!", { id: toastId });
         setGlobalUser({
@@ -56,7 +56,7 @@ export const Setting = () => {
       })
       .catch((err) => {
         toast.dismiss(toastId);
-        console.log(err);
+        // console.log(err);
         setError(err.message);
         toast.error(`Error: ${err.message}`, { id: toastId });
       })
@@ -76,7 +76,7 @@ export const Setting = () => {
         navigate("/admin/signin");
         return;
     }
-    console.log(data);
+    // console.log(data);
     try {
       let response = await axios.put(
         "http://localhost:3000/api/v1/user/editprofile",

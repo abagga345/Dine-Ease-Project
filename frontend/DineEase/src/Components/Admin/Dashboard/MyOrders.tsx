@@ -77,7 +77,7 @@ export const MyOrders = () => {
           throw new Error("Failed to fetch orders");
         }
         const data = await response.json();
-        // console.log(data.orders);
+        // // console.log(data.orders);
         if (data.orders.length == 0) {
           toast.error("No Orders Placed Yet",{id:"no-order-toast"});
         } else {

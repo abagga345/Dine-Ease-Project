@@ -147,7 +147,7 @@ export const MenuItems: React.FC = () => {
       
 
       if (!deleteImageResponse.ok) {
-        console.log(deleteImageResponse)
+        // console.log(deleteImageResponse)
         console.warn("Failed to delete image from Cloudinary");
       }
       setMenuItems((prevItems) => prevItems.filter((item) => item.id !== id));
