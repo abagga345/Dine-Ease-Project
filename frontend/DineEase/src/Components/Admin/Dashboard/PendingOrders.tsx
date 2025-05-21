@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
   Clock,
-  MapPin,
   Package,
   User,
   Info,
-  Loader2,
-  Wallet,
   MapPinHouse,
 } from "lucide-react";
 import Loader from "../../common/Loader";
@@ -149,7 +146,7 @@ export const PendingOrders = () => {
         Pending Orders
       </h1>
       <div className="md:grid md:grid-cols-2 gap-8">
-        {orders.map((order, index) => (
+        {orders.map((order) => (
           <div
             key={order.id}
             className="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200 mb-10"

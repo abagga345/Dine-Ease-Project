@@ -1,4 +1,4 @@
-import * as React from 'react';
+
 
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
@@ -14,16 +14,23 @@ import FastfoodIcon from '@mui/icons-material/Fastfood';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import React from 'react';
 
-
-
+interface ModalInterface{
+    text1:string;
+    text2:string;
+    btn1Text:string;
+    btn2Text:string;
+    btn1Handler:()=>void;
+    btn2Handler: ()=>void;
+}
 
 
 function AppAppBar() {
     const navigate=useNavigate();
     const [open, setOpen] = React.useState(false);
     const [logged,setLogged]=useState(false);
-    const [confirmationModal, setConfirmationModal] = useState(null);
+    const [confirmationModal, setConfirmationModal] = useState<ModalInterface | null>(null);
 
     const handleLogout = async () => {
         const toastId = toast.loading("Loading...",{id:"load-toast"});
@@ -356,7 +363,7 @@ function AppAppBar() {
     );
 }
 
-const ConfirmationModal = ({ modalData }) => {
+const ConfirmationModal = ({ modalData }:any) => {
     const { text1, text2, btn1Text, btn2Text, btn1Handler, btn2Handler } =
       modalData;
   

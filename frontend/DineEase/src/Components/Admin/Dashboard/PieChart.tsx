@@ -1,7 +1,7 @@
 import { ApexOptions } from "apexcharts";
 import { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
-import Chart from 'react-apexcharts';
+
 
 interface ChartThreeState {
   series: number[];
@@ -158,7 +158,7 @@ export const ChartThree: React.FC = () => {
                 className="mr-2 block h-3 w-full max-w-3 rounded-full"
                 style={{
                   backgroundColor:
-                    options.colors[index % options.colors.length],
+                  options.colors![index % options.colors!.length],
                 }}
               ></span>
               <p className="flex w-full justify-between text-sm font-medium">

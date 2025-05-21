@@ -48,7 +48,7 @@ export function Addresses() {
       return;
     }
     try {
-      const result = await axios.delete(
+      await axios.delete(
         `http://localhost:3000/api/v1/user/deleteaddress?id=${addressId}`,
         {
           headers: {

@@ -19,7 +19,7 @@
     "apexcharts": "^4.5.0",
     "axios": "^1.7.2",
     "lucide-react": "^0.487.0",
-    "mui-one-time-password-input": "^5.0.0",
+    "mui-one-time-password-input": "^1.1.2",
     "react": "^18.3.1",
     "react-apexcharts": "^1.7.0",
     "react-dom": "^18.3.1",
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
-    "@types/react": "^18.3.3",
+    "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
