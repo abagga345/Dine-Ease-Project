@@ -58,19 +58,17 @@ function Item(){
     const {itemId}=useParams()
    
     useEffect(() => {
-        const store = localStorage.getItem("storeId");
-        if (store===null || store===undefined || store==="") {
-            navigate("/store");
-            return;
-        }
+        
         const fetchMenuItems = async () => {
             try {
+                const store = localStorage.getItem("storeId");
+                if (store===null || store===undefined || store==="") {
+                    navigate("/store");
+                    return;
+                }
                 //check whether that store has that menu item id !!!!
-
-                //if not navigate user
-                
-                
-                 
+                // if not navigate user
+                // not adding currently , let checkout itself validate and send error if user adds multi store items
                 const res = await fetch(`http://localhost:3000/api/v1/user/viewmenuitem?itemId=${itemId}`);
                 const data = await res.json();
                 setItem({
