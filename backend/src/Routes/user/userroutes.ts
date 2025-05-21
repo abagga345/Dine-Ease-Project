@@ -26,8 +26,8 @@ interface Item{
 userRouter.post("/signup",async (req:Request,res:Response,next:NextFunction)=>{
     let result=UserSignup.safeParse(req.body);
     if (result["success"]==false){
-        console.log(result["error"]);
-        console.log(req.body);
+        // console.log(result["error"]);
+        // console.log(req.body);
         res.status(400).json({"message":"INVALID INPUTS"});
         return;
     }
@@ -63,7 +63,7 @@ userRouter.post("/signup",async (req:Request,res:Response,next:NextFunction)=>{
         let token=jwt.sign({email:result1["email"]},JWT_SECRET);
         res.json({"message":"Successful sign up","token":"Bearer "+token});
     }catch(err){
-        console.log(err);
+        // console.log(err);
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -198,7 +198,7 @@ userRouter.get("/getaddresses",authMiddlewareuser,async (req:CustomRequest,res:R
         });
         res.json({"addresses":result1});
     }catch(err){
-        console.log(err);
+        // console.log(err);
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -312,7 +312,7 @@ userRouter.delete("/deletereview",authMiddlewareuser,async (req:CustomRequest,re
 
 //CHECKED ===> NORMAL , VISIBILITY , PRICE UDPATION
 userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
-    console.log(req.body);
+    // console.log(req.body);
     let result =checkout.safeParse(req.body);
     if (result["success"]===false){
         
@@ -329,16 +329,16 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
             }
             total+=(price["amount"])*req.body.items[i].quantity;
         }
-        //console.log(total);
+        //// console.log(total);
         const shipping = parseInt(process.env.SHIPPING_COST || "0");
         const codcharges = parseInt(process.env.COD || "0");
         const taxRate = parseInt(process.env.TAX_RATE || "0");
 
         total += shipping + (req.body.paymentMethod === "COD" ? codcharges : 0);
-        //console.log(total);
+        //// console.log(total);
         const tax = Math.round(total * (taxRate / 100));
         total+=tax;
-        //console.log(total)
+        //// console.log(total)
         if (total!==req.body.amount){
             res.status(400).json({"message":"Price updated,Please retry"});
             return;
@@ -426,7 +426,7 @@ userRouter.put("/editprofile",authMiddlewareuser,async (req:CustomRequest,res:Re
         });
         res.json({"message":"Profile updated successfully","profile":result1});
     }catch(err){
-        console.log(err);
+        // console.log(err);
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 
@@ -579,8 +579,8 @@ userRouter.post("/generateotp",async (req:Request,res:Response)=>{
                 expirationDate
             }
         })
-        console.log("email"+req.body.email);
-        console.log("otp"+otp);
+        // console.log("email"+req.body.email);
+        // console.log("otp"+otp);
         await sendOTP(req.body.email,otp);
         res.json({"message":"Otp Generated Successfully"});
     }catch(err){
@@ -661,7 +661,7 @@ userRouter.get("/allstores",async (req:Request,res:Response)=>{
             "stores":result
         })
     }catch(err){
-        console.log(err);
+        // console.log(err);
         res.status(500).json({"message":"Internal Server Error"})
     }
 })

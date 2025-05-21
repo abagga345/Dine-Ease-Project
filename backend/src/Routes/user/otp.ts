@@ -19,7 +19,7 @@ export const sendOTP = async (
   otp: string,
 ) => {
 
-  console.log("Sending Mailjet email with variables:", {
+  // console.log("Sending Mailjet email with variables:", {
     otp: otp,
  });
 

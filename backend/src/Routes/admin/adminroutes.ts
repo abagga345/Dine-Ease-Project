@@ -210,7 +210,7 @@ adminRouter.get("/unconfirmedorders",authMiddlewareadmin,async (req:CustomReques
         });
         res.json({"orders":result});
     }catch(err){
-        console.log(err);
+        // console.log(err);
         res.status(500).json({"message":"Internal Server Error"});
     }
 })
@@ -245,7 +245,7 @@ adminRouter.get("/allitems",authMiddlewareadmin,async (req:CustomRequest,res:Res
 adminRouter.post("/additem",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
     let result=additem.safeParse(req.body);
     if (result['success']===false){
-        console.log(result["error"]);
+        // console.log(result["error"]);
         res.status(400).json({"message":"Invalid Item Details"});
         return;
     }
@@ -529,7 +529,7 @@ adminRouter.post("/signup",async (req:Request,res:Response)=>{
         let token=jwt.sign({email:req.body.email,storeId:req.body.storeId},JWT_SECRET);
         res.json({"message":"Successful sign up","token":"Bearer "+token});
     }catch(err){
-        console.log(err);
+        // console.log(err);
         res.status(500).json({"message":"Internal Server Error"});
     }
 })

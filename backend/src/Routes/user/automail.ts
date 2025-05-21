@@ -23,7 +23,7 @@ export const sendOrderConfirmationEmail = async (
   orderDate : string
 ) => {
 
-  console.log("Sending Mailjet email with variables:", {
+  // console.log("Sending Mailjet email with variables:", {
     order_id: orderId,
     amount,
     address,
@@ -58,7 +58,7 @@ export const sendOrderConfirmationEmail = async (
         ]
       });
 
-    console.log("Email sent successfully:", request.body);
+    // console.log("Email sent successfully:", request.body);
   } catch (err: any) {
     console.error("Mailjet error:", err.statusCode, err.message);
   }
