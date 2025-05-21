@@ -125,7 +125,7 @@ export const SidePanel = () => {
             return;
         }
         try{
-            let result=await axios.get("https://dine-ease-project-backend.onrender.com/api/v1/user/verifyrole",{
+            let result=await axios.get("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/verifyrole",{
                 headers:{
                     Authorization:token
                 }

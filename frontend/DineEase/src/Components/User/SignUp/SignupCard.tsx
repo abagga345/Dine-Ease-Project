@@ -50,8 +50,8 @@ export function SignupCard() {
 
   async function sendOtpHandler(){
     // console.log("request sent");
-    // https://dine-ease-project-backend.onrender.com/api/v1/user/generateotp
-    let result=await axios.post("https://dine-ease-project-backend.onrender.com/api/v1/user/generateotp",{
+    // https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/generateotp
+    let result=await axios.post("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/generateotp",{
       email:email
     });
     if (result.status===200){
@@ -66,7 +66,7 @@ export function SignupCard() {
 
   async function verifyOtpHandler(){
     try {
-    let result=await axios.put("https://dine-ease-project-backend.onrender.com/api/v1/user/verifyotp",{
+    let result=await axios.put("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/verifyotp",{
       email:email,
       otp:value
     });
@@ -95,7 +95,7 @@ export function SignupCard() {
       setError("Password not same as confirm password");
       return;
     }
-    const result = await fetch("https://dine-ease-project-backend.onrender.com/api/v1/user/signup", {
+    const result = await fetch("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/signup", {
       method: "POST",
       body: JSON.stringify({
         firstName: data.firstName,

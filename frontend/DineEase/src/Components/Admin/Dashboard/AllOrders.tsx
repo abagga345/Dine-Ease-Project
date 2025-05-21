@@ -57,7 +57,7 @@ export const AllOrders = () => {
             navigate("/signin");
             return;
           }
-          const response = await fetch("https://dine-ease-project-backend.onrender.com/api/v1/admin/allorders",{
+          const response = await fetch("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/admin/allorders",{
             headers:{
                 Authorization:token
             }
@@ -88,7 +88,7 @@ export const AllOrders = () => {
             navigate("/admin/signin");
             return;
         }
-        const response = await fetch(`https://dine-ease-project-backend.onrender.com/api/v1/admin/vieworderitems?orderId=${orderId}`,{
+        const response = await fetch(`https://dine-ease-project-backend-bcnq.onrender.com/api/v1/admin/vieworderitems?orderId=${orderId}`,{
             headers:{
                 Authorization:token
             }

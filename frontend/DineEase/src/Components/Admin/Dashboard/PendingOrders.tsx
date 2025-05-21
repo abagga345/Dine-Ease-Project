@@ -61,7 +61,7 @@ export const PendingOrders = () => {
         }
 
 
-      const response = await fetch("https://dine-ease-project-backend.onrender.com/api/v1/admin/changestatus", {
+      const response = await fetch("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/admin/changestatus", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -103,7 +103,7 @@ export const PendingOrders = () => {
             navigate("/admin/signin")
             return;
         }
-        const response = await fetch("https://dine-ease-project-backend.onrender.com/api/v1/admin/unconfirmedorders",{
+        const response = await fetch("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/admin/unconfirmedorders",{
             headers:{
                 Authorization:token
             }

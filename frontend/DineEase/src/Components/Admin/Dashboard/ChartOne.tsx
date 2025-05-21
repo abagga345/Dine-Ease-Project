@@ -25,7 +25,7 @@ export const ChartOne = () => {
           navigate("/admin/signin");
           return;
         }
-        const response = await fetch("https://dine-ease-project-backend.onrender.com/api/v1/admin/chartdata",{
+        const response = await fetch("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/admin/chartdata",{
           headers:{
             Authorization:token
           }

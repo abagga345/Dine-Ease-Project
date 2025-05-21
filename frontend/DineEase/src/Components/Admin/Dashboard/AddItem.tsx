@@ -47,7 +47,7 @@ export const AddItem = () => {
       }
 
 
-      const response = await fetch("https://dine-ease-project-backend.onrender.com/api/v1/admin/imageupload", {
+      const response = await fetch("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/admin/imageupload", {
         method: "POST",
         body: formData,
         headers:{
@@ -89,7 +89,7 @@ export const AddItem = () => {
         return;
       }
 
-      const response = await fetch("https://dine-ease-project-backend.onrender.com/api/v1/admin/additem", {
+      const response = await fetch("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/admin/additem", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

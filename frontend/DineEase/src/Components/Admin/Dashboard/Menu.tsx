@@ -31,7 +31,7 @@ export const MenuItems: React.FC = () => {
         return;
       }
         
-        const response = await fetch("https://dine-ease-project-backend.onrender.com/api/v1/admin/allitems",{
+        const response = await fetch("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/admin/allitems",{
             headers:{
                 Authorization:token
             }
@@ -76,7 +76,7 @@ export const MenuItems: React.FC = () => {
       }
       
       
-      const response = await fetch(`https://dine-ease-project-backend.onrender.com/api/v1/admin/changevisibility`, {
+      const response = await fetch(`https://dine-ease-project-backend-bcnq.onrender.com/api/v1/admin/changevisibility`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -126,7 +126,7 @@ export const MenuItems: React.FC = () => {
         }
       
       
-    const deleteItemResponse = await fetch(`https://dine-ease-project-backend.onrender.com/api/v1/admin/deleteitem?id=${id}`, {
+    const deleteItemResponse = await fetch(`https://dine-ease-project-backend-bcnq.onrender.com/api/v1/admin/deleteitem?id=${id}`, {
       method: "PUT",
       headers: {
         Authorization: token,
@@ -136,7 +136,7 @@ export const MenuItems: React.FC = () => {
       if (!deleteItemResponse.ok) {
         throw new Error("Failed to delete item");
       }
-      const deleteImageResponse = await fetch("https://dine-ease-project-backend.onrender.com/api/v1/admin/deleteimage", {
+      const deleteImageResponse = await fetch("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/admin/deleteimage", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
