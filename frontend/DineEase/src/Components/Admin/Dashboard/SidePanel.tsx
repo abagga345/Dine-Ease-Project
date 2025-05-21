@@ -73,11 +73,26 @@ const navItems = [
   }
 ];
 
+type ConfirmationModalType = {
+  text1: string;
+  text2: string;
+  btn1Text: string;
+  btn2Text: string;
+  btn1Handler: () => void;
+  btn2Handler: () => void;
+};
+
+interface ConfirmationModalProps {
+  modalData: ConfirmationModalType;
+}
+
+
 export const SidePanel = () => {
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const [confirmationModal, setConfirmationModal] = useState(null);
+  const [confirmationModal, setConfirmationModal] = useState<ConfirmationModalType | null>(null);
+
   const navigate=useNavigate();
   
   const location=useLocation();
@@ -231,7 +246,7 @@ export const SidePanel = () => {
 };
 
 
-const ConfirmationModal = ({ modalData }) => {
+const ConfirmationModal = ({ modalData }:ConfirmationModalProps) => {
     const { text1, text2, btn1Text, btn2Text, btn1Handler, btn2Handler } =
       modalData;
   
