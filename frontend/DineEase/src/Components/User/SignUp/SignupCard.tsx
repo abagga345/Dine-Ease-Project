@@ -334,7 +334,7 @@ export function SignupCard() {
               {(Otpmsg!="" && !verified && Otpphase) ? <div className=" flex items-center justify-center" style={{ color: "#e53e3e" }} >{Otpmsg}</div> : ""}
             </div>
 
-           {(!Otpphase || verified) ?<div>
+           {(verified) ?<div>
               <div className="flex items-center justify-between">
                 <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
                   Password
@@ -362,7 +362,7 @@ export function SignupCard() {
             </div>:<div></div>}
 
 
-             {(!Otpphase || verified) ?<div>
+             {(verified) ?<div>
               <div className="flex items-center justify-between">
                 <label htmlFor="confirmpassword" className="block text-sm font-medium leading-6 text-gray-900">
                   Confirm password
