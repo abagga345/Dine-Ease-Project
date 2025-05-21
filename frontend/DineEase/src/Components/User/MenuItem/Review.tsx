@@ -17,6 +17,12 @@ interface Review {
   };
 }
 
+interface RatingProps {
+  rating: number;
+  setRating: React.Dispatch<React.SetStateAction<number>>;
+}
+
+
 export function Review() {
   const [error,setError]=useState("");
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -251,8 +257,9 @@ export function Review() {
   );
 }
 
-function StarRatingInput({ rating, setRating }) {
-  const [hover, setHover] = useState(null);
+function StarRatingInput({ rating, setRating }:RatingProps) {
+  const [hover, setHover] = useState<number | null>(null);
+
 
   return (
     <div className="flex gap-1">

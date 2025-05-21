@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { AiFillEdit } from "react-icons/ai";
 import { ImBin } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
+import { NavigateOptions } from 'react-router-dom';
 
 interface Field {
   houseStreet: string;
@@ -17,6 +18,12 @@ interface Address {
   state: string;
   houseStreet: string;
   pincode: string;
+}
+
+interface Props {
+  setAddresses: React.Dispatch<React.SetStateAction<Address[]>>;
+  navigate: (to: string, options?: NavigateOptions) => void;
+  setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export function Addresses() {
@@ -312,7 +319,7 @@ export function Addresses() {
   );
 }
 
-function AddAddress({ setAddresses, navigate, setError }) {
+function AddAddress({ setAddresses, navigate, setError }:Props) {
   const [houseStreet, setHouseStreet] = useState("");
   const [state, setState] = useState("Delhi");
   const [pincode, setPincode] = useState("");

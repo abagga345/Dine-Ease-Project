@@ -6,14 +6,11 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import AppAppBar from "../Home/AppAppBar";
 import Footer from "../Home/Footer";
+import { NavigateOptions } from 'react-router-dom';
 
 
 interface fields {
   storeId: any;
-//   houseStreet: string;
-//   landmark: string;
-//   state: string;
-//   postalCode: string;
   addressId:number;
   paymentMethod: string;
   description: string;
@@ -24,6 +21,12 @@ interface Address{
     state:string;
     houseStreet:string;
     pincode:string;
+}
+
+interface Props {
+  setAddresses: React.Dispatch<React.SetStateAction<Address[]>>;
+  navigate: (to: string, options?: NavigateOptions) => void;
+  setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 
@@ -637,7 +640,7 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
 }
 
 
-function AddAddress({setAddresses,navigate,setError}){
+function AddAddress({setAddresses,navigate,setError}:Props){
     const [houseStreet,setHouseStreet]=useState("");
     const [state,setState]=useState("Delhi");
     const [pincode,setPincode]=useState("");
