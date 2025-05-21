@@ -36,7 +36,7 @@ export const Setting = () => {
         navigate("/admin/signin");
         return;
     }
-    fetch("http://localhost:3000/api/v1/user/viewprofile",{
+    fetch("https://dine-ease-project-backend.onrender.com/api/v1/user/viewprofile",{
         headers:{
             Authorization:token
         }
@@ -79,7 +79,7 @@ export const Setting = () => {
     // console.log(data);
     try {
        await axios.put(
-        "http://localhost:3000/api/v1/user/editprofile",
+        "https://dine-ease-project-backend.onrender.com/api/v1/user/editprofile",
         {
           firstName: data.firstName,
           lastName: data.lastName,

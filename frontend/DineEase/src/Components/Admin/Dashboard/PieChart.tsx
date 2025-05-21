@@ -15,7 +15,7 @@ export const getOrderCount = async () => {
       throw new Error("Unauthorized please signin again");
     }
 
-    const response = await fetch("http://localhost:3000/api/v1/admin/ordercounts",{
+    const response = await fetch("https://dine-ease-project-backend.onrender.com/api/v1/admin/ordercounts",{
       headers:{
         Authorization:token
       }

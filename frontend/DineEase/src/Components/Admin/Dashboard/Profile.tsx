@@ -29,7 +29,7 @@ export const Profile = () => {
         return;
         
       }
-      fetch("http://localhost:3000/api/v1/user/viewprofile",{
+      fetch("https://dine-ease-project-backend.onrender.com/api/v1/user/viewprofile",{
         headers:{
             Authorization:token
         }

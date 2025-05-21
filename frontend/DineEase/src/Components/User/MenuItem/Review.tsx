@@ -43,7 +43,7 @@ export function Review() {
           setReviewForm(true);
         }
         let response = await axios.get(
-        `http://localhost:3000/api/v1/user/viewreviews?itemId=${itemId}`,
+        `https://dine-ease-project-backend.onrender.com/api/v1/user/viewreviews?itemId=${itemId}`,
         
        );
       setReviews(response.data.reviews);
@@ -82,7 +82,7 @@ export function Review() {
     }
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/v1/user/dropreview",
+        "https://dine-ease-project-backend.onrender.com/api/v1/user/dropreview",
         {
           description,
           rating,

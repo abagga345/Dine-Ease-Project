@@ -49,7 +49,7 @@ export function Addresses() {
     }
     try {
       await axios.delete(
-        `http://localhost:3000/api/v1/user/deleteaddress?id=${addressId}`,
+        `https://dine-ease-project-backend.onrender.com/api/v1/user/deleteaddress?id=${addressId}`,
         {
           headers: {
             Authorization: token,
@@ -77,7 +77,7 @@ export function Addresses() {
     }
     try {
       const result = await axios.put(
-        `http://localhost:3000/api/v1/user/editaddress?id=${open}`,
+        `https://dine-ease-project-backend.onrender.com/api/v1/user/editaddress?id=${open}`,
         newVal,
         {
           headers: {
@@ -116,7 +116,7 @@ export function Addresses() {
     async function fetchaddress() {
       try {
         let result = await axios.get(
-          "http://localhost:3000/api/v1/user/getaddresses",
+          "https://dine-ease-project-backend.onrender.com/api/v1/user/getaddresses",
           {
             headers: {
               Authorization: token,
@@ -342,7 +342,7 @@ function AddAddress({ setAddresses, navigate, setError }:Props) {
     }
     try {
       let result = await axios.post(
-        "http://localhost:3000/api/v1/user/addaddress",
+        "https://dine-ease-project-backend.onrender.com/api/v1/user/addaddress",
         {
           houseStreet: houseStreet,
           state: state,
