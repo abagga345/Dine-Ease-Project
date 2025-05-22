@@ -35,7 +35,7 @@ export const Menu = () => {
       try {
         const store = localStorage.getItem("storeId");
         const res = await fetch(
-          `http://localhost:3000/api/v1/user/viewmenu?storeId=${store}`
+          `https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/viewmenu?storeId=${store}`
         );
         const data = await res.json();
         setMenuItems(data.items);
