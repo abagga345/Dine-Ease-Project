@@ -188,7 +188,7 @@ userRouter.get("/getaddresses",authMiddlewareuser,async (req:CustomRequest,res:R
         let result1=await prisma.address.findMany({
             where:{
                 email:email,
-                availabilty:true
+                availability:true
             },
             select:{
                 id:true,
@@ -365,7 +365,7 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
         let address=await prisma.address.findFirst({
             where:{
                 id:result1.addressId,
-                availabilty:true
+                availability:true
             }
         })
         if ( address===null ) throw new Error();
@@ -448,7 +448,7 @@ userRouter.put("/editaddress",authMiddlewareuser,async (req:CustomRequest,res:Re
             where:{
                 id:add_id,
                 email:email,
-                availabilty:true
+                availability:true
             },
             data:req.body
         });
