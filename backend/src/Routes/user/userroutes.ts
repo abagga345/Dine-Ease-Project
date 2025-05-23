@@ -469,7 +469,7 @@ userRouter.delete("/deleteaddress",authMiddlewareuser,async (req:CustomRequest,r
                 id:id
             },
             data : {
-                availabilty:false
+                availability:false
             }
         });
         res.json({"message":"Address removed successfully"});
