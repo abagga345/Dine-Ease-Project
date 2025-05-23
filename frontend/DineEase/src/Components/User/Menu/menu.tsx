@@ -140,74 +140,78 @@ export const Menu = () => {
   };
 
   return (
-    <>
-      <AppAppBar></AppAppBar>
-      {loading ? (
-        <div>
-          <div className="font-semibold text-2xl w-full text-center my-4">
-            Menu
-          </div>
-          <div className="bg-gray-50 px-10 pt-10 pb-20 mt-6 mb-20 text-white w-[80%] mx-auto rounded-xl border border-gray-100">
-            <Loader />
-          </div>
-        </div>
-      ) : (
-        <div>
-          <div className="font-semibold text-3xl w-full text-center my-4">
-            Menu
-          </div>
-          <div className="bg-gray-50 px-10 pt-10 pb-20 mt-6 mb-20 text-white w-[80%] mx-auto rounded-xl border border-gray-100">
-            {menuItems.length === 0 ? (
-              <div className="text-center text-black font-semibold text-lg">
-                No menu items available. Check Back Later...
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {menuItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="bg-white px-6 py-4 rounded-lg shadow-sm border border-gray-200 flex flex-col hover:shadow-lg text-black h-auto"
-                  >
-                    <img
-                      src={item.imageUrl}
-                      alt={item.title}
-                      className="w-full h-64 object-cover rounded-md mb-4"
-                    />
-                    <div className="font-bold text-xl my-2">{item.title}</div>
-                    <div className="text-gray-700 mb-4 h-10">
-                      {getShortDescription(item.description)}
-                    </div>
-                    <div className="flex flex-col items-center w-full text-lg mb-4 gap-2">
-                      <div className="flex flex-row justify-center items-center gap-6 w-full">
-                        <div className="text-gray-500 font-semibold">
-                          ₹{item.amount}
-                        </div>
+  <>
+    <AppAppBar />
 
-                        {item.visibility ? (
-                          <div className="flex flex-row items-center justify-center gap-2">
-                            {renderCartControls(item)}
-                          </div>
-                        ) : (
-                          <div className="text-red-500 font-semibold text-sm">
-                            Out of Stock
-                          </div>
-                        )}
-                      </div>
-                      <button
-                        onClick={() => navigate(`/menuitem/${item.id}`)}
-                        className="py-2 px-4 bg-[#0092FF] hover:bg-[#0073CC] text-white rounded-md hover:shadow-md w-full text-center"
-                      >
-                        View Item
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+    {loading ? (
+      <div>
+        <div className="font-semibold text-2xl w-full text-center my-4">
+          Menu
         </div>
-      )}
-      ;<Footer></Footer>
-    </>
-  );
+        <div className="bg-gray-50 px-10 pt-10 pb-20 mt-6 mb-20 text-white w-[80%] mx-auto rounded-xl border border-gray-100">
+          <Loader />
+        </div>
+      </div>
+    ) : (
+      <div>
+        <div className="font-semibold text-3xl w-full text-center my-4">
+          Menu
+        </div>
+
+        <div className="bg-gray-50 px-4 md:px-10 pt-10 pb-20 mt-10 mb-20 text-white w-full mx-auto rounded-xl border border-gray-100">
+          {menuItems.length === 0 ? (
+            <div className="text-center text-black font-semibold text-lg">
+              No menu items available. Check Back Later...
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {menuItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-white px-6 py-4 rounded-lg shadow-sm border border-gray-200 flex flex-col hover:shadow-lg text-black"
+                >
+                  <img
+                    src={item.imageUrl}
+                    alt={item.title}
+                    className="w-full h-64 object-cover rounded-md mb-4"
+                  />
+                  <div className="font-bold text-xl my-2">{item.title}</div>
+                  <div className="text-gray-700 mb-4 h-10">
+                    {getShortDescription(item.description)}
+                  </div>
+                  <div className="flex flex-col items-center w-full text-lg mb-4 gap-2">
+                    <div className="flex flex-row justify-center items-center gap-6 w-full">
+                      <div className="text-gray-500 font-semibold">
+                        ₹{item.amount}
+                      </div>
+
+                      {item.visibility ? (
+                        <div className="flex flex-row items-center justify-center gap-2">
+                          {renderCartControls(item)}
+                        </div>
+                      ) : (
+                        <div className="text-red-500 font-semibold text-sm">
+                          Out of Stock
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => navigate(`/menuitem/${item.id}`)}
+                      className="py-2 px-4 bg-[#0092FF] hover:bg-[#0073CC] text-white rounded-md hover:shadow-md w-full text-center"
+                    >
+                      View Item
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+
+    <Footer />
+  </>
+);
+
 };
