@@ -47,6 +47,7 @@ model Address {
   pincode     String
   user        Users   @relation(fields: [email], references: [email])
   orders      Orders[]
+  availability  Boolean @default(true)
 }
 
 enum status {
@@ -68,7 +69,7 @@ model Orders {
   user        Users     @relation(fields: [email], references: [email])
   storeId     String
   addressId   Int 
-  address     Address @relation(fields:[addressId],references: [id],onDelete: SetNull)
+  address     Address @relation(fields:[addressId],references: [id])
   store       Store @relation(fields: [storeId],references: [storeId])
   paymentMethod paymentMethods 
 }

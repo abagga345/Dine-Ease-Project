@@ -187,7 +187,8 @@ userRouter.get("/getaddresses",authMiddlewareuser,async (req:CustomRequest,res:R
         
         let result1=await prisma.address.findMany({
             where:{
-                email:email
+                email:email,
+                availability:true
             },
             select:{
                 id:true,
@@ -363,7 +364,8 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
         res.json({"message":"Order placed successfully","orderId":result1["id"]});
         let address=await prisma.address.findFirst({
             where:{
-                id:result1.addressId
+                id:result1.addressId,
+                availability:true
             }
         })
         if ( address===null ) throw new Error();
@@ -445,7 +447,8 @@ userRouter.put("/editaddress",authMiddlewareuser,async (req:CustomRequest,res:Re
         let result1=await prisma.address.update({
             where:{
                 id:add_id,
-                email:email
+                email:email,
+                availability:true
             },
             data:req.body
         });
@@ -460,10 +463,13 @@ userRouter.delete("/deleteaddress",authMiddlewareuser,async (req:CustomRequest,r
     let id:number=parseInt(req.query.id as string);
     let email:string=req.email as string;
     try{
-        await prisma.address.delete({
+        await prisma.address.update({
             where:{
                 email:email,
                 id:id
+            },
+            data : {
+                availabilty:false
             }
         });
         res.json({"message":"Address removed successfully"});
