@@ -171,9 +171,11 @@ adminRouter.get("/unconfirmedorders",authMiddlewareadmin,async (req:CustomReques
     let storeId:string=req.storeId as string;
     try{
         let result=await prisma.orders.findMany({
-            where:{
-                storeId:storeId,
-                status:'Unconfirmed'
+            where: {
+                storeId: storeId,
+                status: {
+                  in: ['Unconfirmed', 'Processing', 'Dispatched']
+                }
             },
             orderBy:{
                 creationDate:"desc"
