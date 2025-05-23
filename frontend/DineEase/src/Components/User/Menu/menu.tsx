@@ -180,7 +180,7 @@ export const Menu = () => {
                     {getShortDescription(item.description)}
                   </div>
                   <div className="flex flex-col items-center w-full text-lg mb-4 gap-2">
-                    <div className="flex flex-row justify-center items-center gap-6 w-full">
+                    <div className="flex flex-row justify-between items-center gap-6 w-full">
                       <div className="text-gray-500 font-semibold">
                         ₹{item.amount}
                       </div>
