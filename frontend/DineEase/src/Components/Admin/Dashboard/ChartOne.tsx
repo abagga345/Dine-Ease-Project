@@ -25,7 +25,8 @@ export const ChartOne = () => {
           navigate("/admin/signin");
           return;
         }
-        const response = await fetch("http://localhost:3000/api/v1/admin/chartdata",{
+        const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+        const response = await fetch(`${url}api/v1/admin/chartdata`,{
           headers:{
             Authorization:token
           }

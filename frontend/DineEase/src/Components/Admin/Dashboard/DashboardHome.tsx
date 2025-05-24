@@ -26,7 +26,8 @@ export function DashboardHome(){
                 return;
             }
             try{
-                let result=await axios.get("http://localhost:3000/api/v1/user/verifyrole",{
+              const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+                let result=await axios.get(`${url}api/v1/user/verifyrole`,{
                     headers:{
                         Authorization:token
                     }

@@ -57,7 +57,8 @@ export const AllOrders = () => {
             navigate("/signin");
             return;
           }
-          const response = await fetch("http://localhost:3000/api/v1/admin/allorders",{
+          const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+          const response = await fetch(`${url}api/v1/admin/allorders`,{
             headers:{
                 Authorization:token
             }
@@ -88,7 +89,8 @@ export const AllOrders = () => {
             navigate("/admin/signin");
             return;
         }
-        const response = await fetch(`http://localhost:3000/api/v1/admin/vieworderitems?orderId=${orderId}`,{
+        const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+        const response = await fetch(`${url}api/v1/admin/vieworderitems?orderId=${orderId}`,{
             headers:{
                 Authorization:token
             }

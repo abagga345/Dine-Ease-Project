@@ -30,8 +30,8 @@ export const MenuItems: React.FC = () => {
         navigate("/admin/signin");
         return;
       }
-        
-        const response = await fetch("http://localhost:3000/api/v1/admin/allitems",{
+      const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+        const response = await fetch(`${url}api/v1/admin/allitems`,{
             headers:{
                 Authorization:token
             }
@@ -74,9 +74,9 @@ export const MenuItems: React.FC = () => {
         navigate("/admin/signin");
         return;
       }
+      const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
       
-      
-      const response = await fetch(`http://localhost:3000/api/v1/admin/changevisibility`, {
+      const response = await fetch(`${url}api/v1/admin/changevisibility`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -125,8 +125,8 @@ export const MenuItems: React.FC = () => {
           return;
         }
       
-      
-    const deleteItemResponse = await fetch(`http://localhost:3000/api/v1/admin/deleteitem?id=${id}`, {
+        const url1= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+    const deleteItemResponse = await fetch(`${url1}api/v1/admin/deleteitem?id=${id}`, {
       method: "PUT",
       headers: {
         Authorization: token,
@@ -136,7 +136,8 @@ export const MenuItems: React.FC = () => {
       if (!deleteItemResponse.ok) {
         throw new Error("Failed to delete item");
       }
-      const deleteImageResponse = await fetch("http://localhost:3000/api/v1/admin/deleteimage", {
+      const url2= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+      const deleteImageResponse = await fetch(`${url2}api/v1/admin/deleteimage`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

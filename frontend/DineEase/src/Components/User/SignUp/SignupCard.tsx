@@ -49,9 +49,9 @@ export function SignupCard() {
   }, [timer]);
 
   async function sendOtpHandler(){
-    // console.log("request sent");
-    // http://localhost:3000/api/v1/user/generateotp
-    let result=await axios.post("http://localhost:3000/api/v1/user/generateotp",{
+    
+    const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+    let result=await axios.post(`${url}api/v1/user/generateotp`,{
       email:email
     });
     if (result.status===200){
@@ -66,7 +66,8 @@ export function SignupCard() {
 
   async function verifyOtpHandler(){
     try {
-    let result=await axios.put("http://localhost:3000/api/v1/user/verifyotp",{
+      const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+    let result=await axios.put(`${url}api/v1/user/verifyotp`,{
       email:email,
       otp:value
     });
@@ -95,7 +96,8 @@ export function SignupCard() {
       setError("Password not same as confirm password");
       return;
     }
-    const result = await fetch("http://localhost:3000/api/v1/user/signup", {
+    const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+    const result = await fetch(`${url}api/v1/user/signup`, {
       method: "POST",
       body: JSON.stringify({
         firstName: data.firstName,

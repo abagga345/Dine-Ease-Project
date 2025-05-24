@@ -42,8 +42,9 @@ export function Review() {
         if (token!==null && token!==undefined && token!=="") {
           setReviewForm(true);
         }
+        const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
         let response = await axios.get(
-        `http://localhost:3000/api/v1/user/viewreviews?itemId=${itemId}`,
+        `${url}api/v1/user/viewreviews?itemId=${itemId}`,
         
        );
       setReviews(response.data.reviews);
@@ -81,8 +82,9 @@ export function Review() {
       return;
     }
     try {
+      const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
       const response = await axios.post(
-        "http://localhost:3000/api/v1/user/dropreview",
+        `${url}api/v1/user/dropreview`,
         {
           description,
           rating,
