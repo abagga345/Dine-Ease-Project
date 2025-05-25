@@ -29,6 +29,8 @@ jobs:
           file: ./frontend/DineEase/Dockerfile
           push: true
           tags: baggaaayush05/dine-ease-frontend:v1
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Build and push Backend image
         uses: docker/build-push-action@v5
@@ -37,3 +39,5 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: baggaaayush05/dine-ease-backend:v1
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
