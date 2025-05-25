@@ -29,7 +29,7 @@ export const Profile = () => {
         return;
         
       }
-      const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://localhost:3000/';
       fetch(`${url}api/v1/user/viewprofile`,{
         headers:{
             Authorization:token

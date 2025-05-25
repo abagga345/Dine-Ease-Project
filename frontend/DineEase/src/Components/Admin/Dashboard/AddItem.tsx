@@ -46,7 +46,7 @@ export const AddItem = () => {
         return;
       }
 
-      const url1= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+      const url1= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://localhost:3000/';
       const response = await fetch(`${url1}api/v1/admin/imageupload`, {
         method: "POST",
         body: formData,
@@ -88,7 +88,7 @@ export const AddItem = () => {
         navigate("/admin/signin");
         return;
       }
-      const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://localhost:3000/';
       const response = await fetch(`${url}api/v1/admin/additem`, {
         method: "POST",
         headers: {

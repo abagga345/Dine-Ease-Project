@@ -34,7 +34,7 @@ export const Menu = () => {
     const fetchMenuItems = async () => {
       try {
         const store = localStorage.getItem("storeId");
-        const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://localhost:3000/';
         const res = await fetch(
           `${url}api/v1/user/viewmenu?storeId=${store}`
         );

@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  backend-dineease: 
+    image: baggaaayush05/dine-ease-backend:v1
+    container_name: backend_dineease
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
+
+  frontend-dineease:
+    image: baggaaayush05/dine-ease-frontend:v1
+    container_name: frontend_dineease
+    depends_on:
+      - backend-dineease
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_DOCKER_URL: http://backend_dineease:3000/
+    env_file:
+      - ./frontend/DineEase/.env

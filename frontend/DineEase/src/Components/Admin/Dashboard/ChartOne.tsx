@@ -25,7 +25,7 @@ export const ChartOne = () => {
           navigate("/admin/signin");
           return;
         }
-        const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://localhost:3000/';
         const response = await fetch(`${url}api/v1/admin/chartdata`,{
           headers:{
             Authorization:token

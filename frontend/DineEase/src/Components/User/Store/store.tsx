@@ -32,7 +32,7 @@ export function Store() {
   useEffect(() => {
     const Fetchstores = async () => {
       try {
-        const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://localhost:3000/';
         const response = await fetch(`${url}api/v1/user/allstores`);
         const data = await response.json();
         setStores(data["stores"]);
