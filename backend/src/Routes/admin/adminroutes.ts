@@ -60,34 +60,34 @@ interface CustomRequest extends Request{
 }
 
 //CHECKED
-adminRouter.post("/signin",async (req:Request,res:Response)=>{
-    let result=AdminSignin.safeParse(req.body);
-    if (result["success"]===false){
-        res.status(400).json({"message":"Invalid Inputs"});
-        return;
-    }
-    try{
-        let result1=await prisma.users.findFirst({
-            where:{
-                email:req.body.email,
-                role:'Admin'
-            }
-        });
-        if (result1===null){
-            res.status(401).json({"message":"Invalid credentials"});
-            return;
-        }
-        if (!await bcrypt.compare(req.body.password,result1["password"])){
-            res.status(401).json({"message":"Unauthorised "});
-            return;
-        }
-        let token:string=jwt.sign({email:result1["email"],storeId:result1["storeId"]},JWT_SECRET);
-        res.json({"message":"Successful sign in","token":"Bearer "+token});
-    }
-    catch(err){
-        res.status(500).json({"message":"Internal Server Error"});
-    }
-})
+// adminRouter.post("/signin",async (req:Request,res:Response)=>{
+//     let result=AdminSignin.safeParse(req.body);
+//     if (result["success"]===false){
+//         res.status(400).json({"message":"Invalid Inputs"});
+//         return;
+//     }
+//     try{
+//         let result1=await prisma.users.findFirst({
+//             where:{
+//                 email:req.body.email,
+//                 role:'Admin'
+//             }
+//         });
+//         if (result1===null){
+//             res.status(401).json({"message":"Invalid credentials"});
+//             return;
+//         }
+//         if (!await bcrypt.compare(req.body.password,result1["password"])){
+//             res.status(401).json({"message":"Unauthorised "});
+//             return;
+//         }
+//         let token:string=jwt.sign({email:result1["email"],storeId:result1["storeId"]},JWT_SECRET);
+//         res.json({"message":"Successful sign in","token":"Bearer "+token});
+//     }
+//     catch(err){
+//         res.status(500).json({"message":"Internal Server Error"});
+//     }
+// })
 
 //CHECKED
 adminRouter.get("/allorders",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
@@ -499,42 +499,42 @@ adminRouter.get("/ordercounts",authMiddlewareadmin,async (req:CustomRequest,res:
 
 
 //CHECKED
-adminRouter.post("/signup",async (req:Request,res:Response)=>{
-    let result=AdminSignup.safeParse(req.body);
-    if (result["success"]==false){
-        res.status(400).json({"message":"Invalid Inputs"});
-        return;
-    }
-    try{
-        let result1=await prisma.store.findFirst({where:{storeId:req.body.storeId}});
-        if (result1===null){
-            res.status(400).json({"message":"Invalid Store"});
-            return;
-        }
-        let result2=await prisma.users.findFirst({where:{email:req.body.email}});
-        if (result2!==null){
-            res.status(400).json({"message":"User already exists"});
-            return;
-        }
-        let temp=await bcrypt.hash(req.body.password,5);
-        await prisma.users.create({
-            data:{
-                firstName:req.body.firstName,
-                lastName:req.body.lastName,
-                email:req.body.email,
-                password:temp,
-                storeId:req.body.storeId,
-                role:'Admin',
-                contactNo:req.body.contactNo
-            }
-        });
-        let token=jwt.sign({email:req.body.email,storeId:req.body.storeId},JWT_SECRET);
-        res.json({"message":"Successful sign up","token":"Bearer "+token});
-    }catch(err){
-        // console.log(err);
-        res.status(500).json({"message":"Internal Server Error"});
-    }
-})
+// adminRouter.post("/signup",async (req:Request,res:Response)=>{
+//     let result=AdminSignup.safeParse(req.body);
+//     if (result["success"]==false){
+//         res.status(400).json({"message":"Invalid Inputs"});
+//         return;
+//     }
+//     try{
+//         let result1=await prisma.store.findFirst({where:{storeId:req.body.storeId}});
+//         if (result1===null){
+//             res.status(400).json({"message":"Invalid Store"});
+//             return;
+//         }
+//         let result2=await prisma.users.findFirst({where:{email:req.body.email}});
+//         if (result2!==null){
+//             res.status(400).json({"message":"User already exists"});
+//             return;
+//         }
+//         let temp=await bcrypt.hash(req.body.password,5);
+//         await prisma.users.create({
+//             data:{
+//                 firstName:req.body.firstName,
+//                 lastName:req.body.lastName,
+//                 email:req.body.email,
+//                 password:temp,
+//                 storeId:req.body.storeId,
+//                 role:'Admin',
+//                 contactNo:req.body.contactNo
+//             }
+//         });
+//         let token=jwt.sign({email:req.body.email,storeId:req.body.storeId},JWT_SECRET);
+//         res.json({"message":"Successful sign up","token":"Bearer "+token});
+//     }catch(err){
+//         // console.log(err);
+//         res.status(500).json({"message":"Internal Server Error"});
+//     }
+// })
 
 //CHECKED
 adminRouter.get("/viewprofile",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
