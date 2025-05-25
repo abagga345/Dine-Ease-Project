@@ -46,8 +46,8 @@ export const AddItem = () => {
         return;
       }
 
-
-      const response = await fetch("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/admin/imageupload", {
+      const url1= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+      const response = await fetch(`${url1}api/v1/admin/imageupload`, {
         method: "POST",
         body: formData,
         headers:{
@@ -88,8 +88,8 @@ export const AddItem = () => {
         navigate("/admin/signin");
         return;
       }
-
-      const response = await fetch("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/admin/additem", {
+      const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+      const response = await fetch(`${url}api/v1/admin/additem`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

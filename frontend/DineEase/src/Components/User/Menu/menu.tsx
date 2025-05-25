@@ -34,8 +34,9 @@ export const Menu = () => {
     const fetchMenuItems = async () => {
       try {
         const store = localStorage.getItem("storeId");
+        const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
         const res = await fetch(
-          `https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/viewmenu?storeId=${store}`
+          `${url}api/v1/user/viewmenu?storeId=${store}`
         );
         const data = await res.json();
         setMenuItems(data.items);
@@ -139,7 +140,7 @@ export const Menu = () => {
     }
   };
 
- return (
+  return (
   <>
     <AppAppBar />
 
@@ -158,8 +159,7 @@ export const Menu = () => {
           Menu
         </div>
 
-        {/* Responsive Menu Grid */}
-        <div className="bg-gray-50 px-4 md:px-10 pt-10 pb-20 mt-6 mb-20 text-white w-full mx-auto rounded-xl border border-gray-100">
+        <div className="bg-gray-50 px-4 md:px-10 pt-10 pb-20 mt-10 mb-20 text-white w-full mx-auto rounded-xl border border-gray-100">
           {menuItems.length === 0 ? (
             <div className="text-center text-black font-semibold text-lg">
               No menu items available. Check Back Later...

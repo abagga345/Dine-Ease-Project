@@ -32,7 +32,8 @@ export function Store() {
   useEffect(() => {
     const Fetchstores = async () => {
       try {
-        const response = await fetch("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/allstores");
+        const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+        const response = await fetch(`${url}api/v1/user/allstores`);
         const data = await response.json();
         setStores(data["stores"]);
         const validStoreIds = data["stores"].map((store:storeInterface) => store.storeId);

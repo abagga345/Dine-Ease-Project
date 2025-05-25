@@ -47,8 +47,7 @@ model Address {
   pincode     String
   user        Users   @relation(fields: [email], references: [email])
   orders      Orders[]
-  availability Boolean @default(true)
-
+  availability  Boolean @default(true)
 }
 
 enum status {

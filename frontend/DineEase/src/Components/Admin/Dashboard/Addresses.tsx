@@ -48,8 +48,9 @@ export function Addresses() {
       return;
     }
     try {
+      const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
       await axios.delete(
-        `https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/deleteaddress?id=${addressId}`,
+        `${url}api/v1/user/deleteaddress?id=${addressId}`,
         {
           headers: {
             Authorization: token,
@@ -76,8 +77,9 @@ export function Addresses() {
       return;
     }
     try {
+      const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
       const result = await axios.put(
-        `https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/editaddress?id=${open}`,
+        `${url}api/v1/user/editaddress?id=${open}`,
         newVal,
         {
           headers: {
@@ -115,8 +117,9 @@ export function Addresses() {
 
     async function fetchaddress() {
       try {
+        const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
         let result = await axios.get(
-          "https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/getaddresses",
+          `${url}api/v1/user/getaddresses`,
           {
             headers: {
               Authorization: token,
@@ -341,8 +344,9 @@ function AddAddress({ setAddresses, navigate, setError }:Props) {
       navigate("/signin");
     }
     try {
+      const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
       let result = await axios.post(
-        "https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/addaddress",
+        `${url}api/v1/user/addaddress`,
         {
           houseStreet: houseStreet,
           state: state,

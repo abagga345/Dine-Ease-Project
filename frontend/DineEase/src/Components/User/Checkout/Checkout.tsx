@@ -159,8 +159,9 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
     let response;
 
     try {
+      const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
       response = await axios.get(
-        `https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/viewmenuitem?itemId=${id}`
+        `${url}api/v1/user/viewmenuitem?itemId=${id}`
       );
     } catch (error) {
       // toast.error("Signin to proceed", { id: "auth-failed-toast" });
@@ -214,7 +215,8 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
             setOutOfStockItems(outOfStock);
             setOutOfStockModal(true);
         }
-        const body=await axios.get("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/getaddresses",{
+        const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+        const body=await axios.get(`${url}api/v1/user/getaddresses`,{
             headers:{
                 Authorization:token
             }
@@ -264,8 +266,8 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
         return;
     }
     let currentStoreId=store;
-    
-    let response=await axios.post("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/checkout", {
+    const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+    let response=await axios.post(`${url}api/v1/user/checkout`, {
         addressId:temp.addressId,
         storeId:currentStoreId,
         description: temp.description,
@@ -663,7 +665,8 @@ function AddAddress({setAddresses,navigate,setError}:Props){
             navigate("/signin");
         }
         try{
-        let result=await axios.post("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/addaddress",{
+          const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+          let result=await axios.post(`${url}api/v1/user/addaddress`,{
             houseStreet:houseStreet,
             state:state,
             pincode:pincode

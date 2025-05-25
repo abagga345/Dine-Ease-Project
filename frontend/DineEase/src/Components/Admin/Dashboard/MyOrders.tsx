@@ -66,7 +66,8 @@ export const MyOrders = () => {
 
 
       try {
-        const response = await fetch("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/vieworders",{
+        const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+        const response = await fetch(`${url}api/v1/user/vieworders`,{
             headers:{
                 Authorization:token
             }

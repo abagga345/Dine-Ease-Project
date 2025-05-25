@@ -36,7 +36,8 @@ export const Setting = () => {
         navigate("/admin/signin");
         return;
     }
-    fetch("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/viewprofile",{
+    const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+    fetch(`${url}api/v1/user/viewprofile`,{
         headers:{
             Authorization:token
         }
@@ -78,8 +79,9 @@ export const Setting = () => {
     }
     // console.log(data);
     try {
+      const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
        await axios.put(
-        "https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/editprofile",
+        `${url}api/v1/user/editprofile`,
         {
           firstName: data.firstName,
           lastName: data.lastName,

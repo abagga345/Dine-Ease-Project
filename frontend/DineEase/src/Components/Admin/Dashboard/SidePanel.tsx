@@ -125,7 +125,8 @@ export const SidePanel = () => {
             return;
         }
         try{
-            let result=await axios.get("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/verifyrole",{
+          const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+            let result=await axios.get(`${url}api/v1/user/verifyrole`,{
                 headers:{
                     Authorization:token
                 }

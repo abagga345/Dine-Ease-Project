@@ -21,7 +21,8 @@ export function SigninCard(){
     const navigate=useNavigate();
 
     async function submithandler(data:FormFields){
-        let result=await fetch("https://dine-ease-project-backend-bcnq.onrender.com/api/v1/user/signin",{
+        const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+        let result=await fetch(`${url}api/v1/user/signin`,{
             method:"POST",
             body:JSON.stringify({
                 email:data.email,
