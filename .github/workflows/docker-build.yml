@@ -25,7 +25,7 @@ jobs:
       - name: Build and push Frontend image
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
+          context: ./frontend/DineEase
           file: ./frontend/DineEase/Dockerfile
           push: true
           tags: baggaaayush05/dine-ease-frontend:v1
