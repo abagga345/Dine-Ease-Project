@@ -21,7 +21,7 @@ export function SigninCard(){
     const navigate=useNavigate();
 
     async function submithandler(data:FormFields){
-        const url= import.meta.env.VITE_API_URL || 'http://localhost:3000/';
+        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://localhost:3000/';
         let result=await fetch(`${url}api/v1/user/signin`,{
             method:"POST",
             body:JSON.stringify({
