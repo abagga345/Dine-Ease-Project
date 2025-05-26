@@ -57,7 +57,7 @@ export const AllOrders = () => {
             navigate("/signin");
             return;
           }
-          const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://localhost:3000/';
+          const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
           const response = await fetch(`${url}api/v1/admin/allorders`,{
             headers:{
                 Authorization:token
@@ -89,7 +89,7 @@ export const AllOrders = () => {
             navigate("/admin/signin");
             return;
         }
-        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://localhost:3000/';
+        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
         const response = await fetch(`${url}api/v1/admin/vieworderitems?orderId=${orderId}`,{
             headers:{
                 Authorization:token

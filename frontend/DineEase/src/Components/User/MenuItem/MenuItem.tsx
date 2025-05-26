@@ -69,7 +69,7 @@ function Item(){
                 //check whether that store has that menu item id !!!!
                 // if not navigate user
                 // not adding currently , let checkout itself validate and send error if user adds multi store items
-                const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://localhost:3000/';
+                const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
                 const res = await fetch(`${url}api/v1/user/viewmenuitem?itemId=${itemId}`);
                 const data = await res.json();
                 setItem({
