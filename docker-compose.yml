@@ -17,9 +17,8 @@ services:
       - backend-dineease
     ports:
       - "5173:5173"
-    environment:
-      VITE_DOCKER_URL: http://backend_dineease:3000/
-    env_file:
-      - ./frontend/DineEase/.env
+    # vite adds env var in build time so no need to pass here 
+    # env_file:
+    #   - ./frontend/DineEase/.env
     # volumes: FOR BIND MOUNTING FOR HOT RELOADS DEV MODE
     #   - ./frontend/DineEase/src:/app/src:ro

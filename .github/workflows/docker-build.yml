@@ -52,21 +52,21 @@ jobs:
       - name: Verify Frontend image push
         run: docker pull baggaaayush05/dine-ease-frontend:v1
 
-  # Continuous-Deployment:
-  #   runs-on: ubuntu-latest
-  #   needs: Continuous-Integration
-  #   steps:
-  #     - name: Deploy to EC2
-  #       uses: appleboy/ssh-action@master
-  #       with:
-  #         host: ${{ secrets.SSH_HOST }}
-  #         username: ${{ secrets.SSH_USERNAME }}
-  #         key: ${{ secrets.SSH_KEY }}
-  #         script: |
-  #           sudo docker pull baggaaayush05/dine-ease-backend:v1
-  #           sudo docker stop web-app || true
-  #           sudo docker rm web-app || true
-  #           sudo docker run -d --name web-app -p 3000:3000 --env-file .envbd baggaaayush05/dine-ease-backend:v1
+  Continuous-Deployment:
+    runs-on: ubuntu-latest
+    needs: Continuous-Integration
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            sudo docker pull baggaaayush05/dine-ease-backend:v1
+            sudo docker pull baggaaayush05/dine-ease-frontend:v1
+            sudo docker compose down || true
+            sudo docker compose up 
 
       
       
