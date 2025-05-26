@@ -44,7 +44,7 @@
 
 ---
 
-## Installation
+## Installation without Docker
 
 ### Backend Setup
 
@@ -106,6 +106,35 @@
 4. Start the frontend in development mode:
    ```bash
    npm run dev
+   ```
+
+## Installation using Docker 
+
+1. Create a `.env` file in the `backend` folder with the following environment variables:
+   ```
+   DATABASE_URL=
+   API_SECRET=
+   CLOUD_NAME=
+   API_KEY=
+   TAX_RATE=
+   SHIPPING_COST=
+   COD=
+   JWT_SECRET=
+   MAILJET_PUBLIC_KEY=
+   MAILJET_PRIVATE_KEY=
+   ```
+
+2. Create a `.env` file in the `frontend/DineEase` folder with the following environment variables:
+   ```
+   VITE_TAX_RATE=
+   VITE_SHIPPING_COST=
+   VITE_COD=
+   ```
+
+3. Pull and run frontend and backend containers ( Frontend runs at port 5173 , Backend runs at port 3000 )
+   ```bash
+   docker compose pull
+   docker compose up
    ```
 
 ---
