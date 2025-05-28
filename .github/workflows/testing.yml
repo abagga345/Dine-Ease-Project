@@ -1,0 +1,59 @@
+name: Testing on Unit,Integrated Tests
+
+on:
+  pull_request:
+    branches:
+      - production  
+
+jobs:
+  Continuous-testing:
+    runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: postgresql://postgres:abc@localhost:5432/dineease
+      API_SECRET: ${{ secrets.API_SECRET }}
+      CLOUD_NAME: ${{ secrets.CLOUD_NAME }}
+      API_KEY: ${{ secrets.API_KEY }}
+      TAX_RATE: ${{ secrets.TAX_RATE }}
+      SHIPPING_COST: ${{ secrets.SHIPPING_COST }}
+      COD: ${{ secrets.COD }}
+      MAIL_JET_PUBLIC_KEY: ${{ secrets.MAIL_JET_PUBLIC_KEY }}
+      MAIL_JET_PRIVATE_KEY: ${{ secrets.MAIL_JET_PRIVATE_KEY }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Start PostgreSQL container
+        run: |
+          docker run -d --name postgres-test \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_PASSWORD=abc \
+            -e POSTGRES_DB=dineease \
+            -p 5432:5432 \
+            postgres
+          
+          
+          until docker exec postgres-test pg_isready -U postgres; do
+            echo "Waiting for Postgres container to be ready..."
+            sleep 2
+          done
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./backend
+      - name: Generate Prisma Client
+        run: npx prisma migrate dev
+        working-directory: ./backend
+      - name: Run Integration Tests
+        run: npm run test
+        working-directory: ./backend
+      - name: Stop and remove PostgreSQL container
+        if: always()
+        run: |
+          docker stop postgres-test
+          docker rm postgres-test
+
