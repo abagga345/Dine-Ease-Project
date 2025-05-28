@@ -10,6 +10,7 @@ import { rolegetter } from "../../Middlewares/rolegetter";
 import { sendOrderConfirmationEmail } from "./automail";
 import { otpEmail,otpVerifyEmail } from "../../zodschema/schema";
 import { sendOTP } from "./otp";
+import { error } from "console";
 
 
 export const userRouter=express.Router();
@@ -224,7 +225,8 @@ userRouter.get("/viewmenu",async (req:CustomRequest,res:Response)=>{
                 description:true,
                 id:true,
                 title:true,
-                visibility:true
+                visibility:true,
+                available:true
             }
         });
         res.json({"items":result1});
@@ -344,6 +346,13 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
             res.status(400).json({"message":"Price updated,Please retry"});
             return;
         }
+        let address=await prisma.address.findFirst({
+            where:{
+                id:req.body.addressId,
+                availability:true
+            }
+        })
+        if ( address===null ) throw new Error();
         let result1=await prisma.orders.create({data:{
             amount:total,
             storeId:req.body.storeId,
@@ -362,13 +371,6 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
             }
         }})
         res.json({"message":"Order placed successfully","orderId":result1["id"]});
-        let address=await prisma.address.findFirst({
-            where:{
-                id:result1.addressId,
-                availability:true
-            }
-        })
-        if ( address===null ) throw new Error();
         await sendOrderConfirmationEmail(
             req.email as string,
             result1.id,
@@ -376,7 +378,7 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
             address.houseStreet + " , " + address.state + " , " + address.pincode,
             result1.creationDate.toLocaleDateString()
         );
-    }catch(err){
+    }catch(error){
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     } 
 })

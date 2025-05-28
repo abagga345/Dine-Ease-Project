@@ -491,7 +491,7 @@ adminRouter.get("/ordercounts",authMiddlewareadmin,async (req:CustomRequest,res:
                 id:true
             }
         })
-        res.json({"message":"Order counts fetched successfully ",orderCounts:result});
+        res.json({"message":"Order counts fetched successfully",orderCounts:result});
     }catch(err){
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }

@@ -88,9 +88,9 @@ export const editaddress=z.object({
 })
 
 export const editUser=z.object({
-    firstName:z.string().min(1),
-    lastName:z.string().min(1),
-    contactNo:z.string().length(10),
+    firstName:z.string().min(1).optional(),
+    lastName:z.string().min(1).optional(),
+    contactNo:z.string().length(10).optional(),
     password:z.string().min(5).max(30).optional()
 })
 
