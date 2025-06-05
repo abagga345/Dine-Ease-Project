@@ -21,7 +21,7 @@ export function SigninCard(){
     const navigate=useNavigate();
 
     async function submithandler(data:FormFields){
-        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
         let result=await fetch(`${url}api/v1/user/signin`,{
             method:"POST",
             body:JSON.stringify({

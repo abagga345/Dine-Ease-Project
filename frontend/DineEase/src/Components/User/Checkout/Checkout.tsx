@@ -159,7 +159,7 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
     let response;
 
     try {
-      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
       response = await axios.get(
         `${url}api/v1/user/viewmenuitem?itemId=${id}`
       );
@@ -215,7 +215,7 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
             setOutOfStockItems(outOfStock);
             setOutOfStockModal(true);
         }
-        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
         const body=await axios.get(`${url}api/v1/user/getaddresses`,{
             headers:{
                 Authorization:token
@@ -266,7 +266,7 @@ const fetchItems = Object.keys(itemsbody).map(async (key) => {
         return;
     }
     let currentStoreId=store;
-    const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+    const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
     let response=await axios.post(`${url}api/v1/user/checkout`, {
         addressId:temp.addressId,
         storeId:currentStoreId,
@@ -665,7 +665,7 @@ function AddAddress({setAddresses,navigate,setError}:Props){
             navigate("/signin");
         }
         try{
-          const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+          const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
           let result=await axios.post(`${url}api/v1/user/addaddress`,{
             houseStreet:houseStreet,
             state:state,

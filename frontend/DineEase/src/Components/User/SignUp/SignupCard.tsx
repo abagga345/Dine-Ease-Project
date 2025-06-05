@@ -50,7 +50,7 @@ export function SignupCard() {
 
   async function sendOtpHandler(){
     
-    const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+    const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
     let result=await axios.post(`${url}api/v1/user/generateotp`,{
       email:email
     });
@@ -66,7 +66,7 @@ export function SignupCard() {
 
   async function verifyOtpHandler(){
     try {
-      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
     let result=await axios.put(`${url}api/v1/user/verifyotp`,{
       email:email,
       otp:value
@@ -96,7 +96,7 @@ export function SignupCard() {
       setError("Password not same as confirm password");
       return;
     }
-    const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+    const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
     const result = await fetch(`${url}api/v1/user/signup`, {
       method: "POST",
       body: JSON.stringify({

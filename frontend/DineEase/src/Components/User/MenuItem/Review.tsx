@@ -42,7 +42,7 @@ export function Review() {
         if (token!==null && token!==undefined && token!=="") {
           setReviewForm(true);
         }
-        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
         let response = await axios.get(
         `${url}api/v1/user/viewreviews?itemId=${itemId}`,
         
@@ -82,7 +82,7 @@ export function Review() {
       return;
     }
     try {
-      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'http://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
       const response = await axios.post(
         `${url}api/v1/user/dropreview`,
         {
