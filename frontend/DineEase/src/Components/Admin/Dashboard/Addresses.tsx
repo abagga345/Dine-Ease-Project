@@ -48,7 +48,7 @@ export function Addresses() {
       return;
     }
     try {
-      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
       await axios.delete(
         `${url}api/v1/user/deleteaddress?id=${addressId}`,
         {
@@ -77,7 +77,7 @@ export function Addresses() {
       return;
     }
     try {
-      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
       const result = await axios.put(
         `${url}api/v1/user/editaddress?id=${open}`,
         newVal,
@@ -117,7 +117,7 @@ export function Addresses() {
 
     async function fetchaddress() {
       try {
-        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
         let result = await axios.get(
           `${url}api/v1/user/getaddresses`,
           {
@@ -344,7 +344,7 @@ function AddAddress({ setAddresses, navigate, setError }:Props) {
       navigate("/signin");
     }
     try {
-      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
       let result = await axios.post(
         `${url}api/v1/user/addaddress`,
         {

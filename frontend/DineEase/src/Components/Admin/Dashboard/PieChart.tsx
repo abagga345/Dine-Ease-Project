@@ -14,7 +14,7 @@ export const getOrderCount = async () => {
     if (token===undefined || token===null){
       throw new Error("Unauthorized please signin again");
     }
-    const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+    const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
     const response = await fetch(`${url}api/v1/admin/ordercounts`,{
       headers:{
         Authorization:token

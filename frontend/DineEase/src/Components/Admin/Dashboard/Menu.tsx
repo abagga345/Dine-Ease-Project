@@ -30,7 +30,7 @@ export const MenuItems: React.FC = () => {
         navigate("/admin/signin");
         return;
       }
-      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
         const response = await fetch(`${url}api/v1/admin/allitems`,{
             headers:{
                 Authorization:token
@@ -74,7 +74,7 @@ export const MenuItems: React.FC = () => {
         navigate("/admin/signin");
         return;
       }
-      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
       
       const response = await fetch(`${url}api/v1/admin/changevisibility`, {
         method: "PUT",
@@ -125,7 +125,7 @@ export const MenuItems: React.FC = () => {
           return;
         }
       
-        const url1= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+        const url1= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
     const deleteItemResponse = await fetch(`${url1}api/v1/admin/deleteitem?id=${id}`, {
       method: "PUT",
       headers: {
@@ -136,7 +136,7 @@ export const MenuItems: React.FC = () => {
       if (!deleteItemResponse.ok) {
         throw new Error("Failed to delete item");
       }
-      const url2= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+      const url2= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
       const deleteImageResponse = await fetch(`${url2}api/v1/admin/deleteimage`, {
         method: "DELETE",
         headers: {

@@ -46,7 +46,7 @@ export const AddItem = () => {
         return;
       }
 
-      const url1= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+      const url1= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
       const response = await fetch(`${url1}api/v1/admin/imageupload`, {
         method: "POST",
         body: formData,
@@ -88,7 +88,7 @@ export const AddItem = () => {
         navigate("/admin/signin");
         return;
       }
-      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
       const response = await fetch(`${url}api/v1/admin/additem`, {
         method: "POST",
         headers: {

@@ -26,7 +26,7 @@ export function DashboardHome(){
                 return;
             }
             try{
-              const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://ec2-15-207-248-253.ap-south-1.compute.amazonaws.com:3000/';
+              const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
                 let result=await axios.get(`${url}api/v1/user/verifyrole`,{
                     headers:{
                         Authorization:token
