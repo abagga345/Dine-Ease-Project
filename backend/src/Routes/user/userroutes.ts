@@ -4,13 +4,15 @@ import bcrypt from "bcrypt"
 import { Request,Response} from "express"
 import { JWT_SECRET } from "../../config"
 import { authMiddlewareuser } from "../../Middlewares/authMiddlewareuser";
-import { UserSignin, UserSignup, address, checkout, editUser, editaddress, editreview, review, visibility } from "../../zodschema/schema";
+import { UserSignin, UserSignup, address, checkout, editUser, editaddress, editreview, review, visibility, razorpayCreateOrder, verifyPayment } from "../../zodschema/schema";
 import { rolegetter } from "../../Middlewares/rolegetter";
 import { sendOrderConfirmationEmail } from "./automail";
 import { otpEmail,otpVerifyEmail } from "../../zodschema/schema";
 import { sendOTP } from "./otp";
 import { prisma } from "../../prismaClient";
 import { computeOrderTotal } from "../../utils/pricing";
+import { Prisma } from "@prisma/client";
+import { getRazorpay, getPublicKeyId, isRazorpayConfigured, verifyPaymentSignature } from "./razorpayClient";
 
 // Bcrypt salt rounds used everywhere passwords/otps are hashed.
 const BCRYPT_ROUNDS = 10;
@@ -32,6 +34,37 @@ class OrderError extends Error{
         super(message);
         this.status=status;
     }
+}
+
+// Re-validate item prices/visibility against the DB inside a transaction and
+// recompute the authoritative order total. Throws OrderError if an item is
+// unavailable or the client-sent amount no longer matches. Shared by the COD
+// checkout and the Razorpay create-order flow so the server is always the
+// source of truth for the amount.
+async function priceAndValidateOrder(
+    tx: Prisma.TransactionClient,
+    body: { items: Item[]; storeId: string; amount: number; paymentMethod: string }
+): Promise<number> {
+    const lines: { amount: number; quantity: number }[] = [];
+    for (let i = 0; i < body.items.length; i++) {
+        const price = await tx.menu.findFirst({
+            where: { id: body.items[i].id, storeId: body.storeId, visibility: true, available: true }
+        });
+        if (price === null) {
+            throw new OrderError(400, "Some items are out of stock or not available");
+        }
+        lines.push({ amount: price.amount, quantity: body.items[i].quantity });
+    }
+
+    const shipping = parseInt(process.env.SHIPPING_COST || "0");
+    const codcharges = parseInt(process.env.COD || "0");
+    const taxRate = parseInt(process.env.TAX_RATE || "0");
+
+    const total = computeOrderTotal(lines, { shipping, cod: codcharges, taxRate, paymentMethod: body.paymentMethod });
+    if (total !== body.amount) {
+        throw new OrderError(400, "Price updated,Please retry");
+    }
+    return total;
 }
 
 //CHECKED 
@@ -380,27 +413,10 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
             return;
         }
 
-        const shipping = parseInt(process.env.SHIPPING_COST || "0");
-        const codcharges = parseInt(process.env.COD || "0");
-        const taxRate = parseInt(process.env.TAX_RATE || "0");
-
         // Re-validate prices/visibility and create the order atomically so the
         // total can't be raced against a concurrent price change.
         const result1=await prisma.$transaction(async (tx)=>{
-            const lines:{amount:number;quantity:number}[]=[];
-            for(let i=0;i<req.body.items.length;i++){
-                let price =await tx.menu.findFirst({where:{id:req.body.items[i].id,storeId:req.body.storeId,visibility:true,available:true}});
-                if (price===null){
-                    throw new OrderError(400,"Some items are out of stock or not available");
-                }
-                lines.push({amount:price["amount"],quantity:req.body.items[i].quantity});
-            }
-
-            const total=computeOrderTotal(lines,{shipping,cod:codcharges,taxRate,paymentMethod:req.body.paymentMethod});
-
-            if (total!==req.body.amount){
-                throw new OrderError(400,"Price updated,Please retry");
-            }
+            const total=await priceAndValidateOrder(tx,{items:req.body.items,storeId:req.body.storeId,amount:req.body.amount,paymentMethod:req.body.paymentMethod});
 
             return tx.orders.create({data:{
                 amount:total,
@@ -443,6 +459,158 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
+
+// Razorpay "Pay Online": create a Razorpay order + a local Pending order row.
+// The order is recorded now (so failures are persisted) but stays hidden from
+// the store until payment is verified (paymentStatus -> Paid).
+userRouter.post("/payment/create-order",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
+    let result=razorpayCreateOrder.safeParse(req.body);
+    if (result["success"]===false){
+        req.log.warn("Razorpay create-order rejected: invalid inputs");
+        res.status(400).json({"message":"INVALID INPUTS"});
+        return;
+    }
+    if (!isRazorpayConfigured()){
+        req.log.error("Razorpay create-order failed: gateway not configured");
+        res.status(503).json({"message":"Online payment is currently unavailable"});
+        return;
+    }
+    try{
+        const email=req.email as string;
+
+        const address=await prisma.address.findFirst({
+            where:{id:req.body.addressId,email:email,availability:true}
+        });
+        if (address===null){
+            req.log.warn({addressId:req.body.addressId},"Razorpay create-order rejected: invalid address");
+            res.status(400).json({"message":"Invalid address"});
+            return;
+        }
+
+        // Recompute the authoritative total (paymentMethod Razorpay => no COD surcharge).
+        const total=await prisma.$transaction((tx)=>priceAndValidateOrder(tx,{items:req.body.items,storeId:req.body.storeId,amount:req.body.amount,paymentMethod:"Razorpay"}));
+
+        // Create the Razorpay order (amount in paise). If this throws, no local
+        // order row is created.
+        const rzpOrder=await getRazorpay().orders.create({
+            amount: total*100,
+            currency: "INR",
+            receipt: `rcpt_${Date.now()}`
+        });
+
+        const order=await prisma.orders.create({data:{
+            amount:total,
+            storeId:req.body.storeId,
+            email:email,
+            description:req.body.description ?? "",
+            status:'Unconfirmed',
+            addressId:req.body.addressId,
+            paymentMethod:'Razorpay',
+            paymentStatus:'Pending',
+            razorpayOrderId:rzpOrder.id,
+            items:{
+                create:req.body.items.map((element:Item)=>({itemId:element.id,quantity:element.quantity}))
+            }
+        }});
+
+        req.log.info({orderId:order.id,razorpayOrderId:rzpOrder.id,amount:total},"Razorpay order created");
+        res.json({
+            "orderId":order.id,
+            "razorpayOrderId":rzpOrder.id,
+            "amount":total*100,
+            "currency":"INR",
+            "keyId":getPublicKeyId()
+        });
+    }catch(err){
+        if (err instanceof OrderError){
+            req.log.warn({status:err.status,reason:err.message},"Razorpay create-order rejected");
+            res.status(err.status).json({"message":err.message});
+            return;
+        }
+        req.log.error({err},"Unexpected error creating Razorpay order");
+        res.status(500).json({"message":"INTERNAL SERVER ERROR"});
+    }
+})
+
+// Verify the signature returned by checkout.js on success. Confirms the order
+// (Pending -> Paid) and sends the confirmation email; records Failed otherwise.
+userRouter.post("/payment/verify",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
+    let result=verifyPayment.safeParse(req.body);
+    if (result["success"]===false){
+        res.status(400).json({"message":"INVALID INPUTS"});
+        return;
+    }
+    const email=req.email as string;
+    const {razorpay_order_id,razorpay_payment_id,razorpay_signature}=req.body;
+    try{
+        if (!verifyPaymentSignature(razorpay_order_id,razorpay_payment_id,razorpay_signature)){
+            // Record the failure (only if still pending and owned by this user).
+            await prisma.orders.updateMany({
+                where:{razorpayOrderId:razorpay_order_id,email:email,paymentStatus:'Pending'},
+                data:{paymentStatus:'Failed',razorpayPaymentId:razorpay_payment_id}
+            });
+            req.log.warn({razorpay_order_id},"Razorpay payment signature verification failed");
+            res.status(400).json({"message":"Payment verification failed"});
+            return;
+        }
+
+        // Valid signature: flip Pending -> Paid. updateMany count tells us if WE
+        // performed the transition (vs the webhook getting there first) so the
+        // confirmation email is sent exactly once.
+        const updated=await prisma.orders.updateMany({
+            where:{razorpayOrderId:razorpay_order_id,email:email,paymentStatus:'Pending'},
+            data:{paymentStatus:'Paid',razorpayPaymentId:razorpay_payment_id}
+        });
+
+        const order=await prisma.orders.findFirst({
+            where:{razorpayOrderId:razorpay_order_id,email:email},
+            include:{address:true}
+        });
+        if (order===null){
+            res.status(404).json({"message":"Order not found"});
+            return;
+        }
+
+        if (updated.count===1){
+            sendOrderConfirmationEmail(
+                email,
+                order.id,
+                order.amount,
+                order.address.houseStreet + " , " + order.address.state + " , " + order.address.pincode,
+                order.creationDate.toLocaleDateString()
+            ).catch((err)=>req.log.error({err,orderId:order.id},"Order confirmation email failed"));
+        }
+
+        req.log.info({orderId:order.id},"Razorpay payment verified");
+        res.json({"message":"Payment verified","orderId":order.id});
+    }catch(err){
+        req.log.error({err},"Unexpected error verifying Razorpay payment");
+        res.status(500).json({"message":"INTERNAL SERVER ERROR"});
+    }
+})
+
+// Best-effort marker when the user dismisses the checkout modal without paying.
+// The webhook (payment.failed) is the authoritative source; this just keeps the
+// DB tidy quickly.
+userRouter.post("/payment/failed",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
+    const razorpay_order_id=req.body?.razorpay_order_id;
+    if (typeof razorpay_order_id!=="string"){
+        res.status(400).json({"message":"INVALID INPUTS"});
+        return;
+    }
+    const email=req.email as string;
+    try{
+        await prisma.orders.updateMany({
+            where:{razorpayOrderId:razorpay_order_id,email:email,paymentStatus:'Pending'},
+            data:{paymentStatus:'Failed'}
+        });
+        res.json({"message":"Marked failed"});
+    }catch(err){
+        req.log.error({err},"Unexpected error marking Razorpay payment failed");
+        res.status(500).json({"message":"INTERNAL SERVER ERROR"});
+    }
+})
+
 //CHECKED
 userRouter.put("/editreview",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     let rev_id:number=parseInt(req.query.reviewId as string);

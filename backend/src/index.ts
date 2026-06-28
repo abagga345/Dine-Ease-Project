@@ -34,6 +34,9 @@ const warnEnv = [
   "SHIPPING_COST",
   "COD",
   "TAX_RATE",
+  "RAZOR_PAY_API_KEY",
+  "RAZOR_PAY_SECRET_KEY",
+  "RAZOR_PAY_WEBHOOK_SECRET",
 ];
 const missingWarn = warnEnv.filter((key) => !process.env[key]);
 if (missingWarn.length > 0) {
@@ -95,7 +98,15 @@ if (corsOriginEnv) {
   logger.warn("CORS_ORIGIN not set — allowing all origins (development mode)");
 }
 
-app.use(express.json());
+// Keep the raw request bytes so the Razorpay webhook can verify its HMAC
+// signature (computed over the exact body). Does not change JSON parsing.
+app.use(
+  express.json({
+    verify: (req, _res, buf) => {
+      (req as any).rawBody = buf;
+    },
+  })
+);
 app.use(requestCount);
 app.use(activeRequestCount);
 app.use(requestDuration);

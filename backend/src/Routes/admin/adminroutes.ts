@@ -95,7 +95,10 @@ adminRouter.get("/allorders",authMiddlewareadmin,async (req:CustomRequest,res:Re
     try{
         let result=await prisma.orders.findMany({
             where:{
-                storeId:storeId
+                storeId:storeId,
+                // Hide Razorpay orders that haven't been paid (Pending/Failed).
+                // COD/UPI orders are NotApplicable and always show.
+                paymentStatus:{ notIn:['Pending','Failed'] }
             },
             orderBy:{
                 creationDate:"desc"
@@ -178,7 +181,9 @@ adminRouter.get("/unconfirmedorders",authMiddlewareadmin,async (req:CustomReques
                 storeId: storeId,
                 status: {
                   in: ['Unconfirmed', 'Processing', 'Dispatched']
-                }
+                },
+                // Exclude unpaid/failed Razorpay orders (COD/UPI are NotApplicable).
+                paymentStatus: { notIn: ['Pending', 'Failed'] }
             },
             orderBy:{
                 creationDate:"desc"
@@ -519,6 +524,10 @@ adminRouter.get("/ordercounts",authMiddlewareadmin,async (req:CustomRequest,res:
     try{
         let result=await prisma.orders.groupBy({
             by:['status'],
+            where:{
+                // Don't count unpaid/failed Razorpay orders in dashboard tallies.
+                paymentStatus:{ notIn:['Pending','Failed'] }
+            },
             _count:{
                 id:true
             }

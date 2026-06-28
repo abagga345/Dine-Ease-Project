@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Banknote, FileText } from "lucide-react";
+import { Banknote, CreditCard, FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -15,6 +15,8 @@ import { Select } from "../../common/ui/Select";
 import { RadioCard } from "../../common/ui/RadioCard";
 import { Modal } from "../../common/ui/Modal";
 import { apiUrl, numEnv } from "../../../config/api";
+import { brand } from "../../../config/brand";
+import { loadRazorpayScript } from "../../../config/razorpay";
 
 interface fields {
   storeId: any;
@@ -100,7 +102,7 @@ export function Checkout() {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<fields>({});
+  } = useForm<fields>({ defaultValues: { paymentMethod: "COD" } });
 
   const method = watch("paymentMethod");
   const shipping = numEnv(import.meta.env.VITE_SHIPPING_COST);
@@ -238,6 +240,17 @@ export function Checkout() {
     }
   }, [method]);
 
+  // Shared success path: clear the cart and head to the dashboard.
+  function onOrderSuccess(id: number) {
+    toast.success(`Order placed successfully! Order ID: ${id}`, {
+      duration: 5000,
+      id: "order-success-toast",
+    });
+    localStorage.setItem("cart", "{}");
+    window.dispatchEvent(new Event("cart-updated"));
+    setTimeout(() => navigate("/dashboard"), 1000);
+  }
+
   async function submithandler(data: fields) {
     setbuttonstate(false);
     let token = localStorage.getItem("token");
@@ -249,14 +262,104 @@ export function Checkout() {
     }
     const temp = data;
     temp.addressId = Number(temp.addressId);
-    try {
-      let store = localStorage.getItem("storeId");
-      if (store === null || store === undefined || store === "") {
-        navigate("/menu");
-        setError("Store unselected");
+
+    let store = localStorage.getItem("storeId");
+    if (store === null || store === undefined || store === "") {
+      navigate("/menu");
+      setError("Store unselected");
+      return;
+    }
+    const currentStoreId = store;
+    // Razorpay never adds the COD surcharge.
+    const amount = Math.round(subtotal + (temp.paymentMethod === "COD" ? codcharges : 0) + shipping + tax);
+    const itemsPayload = items.map((item) => ({ id: item.id, quantity: item.quantity }));
+
+    // ---- Pay Online (Razorpay) ----------------------------------------------
+    if (temp.paymentMethod === "Razorpay") {
+      let createRes;
+      try {
+        createRes = await axios.post(
+          apiUrl("user/payment/create-order"),
+          {
+            addressId: temp.addressId,
+            storeId: currentStoreId,
+            description: temp.description,
+            amount,
+            items: itemsPayload,
+          },
+          { headers: { Authorization: token } }
+        );
+      } catch (err) {
+        setError("Unable to start payment");
+        navigate("/error");
         return;
       }
-      let currentStoreId = store;
+
+      const { orderId, razorpayOrderId, amount: rzpAmount, currency, keyId } = createRes.data;
+
+      try {
+        await loadRazorpayScript();
+      } catch {
+        toast.error("Could not load the payment gateway. Please try again.");
+        setbuttonstate(true);
+        return;
+      }
+
+      const rzp = new window.Razorpay({
+        key: keyId,
+        order_id: razorpayOrderId,
+        amount: rzpAmount,
+        currency,
+        name: brand.name,
+        description: `Order #${orderId}`,
+        handler: async (response: any) => {
+          try {
+            const verifyRes = await axios.post(
+              apiUrl("user/payment/verify"),
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              },
+              { headers: { Authorization: token } }
+            );
+            if (verifyRes.data.message === "Payment verified") {
+              onOrderSuccess(verifyRes.data.orderId);
+            } else {
+              setError("Payment could not be verified");
+              setbuttonstate(true);
+            }
+          } catch (err) {
+            toast.error("Payment verification failed. If money was deducted, please contact support.");
+            setbuttonstate(true);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setbuttonstate(true);
+            // Best-effort: mark the pending order failed (webhook is authoritative).
+            axios
+              .post(
+                apiUrl("user/payment/failed"),
+                { razorpay_order_id: razorpayOrderId },
+                { headers: { Authorization: token } }
+              )
+              .catch(() => {});
+          },
+        },
+        theme: { color: "#7A1F2B" },
+      });
+
+      rzp.on("payment.failed", () => {
+        toast.error("Payment failed. Please try again.");
+        setbuttonstate(true);
+      });
+      rzp.open();
+      return;
+    }
+
+    // ---- Pay at delivery (UPI / Cash on Delivery) ---------------------------
+    try {
       let response = await axios.post(
         apiUrl("user/checkout"),
         {
@@ -264,22 +367,15 @@ export function Checkout() {
           storeId: currentStoreId,
           description: temp.description,
           paymentMethod: temp.paymentMethod,
-          amount: Math.round(subtotal + (method === "COD" ? codcharges : 0) + shipping + tax),
-          items: items.map((item) => ({ id: item.id, quantity: item.quantity })),
+          amount,
+          items: itemsPayload,
         },
         { headers: { Authorization: token } }
       );
 
       let body = response.data;
       if (body.message === "Order placed successfully") {
-        const id = body.orderId;
-        toast.success(`Order placed successfully! Order ID: ${id}`, {
-          duration: 5000,
-          id: "order-success-toast",
-        });
-        localStorage.setItem("cart", "{}");
-        window.dispatchEvent(new Event("cart-updated"));
-        setTimeout(() => navigate("/dashboard"), 1000);
+        onOrderSuccess(body.orderId);
       } else {
         setError("Unable to place order");
         setbuttonstate(true);
@@ -353,30 +449,30 @@ export function Checkout() {
               <h2 className="mt-8 font-serif text-lg font-bold text-brand-ink">Payment Method</h2>
               <div className="mt-4 grid gap-4">
                 <RadioCard
-                  id="radio_upi"
-                  value="UPI"
+                  id="radio_cod"
+                  value="COD"
                   inputProps={register("paymentMethod")}
                   defaultChecked
                 >
                   <div className="flex items-center gap-4">
-                    <img
-                      className="h-8 w-12 object-contain"
-                      src="https://cdn.iconscout.com/icon/free/png-256/free-upi-logo-icon-download-in-svg-png-gif-file-formats--unified-payments-interface-payment-money-transfer-logos-icons-1747946.png"
-                      alt="UPI"
-                    />
+                    <Banknote className="text-brand-terracotta" />
                     <div>
-                      <p className="font-semibold text-brand-ink">UPI</p>
-                      <p className="text-sm text-brand-ink-soft">Pay via any UPI app at delivery</p>
+                      <p className="font-semibold text-brand-ink">UPI / Cash on Delivery</p>
+                      <p className="text-sm text-brand-ink-soft">
+                        Pay by UPI or cash when your order arrives · +₹{codcharges} charge
+                      </p>
                     </div>
                   </div>
                 </RadioCard>
 
-                <RadioCard id="radio_cod" value="COD" inputProps={register("paymentMethod")}>
+                <RadioCard id="radio_online" value="Razorpay" inputProps={register("paymentMethod")}>
                   <div className="flex items-center gap-4">
-                    <Banknote className="text-brand-terracotta" />
+                    <CreditCard className="text-brand-maroon" />
                     <div>
-                      <p className="font-semibold text-brand-ink">Cash On Delivery</p>
-                      <p className="text-sm text-brand-ink-soft">+₹{codcharges} COD charge</p>
+                      <p className="font-semibold text-brand-ink">Pay Online</p>
+                      <p className="text-sm text-brand-ink-soft">
+                        Cards, UPI, Netbanking & Wallets · Pay securely now
+                      </p>
                     </div>
                   </div>
                 </RadioCard>
@@ -428,7 +524,7 @@ export function Checkout() {
               </div>
 
               <Button type="submit" fullWidth size="lg" className="mt-6" disabled={!buttonstate}>
-                Place Order
+                {method === "Razorpay" ? `Pay ₹${total} Now` : "Place Order"}
               </Button>
               {errors.addressId && (
                 <p className="mt-2 text-center text-sm text-red-600">Please select a shipping address</p>

@@ -21,6 +21,14 @@ enum paymentMethods {
   COD
   UPI
   StorePayment
+  Razorpay
+}
+
+enum paymentStatus {
+  NotApplicable
+  Pending
+  Paid
+  Failed
 }
 
 
@@ -71,7 +79,10 @@ model Orders {
   addressId   Int 
   address     Address @relation(fields:[addressId],references: [id])
   store       Store @relation(fields: [storeId],references: [storeId])
-  paymentMethod paymentMethods 
+  paymentMethod paymentMethods
+  paymentStatus paymentStatus @default(NotApplicable)
+  razorpayOrderId   String?  @unique
+  razorpayPaymentId String?
 }
 
 model OrderItems {

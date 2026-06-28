@@ -81,6 +81,25 @@ export const checkout=z.object({
 })
 
 
+// Razorpay "Pay Online" — same shape as checkout but the payment method is
+// implicitly Razorpay (no paymentMethod field; COD surcharge never applies).
+export const razorpayCreateOrder=z.object({
+    description:z.string().max(75).optional(),
+    storeId:z.string(),
+    items:z.array(z.object({
+        id:z.number().int(),
+        quantity:z.number().int().min(1, { message: 'Quantity must be a positive integer' })
+    })),
+    amount:z.number(),
+    addressId:z.number()
+})
+
+export const verifyPayment=z.object({
+    razorpay_order_id:z.string(),
+    razorpay_payment_id:z.string(),
+    razorpay_signature:z.string()
+})
+
 export const editaddress=z.object({
     houseStreet:z.string().max(60).optional(),
     state:z.string().max(30).optional(),
