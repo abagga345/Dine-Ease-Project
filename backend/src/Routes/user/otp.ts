@@ -1,17 +1,5 @@
-import mailjet from 'node-mailjet';
 import { logger } from '../../logger';
-
-// Lazily create the Mailjet client so a missing key doesn't crash the server
-// at import/boot time. Returns null (and logs) when keys are unavailable.
-const getMailjetClient = () => {
-  const mailjetPublic = process.env.MAIL_JET_PUBLIC_KEY;
-  const mailjetPrivate = process.env.MAIL_JET_PRIVATE_KEY;
-  if (!mailjetPublic || !mailjetPrivate) {
-    logger.error('Missing Mailjet API keys in environment variables');
-    return null;
-  }
-  return mailjet.apiConnect(mailjetPublic, mailjetPrivate);
-};
+import { getMailjetClient } from './mailjetClient';
 
 export const sendOTP = async (
   recipientEmail: string,
