@@ -1,4 +1,10 @@
 import "dotenv/config";
+import dns from "node:dns";
+// Prefer IPv4 for outbound connections. Some cloud hosts (e.g. Render) have a
+// broken/flaky IPv6 path to third-party APIs like api.mailjet.com, which shows
+// up as "read ECONNRESET" on otherwise-valid requests. Resolving IPv4 first
+// avoids that dead route while still falling back to IPv6 if needed.
+dns.setDefaultResultOrder("ipv4first");
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { randomUUID } from "crypto";
