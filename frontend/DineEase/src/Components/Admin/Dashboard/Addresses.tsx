@@ -2,17 +2,10 @@ import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { AiFillEdit } from "react-icons/ai";
 import { ImBin } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import { NavigateOptions } from 'react-router-dom';
 import { Button } from "../../common/ui/Button";
-
-interface Field {
-  houseStreet: string;
-  state: string;
-  pincode: string;
-}
 
 interface Address {
   id: number;
@@ -31,13 +24,7 @@ export function Addresses() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [addresses, setAddresses] = useState<Address[]>([]);
-  const [open, setOpen] = useState(0);
   const navigate = useNavigate();
-  const [newVal, setNewVal] = useState<Field>({
-    houseStreet: "",
-    state: "",
-    pincode: "",
-  });
 
   async function deletehandler(addressId: number) {
     let token = localStorage.getItem("token");
@@ -59,49 +46,10 @@ export function Addresses() {
         }
       );
       setAddresses(addresses.filter((item) => item.id !== addressId));
-      toast.success("Address updated successfully!", { id });
+      toast.success("Address removed successfully!", { id });
     } catch (error: any) {
       setError(error.message);
 
-      toast.error(`Error: ${error.message}`, { id });
-    }
-  }
-
-  async function submithandler() {
-    let token = localStorage.getItem("token");
-    let id = toast.loading("Loading...");
-
-    if (token === null) {
-      setError("Unauthorized , Please signin again");
-      toast.error(`Error: Unauthorized , Please Signin again`, { id });
-      navigate("/signin");
-      return;
-    }
-    try {
-      const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
-      const result = await axios.put(
-        `${url}api/v1/user/editaddress?id=${open}`,
-        newVal,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      setAddresses(
-        addresses.map((item) => {
-          if (item.id == open) {
-            (item.houseStreet = result.data["houseStreet"]),
-              (item.state = result.data["state"]),
-              (item.pincode = result.data["pincode"]);
-          }
-          return item;
-        })
-      );
-      setOpen(0);
-      toast.success("Address updated successfully!", { id });
-    } catch (error: any) {
-      setError(error.message);
       toast.error(`Error: ${error.message}`, { id });
     }
   }
@@ -171,143 +119,24 @@ export function Addresses() {
               {addresses.map((item) => (
                 <div key={item.id}>
                   <div className="relative">
-                    <div className="border-brand-cream-dark bg-brand-cream flex items-center justify-between cursor-pointer select-none rounded-lg border p-4">
-                      <div className="ml-5 flex flex-col gap-3">
-                        <input
-                          type="text"
-                          disabled={item.id !== open}
-                          className="mt-2 font-semibold p-1 rounded-lg border border-brand-cream-dark bg-white focus:border-brand-maroon focus:ring-brand-turmeric"
-                          value={
-                            item.id !== open
-                              ? item.houseStreet
-                              : newVal.houseStreet
-                          }
-                          onChange={(e) => {
-                            setNewVal((cur) => ({
-                              ...cur,
-                              houseStreet: e.target.value,
-                            }));
-                          }}
-                        />
-                        <div className="flex gap-2">
-                          <select
-                            disabled={item.id !== open}
-                            className="text-brand-ink-soft text-sm leading-6 p-1 rounded-lg border border-brand-cream-dark bg-white focus:border-brand-maroon focus:ring-brand-turmeric"
-                            value={item.id !== open ? item.state : newVal.state}
-                            onChange={(e) => {
-                              setNewVal((cur) => ({
-                                ...cur,
-                                state: e.target.value,
-                              }));
-                            }}
-                          >
-                            <option value="">Select State</option>
-                            <option>Andhra Pradesh</option>
-                            <option>Arunachal Pradesh</option>
-                            <option>Assam</option>
-                            <option>Bihar</option>
-                            <option>Chhattisgarh</option>
-                            <option>Delhi</option>
-                            <option>Goa</option>
-                            <option>Gujarat</option>
-                            <option>Haryana</option>
-                            <option>Himachal Pradesh</option>
-                            <option>Jammu and Kashmir</option>
-                            <option>Jharkhand</option>
-                            <option>Karnataka</option>
-                            <option>Kerala</option>
-                            <option>Madhya Pradesh</option>
-                            <option>Maharashtra</option>
-                            <option>Manipur</option>
-                            <option>Meghalaya</option>
-                            <option>Mizoram</option>
-                            <option>Nagaland</option>
-                            <option>Odisha</option>
-                            <option>Punjab</option>
-                            <option>Rajasthan</option>
-                            <option>Sikkim</option>
-                            <option>Tamil Nadu</option>
-                            <option>Telangana</option>
-                            <option>Tripura</option>
-                            <option>Uttarakhand</option>
-                            <option>Uttar Pradesh</option>
-                            <option>West Bengal</option>
-                            <option>Andaman and Nicobar Islands</option>
-                            <option>Chandigarh</option>
-                            <option>Dadra and Nagar Haveli</option>
-                            <option>Daman and Diu</option>
-                            <option>Lakshadweep</option>
-                            <option>Puducherry</option>
-                          </select>
-
-                          <input
-                            type="text"
-                            disabled={item.id !== open}
-                            className="text-brand-ink-soft text-sm leading-6 p-1 rounded-lg border border-brand-cream-dark bg-white focus:border-brand-maroon focus:ring-brand-turmeric"
-                            value={
-                              item.id !== open ? item.pincode : newVal.pincode
-                            }
-                            onChange={(e) => {
-                              setNewVal((cur) => ({
-                                ...cur,
-                                pincode: e.target.value,
-                              }));
-                            }}
-                          />
-                        </div>
+                    <div className="border-brand-cream-dark bg-brand-cream flex items-center justify-between rounded-lg border p-4">
+                      <div className="ml-5 flex flex-col gap-1">
+                        <p className="font-semibold text-brand-ink">{item.houseStreet}</p>
+                        <p className="text-sm text-brand-ink-soft">
+                          {item.state} — {item.pincode}
+                        </p>
                       </div>
-                      {open !== item.id ? (
-                        <div className="flex gap-6">
-                          <button
-                            onClick={() => {
-                              setOpen(item.id);
-                              setNewVal({
-                                houseStreet: item.houseStreet,
-                                state: item.state,
-                                pincode: item.pincode,
-                              });
-                            }}
-                            className="text-brand-maroon hover:text-brand-maroon-dark"
-                          >
-                            <div className="flex flex-row items-center gap-2">
-                              <AiFillEdit />
-                              Edit
-                            </div>
-                          </button>
-                          <button
-                            onClick={() => {
-                              deletehandler(item.id);
-                            }}
-                            className="text-brand-terracotta hover:text-brand-terracotta-dark"
-                          >
-                            <div className="flex flex-row items-center gap-2">
-                              <ImBin />
-                            </div>
-                          </button>
+                      <button
+                        onClick={() => {
+                          deletehandler(item.id);
+                        }}
+                        aria-label="Delete address"
+                        className="text-brand-terracotta hover:text-brand-terracotta-dark"
+                      >
+                        <div className="flex flex-row items-center gap-2">
+                          <ImBin />
                         </div>
-                      ) : (
-                        <div className="flex gap-3">
-                          <Button
-                            onClick={() => {
-                              submithandler();
-                            }}
-                            type="button"
-                            size="sm"
-                          >
-                            Save
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              setOpen(0);
-                            }}
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                          >
-                            Back
-                          </Button>
-                        </div>
-                      )}
+                      </button>
                     </div>
                   </div>
                 </div>
