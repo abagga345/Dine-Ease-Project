@@ -64,14 +64,14 @@ export const brand = {
       { label: "Gift Boxes", href: "/store" },
     ],
     company: [
-      { label: "About Us", href: "#" },
-      { label: "Our Heritage", href: "#" },
-      { label: "Contact", href: "#" },
+      { label: "About Us", href: "/#features" },
+      { label: "Our Heritage", href: "/#story" },
+      { label: "Contact", href: "/#contact" },
     ],
     legal: [
-      { label: "Privacy Policy", href: "#" },
-      { label: "Terms of Service", href: "#" },
-      { label: "Shipping & Returns", href: "#" },
+      { label: "Privacy Policy", href: "/privacy-policy" },
+      { label: "Terms of Service", href: "/terms-of-service" },
+      { label: "Shipping & Returns", href: "/shipping-returns" },
     ],
   },
 } as const;

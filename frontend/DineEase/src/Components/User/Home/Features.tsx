@@ -18,9 +18,9 @@ const items = [
     title: "Sun-Cured the Old Way",
     description:
       "Each batch is matured under the sun in traditional martabans, the way our grandmothers did, for a deeper, richer flavour.",
-    // Traditional mango pickle jar with a brown lid.
+    // Homemade mango pickle in a jar with spices (no branding).
     image:
-      "https://images.pexels.com/photos/35267279/pexels-photo-35267279.jpeg?auto=compress&cs=tinysrgb&w=900",
+      "https://images.pexels.com/photos/9164642/pexels-photo-9164642.jpeg?auto=compress&cs=tinysrgb&w=900",
   },
   {
     icon: Truck,

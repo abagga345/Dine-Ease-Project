@@ -43,7 +43,17 @@ function FooterColumn({
 export default function Footer() {
   const navigate = useNavigate();
   const onNavigate = (href: string) => {
-    if (href.startsWith("/")) navigate(href);
+    if (!href.startsWith("/")) return;
+    const [path, hash] = href.split("#");
+    navigate(path || "/");
+    if (hash) {
+      // Allow the destination page to render before scrolling to the section.
+      setTimeout(() => {
+        document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (

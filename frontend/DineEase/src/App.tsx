@@ -26,6 +26,9 @@ import { DashboardHome } from "./Components/Admin/Dashboard/DashboardHome"
 import { Store } from "./Components/User/Store/store"
 import { Addresses } from "./Components/Admin/Dashboard/Addresses"
 import {MenuItem} from "./Components/User/MenuItem/MenuItem"
+import { PrivacyPolicy } from "./Components/User/Legal/PrivacyPolicy"
+import { TermsOfService } from "./Components/User/Legal/TermsOfService"
+import { ShippingReturns } from "./Components/User/Legal/ShippingReturns"
 function App() {
   return (
     <div>
@@ -41,6 +44,9 @@ function App() {
           <Route path="/checkout" element={<Checkout></Checkout>}></Route>
           <Route path="/store" element={<Store></Store>}></Route>
           <Route path="/menuitem/:itemId" element={<MenuItem></MenuItem>}></Route>
+          <Route path="/privacy-policy" element={<PrivacyPolicy></PrivacyPolicy>}></Route>
+          <Route path="/terms-of-service" element={<TermsOfService></TermsOfService>}></Route>
+          <Route path="/shipping-returns" element={<ShippingReturns></ShippingReturns>}></Route>
           <Route path="/dashboard" element={<Dashboard></Dashboard>}>
               <Route path="" element={<DashboardHome></DashboardHome>}></Route>
               <Route path="allorders" element={<AllOrders></AllOrders>}></Route>

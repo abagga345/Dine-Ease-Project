@@ -5,6 +5,7 @@ import Collections from "./Collections";
 import HeritageStory from "./HeritageStory";
 import Features from "./Features";
 import Testimonials from "./Testimonials";
+import ContactSection from "./ContactSection";
 import Footer from "./Footer";
 
 export function UserHome() {
@@ -18,6 +19,7 @@ export function UserHome() {
         <HeritageStory />
         <Features />
         <Testimonials />
+        <ContactSection />
       </main>
       <Footer />
     </div>
