@@ -109,6 +109,11 @@ export function Checkout() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      toast.error("Please sign in to continue to checkout", { id: "auth-redirect" });
+      navigate("/signin");
+      return;
+    }
     setLoading(true);
 
     const itemstemp = localStorage.getItem("cart");

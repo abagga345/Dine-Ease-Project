@@ -94,7 +94,7 @@ export function SignupCard() {
     if (result.ok) {
       const body: SignupresultSuccess = await result.json();
       localStorage.setItem("token", body["token"]);
-      navigate("/home");
+      navigate("/dashboard");
       return;
     }
     const err: { message: string } = await result.json();

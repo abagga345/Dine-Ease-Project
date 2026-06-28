@@ -35,7 +35,7 @@ export function SigninCard() {
     if (result.ok) {
       const body: SigninresultSuccess = await result.json();
       localStorage.setItem("token", body["token"]);
-      navigate("/home");
+      navigate("/dashboard");
       return;
     }
     const err: { message: string } = await result.json();
