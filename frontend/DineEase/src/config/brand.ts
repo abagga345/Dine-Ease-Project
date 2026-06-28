@@ -8,7 +8,7 @@
 
 export const brand = {
   /** Brand / company name shown in the navbar, footer, auth pages, emails copy. */
-  name: "Gandhi Achar",
+  name: "Gandhi's Achar",
   /** Short word that follows the name as a wordmark suffix, e.g. "Pickles". */
   wordmarkSuffix: "6 Ranga",
   /** One-line tagline used under the hero headline and in the footer. */
@@ -36,7 +36,7 @@ export const brand = {
 
   /** About-us page / footer blurb. */
   about:
-    "Gandhi Achar 6 Ranga, from Khari Baoli, Delhi, has been crafting a wide " +
+    "Gandhi's Achar 6 Ranga, from Khari Baoli, Delhi, has been crafting a wide " +
     "range of traditional pickles since 1950 — from Mango and Nimboo to Garlic, " +
     "Ginger, Chilli, Murabba and our signature Punjabi Mix.",
 
