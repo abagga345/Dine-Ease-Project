@@ -1,39 +1,34 @@
-
 import { useNavigate } from "react-router-dom";
 import Footer from "../User/Home/Footer";
 import AppAppBar from "../User/Home/AppAppBar";
+import { Container } from "./ui/Container";
+import { Button } from "./ui/Button";
 
-interface InputProps{
-    link:string;
+interface InputProps {
+  link: string;
 }
 
-export function ErrorPage404({link}:InputProps) {
-    const navigate=useNavigate();
-    return (
-      <div>
-        <AppAppBar></AppAppBar>
-        <main className="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
-          <div className="text-center">
-            <p className="text-base font-semibold text-indigo-600">404</p>
-            <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">Page Not Found</h1>
-            <p className="mt-6 text-base leading-7 text-gray-600">The page you're looking for doesn't exist or has been moved.</p>
-            <p className="mt-6 text-base leading-7 text-gray-600">Please check the URL or return to the homepage. If you believe this is an error, contact support.</p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <a
-                href="#"
-                onClick={(e)=>{
-                    e.preventDefault();
-                    navigate(link);
-                }}
-                className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Go back home
-              </a>
-              
-            </div>
-          </div>
-          <Footer />
-        </main>
-      </div>
-    )
-  }
+export function ErrorPage404({ link }: InputProps) {
+  const navigate = useNavigate();
+  return (
+    <div className="min-h-screen bg-brand-cream">
+      <AppAppBar />
+      <Container className="grid min-h-[60vh] place-items-center py-24 text-center">
+        <div>
+          <p className="font-serif text-base font-semibold text-brand-terracotta">404</p>
+          <h1 className="mt-4 font-serif text-4xl font-bold text-brand-maroon sm:text-5xl">
+            Page Not Found
+          </h1>
+          <p className="mx-auto mt-6 max-w-md text-brand-ink-soft">
+            The page you&apos;re looking for doesn&apos;t exist or has been moved. Please check the
+            URL or return to the homepage.
+          </p>
+          <Button className="mt-10" size="lg" onClick={() => navigate(link)}>
+            Go back home
+          </Button>
+        </div>
+      </Container>
+      <Footer />
+    </div>
+  );
+}

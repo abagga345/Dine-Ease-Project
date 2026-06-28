@@ -1,215 +1,160 @@
-import { FaShoppingCart } from "react-icons/fa";
-import { Review } from "./Review";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Loader } from "lucide-react";
+import { ChevronLeft, Leaf } from "lucide-react";
 import AppAppBar from "../Home/AppAppBar";
 import Footer from "../Home/Footer";
+import Loader from "../../common/Loader";
+import { Review } from "./Review";
+import { Container } from "../../common/ui/Container";
+import { Badge } from "../../common/ui/Badge";
+import { Button } from "../../common/ui/Button";
+import { QuantityStepper } from "../../common/ui/QuantityStepper";
+import { useCart } from "../../common/useCart";
+import { apiUrl } from "../../../config/api";
 
 interface MenuItem1 {
-    id: number;
-    title: string;
-    description: string;
-    amount: number;
-    imageUrl: string;
-    visibility: boolean;
-    storeId:string;
+  id: number;
+  title: string;
+  description: string;
+  amount: number;
+  imageUrl: string;
+  visibility: boolean;
+  storeId: string;
+}
+
+export function MenuItem() {
+  return (
+    <div className="min-h-screen bg-brand-cream">
+      <AppAppBar />
+      <Item />
+      <Review />
+      <Footer />
+    </div>
+  );
+}
+
+function Item() {
+  const [loading, setLoading] = useState(true);
+  const [item, setItem] = useState<MenuItem1>({
+    id: 0,
+    imageUrl: "",
+    description: "",
+    visibility: false,
+    storeId: "",
+    amount: 0,
+    title: "",
+  });
+  const navigate = useNavigate();
+  const { itemId } = useParams();
+  const { getQuantity, increment, decrement, addToCart } = useCart();
+
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        const store = localStorage.getItem("storeId");
+        if (!store) {
+          navigate("/store");
+          return;
+        }
+        const res = await fetch(apiUrl(`user/viewmenuitem?itemId=${itemId}`));
+        const data = await res.json();
+        setItem({
+          id: data.id,
+          imageUrl: data.imageUrl,
+          description: data.description,
+          visibility: data.visibility,
+          amount: data.amount,
+          storeId: data.storeId,
+          title: data.title,
+        });
+      } catch (error) {
+        console.error("Failed to fetch item", error);
+        toast.error("Failed to fetch menu item");
+        navigate("/error");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMenuItems();
+  }, []);
+
+  if (loading) {
+    return (
+      <Container className="py-16">
+        <Loader />
+      </Container>
+    );
   }
 
-interface MenuItemProps{
-    item:MenuItem1
-}
+  const quantity = getQuantity(item.id);
 
-type Cart = {
-    [key: number]: number;
-  };
+  return (
+    <Container className="py-10">
+      <button
+        onClick={() => navigate("/menu")}
+        className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-brand-ink-soft transition hover:text-brand-maroon"
+      >
+        <ChevronLeft size={16} /> Back to all pickles
+      </button>
 
+      <div className="grid gap-10 lg:grid-cols-2">
+        {/* Image */}
+        <div className="relative overflow-hidden rounded-3xl border border-brand-cream-dark bg-white shadow-card">
+          <img src={item.imageUrl} alt={item.title} className="h-full max-h-[32rem] w-full object-cover" />
+          {!item.visibility && (
+            <span className="absolute left-4 top-4">
+              <Badge tone="danger">Sold out</Badge>
+            </span>
+          )}
+        </div>
 
-export function MenuItem(){
-    return (
-        <>
-            <AppAppBar></AppAppBar>  
-            <Item></Item>
-            <Review></Review>
-            <Footer></Footer>
-        </>
-    )
-}
+        {/* Info */}
+        <div className="flex flex-col">
+          <Badge tone="muted" className="w-fit">
+            <Leaf size={13} className="mr-1" /> 100% Natural
+          </Badge>
+          <h1 className="mt-4 font-serif text-3xl font-bold text-brand-maroon sm:text-4xl">
+            {item.title}
+          </h1>
+          <p className="mt-4 text-brand-ink-soft">{item.description}</p>
 
-  
+          <div className="mt-6 flex items-baseline gap-2">
+            <span className="font-serif text-3xl font-bold text-brand-maroon">₹{item.amount}</span>
+            <span className="text-sm text-brand-ink-soft">incl. of all taxes</span>
+          </div>
 
+          <div className="mt-8 flex items-center gap-4">
+            {item.visibility ? (
+              <>
+                <QuantityStepper
+                  quantity={quantity}
+                  onIncrement={() => increment(item.id)}
+                  onDecrement={() => decrement(item.id)}
+                  onAdd={() => addToCart(item.id)}
+                />
+                <Button variant="outline" onClick={() => navigate("/checkout")}>
+                  Go to Checkout
+                </Button>
+              </>
+            ) : (
+              <span className="font-semibold text-red-500">Currently out of stock</span>
+            )}
+          </div>
 
-
-
-function Item(){
-    const [cart, setCart] = useState<Cart>({});
-    const [loading,setLoading]=useState(true);
-    const [item,setItem]=useState<MenuItem1>({
-        id:0,
-        imageUrl:"",
-        description:"",
-        visibility:false,
-        storeId:"",
-        amount:0,
-        title:""
-    })
-    const navigate=useNavigate();
-    const {itemId}=useParams()
-   
-    useEffect(() => {
-        
-        const fetchMenuItems = async () => {
-            try {
-                const store = localStorage.getItem("storeId");
-                if (store===null || store===undefined || store==="") {
-                    navigate("/store");
-                    return;
-                }
-                //check whether that store has that menu item id !!!!
-                // if not navigate user
-                // not adding currently , let checkout itself validate and send error if user adds multi store items
-                const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
-                const res = await fetch(`${url}api/v1/user/viewmenuitem?itemId=${itemId}`);
-                const data = await res.json();
-                setItem({
-                    id:data.id,
-                    imageUrl:data.imageUrl,
-                    description:data.description,
-                    visibility:data.visibility,
-                    amount:data.amount,
-                    storeId:data.storeId,
-                    title:data.title,
-                });
-              } catch (error) {
-                console.error("Failed to fetch item", error);
-                toast.error("Failed to fetch menu item")
-                navigate("/error");
-                return;
-              } finally {
-                setLoading(false);
-              }
-            };
-        
-            fetchMenuItems();
-            loadCartFromLocalStorage();
-        }, []);
-
-    
-    
-    
-    const saveCartToLocalStorage = (cartItems: Cart) => {
-        localStorage.setItem("cart", JSON.stringify(cartItems));
-      };
-    
-    const loadCartFromLocalStorage = () => {
-        const savedCart = localStorage.getItem("cart");
-        if (savedCart) {
-          setCart(JSON.parse(savedCart));
-        }
-    };
-    
-    const updateCart = (itemId: number, quantityChange: number) => {
-        setCart((prevCart) => {
-          const newCart = { ...prevCart };
-          const currentQuantity = prevCart[itemId] || 0;
-          const newQuantity = Math.max(0, currentQuantity + quantityChange);
-    
-          if (newQuantity === 0) {
-            delete newCart[itemId];
-          } else {
-            newCart[itemId] = newQuantity;
-          }
-    
-          saveCartToLocalStorage(newCart);
-          return newCart;
-        });
-      };
-    
-      const incrementQuantity = (itemId: number) => {
-        updateCart(itemId, 1);
-      };
-    
-      const decrementQuantity = (itemId: number) => {
-        updateCart(itemId, -1);
-      };
-    
-      const addToCart = (itemId: number) => {
-        updateCart(itemId, 1);
-      };
-    
-      const getItemQuantity = (itemId: number): number => {
-        return cart[itemId] || 0;
-      };
-      
-      const RenderCartControls = ({item}:MenuItemProps) => {
-        const quantity = getItemQuantity(item.id);
-    
-        if (quantity > 0) {
-          return (
-            <>
-              <button
-                onClick={() => decrementQuantity(item.id)}
-                className="px-4 py-2 bg-gray-400 text-white rounded-md"
-              >
-                -
-              </button>
-              <span className="text-lg mx-2 w-6 text-center">{quantity}</span>
-              <button
-                onClick={() => incrementQuantity(item.id)}
-                className="px-4 py-2 bg-[#0092FF] hover:bg-[#0073CC] text-white rounded-md"
-              >
-                +
-              </button>
-            </>
-          );
-        } else {
-          return (
-            <button
-              onClick={() => addToCart(item.id)}
-              className="py-2 px-4 bg-[#0092FF] hover:bg-[#0073CC] text-white rounded-md flex items-center hover:shadow-md"
-            >
-              <FaShoppingCart className="mr-2" />
-              Add
-            </button>
-          );
-        }
-      };
-     
-     return (
-     <>
-        {(loading) ? (
-        <div>
-          <div className="bg-gray-50 px-10 pt-10 pb-20 mt-6 mb-20 text-white w-[80%] mx-auto rounded-xl border border-gray-100">
-            <Loader />
+          <div className="mt-10 grid grid-cols-3 gap-3 border-t border-brand-cream-dark pt-6 text-center text-xs text-brand-ink-soft">
+            <div>
+              <p className="font-semibold text-brand-ink">No Preservatives</p>
+            </div>
+            <div>
+              <p className="font-semibold text-brand-ink">Sun-Cured</p>
+            </div>
+            <div>
+              <p className="font-semibold text-brand-ink">PAN-India Delivery</p>
+            </div>
           </div>
         </div>
-      ): (
-        <div key={item.id} className="mb-32 mt-7 px-4 sm:px-10 lg:px-20 xl:px-52" >
-    <div
-        className="px-6 py-4 rounded-lg shadow-sm border border-gray-200 flex flex-col hover:shadow-lg text-black h-auto"
-    >
-    <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  className="w-full h-96  rounded-md mb-4"
-                />
-                <div className="font-bold text-xl my-2">{item.title}</div>
-                <div className="text-gray-700 mb-4 h-10">
-                  {item.description}
-                </div>
-                <div className="flex flex-row justify-between items-center w-full text-lg mb-4">
-                  <div className="text-gray-500">₹{item.amount}</div>
-                  {item.visibility ? (
-                    <div className="flex flex-row items-center justify-center">
-                      {<RenderCartControls item={item}></RenderCartControls>}
-                    </div>
-                  ) : (
-                    <div className="text-red-500 font-semibold">
-                      Out of Stock
-                    </div>
-                  )}
-                </div>
-              </div>  </div>)
-        }
-</> ) }
+      </div>
+    </Container>
+  );
+}

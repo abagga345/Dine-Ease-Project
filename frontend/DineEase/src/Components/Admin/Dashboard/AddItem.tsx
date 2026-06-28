@@ -2,6 +2,9 @@ import React, { useRef, useState } from "react";
 import { PlusCircle, Image as ImageIcon, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { Input } from "../../common/ui/Input";
+import { Button } from "../../common/ui/Button";
+import { Card } from "../../common/ui/Card";
 
 
 export const AddItem = () => {
@@ -127,29 +130,24 @@ export const AddItem = () => {
   };
     return (
       <div className="flex justify-center items-start w-full px-4">
-          <div className="max-w-md w-full mt-10 p-6 bg-white rounded-lg shadow-lg">
-          <h2 className="text-3xl font-semibold text-center text-gray-900 mb-6">
+          <Card className="max-w-md w-full mt-10 p-6">
+          <h2 className="text-3xl font-serif font-semibold text-center text-brand-maroon mb-6">
             Add Menu Item
           </h2>
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Title */}
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-                Title
-              </label>
-              <input
-                type="text"
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                className="w-full mt-1 px-3 py-2 text-gray-700 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-    
+            <Input
+              label="Title"
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+
             {/* Description */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-brand-ink">
                 Description
               </label>
               <textarea
@@ -158,42 +156,37 @@ export const AddItem = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
-                className="w-full mt-1 px-3 py-2 text-gray-700 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                className="w-full rounded-lg border border-brand-cream-dark bg-white px-4 py-2.5 text-sm text-brand-ink shadow-sm outline-none transition focus:border-brand-maroon focus:ring-2 focus:ring-brand-turmeric/40 resize-none placeholder:text-brand-ink-soft/60"
               />
             </div>
-    
+
             {/* Amount */}
-            <div>
-              <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
-                Amount
-              </label>
-              <input
-                type="number"
-                id="amount"
-                min="1"
-                value={amount}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value === "" || Number(value) > 0) setAmount(value);
-                }}
-                onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()}
-                required
-                className="w-full mt-1 px-3 py-2 text-gray-700 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-    
+            <Input
+              label="Amount"
+              type="number"
+              id="amount"
+              min="1"
+              value={amount}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "" || Number(value) > 0) setAmount(value);
+              }}
+              onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()}
+              required
+            />
+
             {/* Image Upload */}
             <div>
-              <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="image" className="mb-1.5 block text-sm font-medium text-brand-ink">
                 Image
               </label>
               <div className="mt-1">
                 <label
                   htmlFor="image"
-                  className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-200"
+                  className="flex items-center justify-center gap-2 px-4 py-2 bg-brand-cream border border-brand-cream-dark rounded-lg cursor-pointer hover:bg-brand-cream-dark transition-colors"
                 >
-                  <ImageIcon className="w-5 h-5 text-gray-600" />
-                  <span className="text-sm text-gray-700">
+                  <ImageIcon className="w-5 h-5 text-brand-terracotta" />
+                  <span className="text-sm text-brand-ink">
                     {image ? "Change Image" : "Upload Image"}
                   </span>
                   <input
@@ -208,8 +201,8 @@ export const AddItem = () => {
                 </label>
                 {image && (
                   <div className="mt-3 space-y-2">
-                    <div className="flex items-center justify-between bg-gray-100 rounded p-2">
-                      <span className="text-sm text-gray-600 truncate">{image.name}</span>
+                    <div className="flex items-center justify-between bg-brand-cream rounded-lg p-2">
+                      <span className="text-sm text-brand-ink-soft truncate">{image.name}</span>
                       <button type="button" onClick={handleRemoveImage} className="text-red-600 hover:text-red-800">
                         <X className="h-5 w-5" />
                       </button>
@@ -223,19 +216,18 @@ export const AddItem = () => {
                 )}
               </div>
             </div>
-    
+
             {/* Submit Button */}
-            <button
+            <Button
               type="submit"
+              fullWidth
+              loading={loading}
               disabled={!buttonstate || loading}
-              className={`w-full flex justify-center items-center gap-2 text-white font-medium py-2 px-4 rounded-lg shadow transition-all duration-200 
-                ${buttonstate && !loading ? "bg-[#0092FF] hover:bg-[#0073CC]" : "bg-gray-400 cursor-not-allowed"}
-              `}
             >
               <PlusCircle className="h-5 w-5" />
               <span>{loading ? "Adding..." : "Add Item"}</span>
-            </button>
+            </Button>
           </form>
-        </div>
+        </Card>
       </div>
     );    }

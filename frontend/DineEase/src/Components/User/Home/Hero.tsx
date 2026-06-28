@@ -1,120 +1,53 @@
-import { alpha } from '@mui/material';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import FastfoodIcon from '@mui/icons-material/Fastfood';
+import { useNavigate } from "react-router-dom";
+import { Container } from "../../common/ui/Container";
+import { Button } from "../../common/ui/Button";
+import { brand, heroImages } from "../../../config/brand";
 
+export default function Hero() {
+  const navigate = useNavigate();
 
-export default function Hero({ children }: React.PropsWithChildren) {
-    return (
-        <Box
-            id="hero"
-            sx={(theme) => ({
-                width: '100%',
-                backgroundImage:
-                    theme.palette.mode === 'light'
-                        ? 'linear-gradient(180deg, #CEE5FD, #FFF)'
-                        : `linear-gradient(#02294F, ${alpha('#090E10', 0.0)})`,
-                backgroundSize: '100% 20%',
-                backgroundRepeat: 'no-repeat',
-            })}
-        >
-            {children}
-            <Container
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    pt: { xs: 14, sm: 20 },
-                    pb: { xs: 8, sm: 12 },
-                }}
-            >
-                <Stack spacing={2} useFlexGap sx={{ width: { xs: '100%', sm: '70%' } }}>
-                    <Typography
-                        variant="h1"
-                        sx={{
-                            display: 'flex',
-                            flexDirection: { xs: 'column', md: 'row' },
-                            alignSelf: 'center',
-                            textAlign: 'center',
-                            fontSize: 'clamp(3.5rem, 10vw, 4rem)',
-                        }}
-                    >
-                        <Typography
-                            component="span"
-                            variant="h1"
-                            sx={{
-                                fontSize: 'clamp(3rem, 10vw, 4rem)',
-                                color: (theme) =>
-                                    theme.palette.mode === 'light' ? 'primary.main' : 'primary.light',
-                            }}
-                        >
-                            <FastfoodIcon fontSize="large" />
-                            &nbsp;DineEase
-                        </Typography>
-                    </Typography>
-                    <Typography
-                        textAlign="center"
-                        color="text.secondary"
-                        sx={{ alignSelf: 'center', width: { sm: '100%', md: '80%' } }}
-                    >
-                        Your Favorite Meals, Delivered with Ease
-                    </Typography>
-                    {/* <Stack
-                        direction={{ xs: 'column', sm: 'row' }}
-                        alignSelf="center"
-                        spacing={1}
-                        useFlexGap
-                        sx={{ pt: 2, width: { xs: '100%', sm: 'auto' } }}
-                    >
-                        <TextField
-                            id="outlined-basic"
-                            hiddenLabel
-                            size="small"
-                            variant="outlined"
-                            aria-label="Enter your email address"
-                            placeholder="Your email address"
-                            inputProps={{
-                                autoComplete: 'off',
-                                'aria-label': 'Enter your email address',
-                            }}
-                        />
-                        <Button variant="contained" color="primary">
-                            Start now
-                        </Button>
-                    </Stack> */}
-                    {/* <Typography variant="caption" textAlign="center" sx={{ opacity: 0.8 }}>
-                        By clicking &quot;Start now&quot; you agree to our&nbsp;
-                        <Link href="#" color="primary">
-                            Terms & Conditions
-                        </Link>
-                        .
-                    </Typography> */}
-                </Stack>
-                <Box
-                    id="image"
-                    sx={(theme) => ({
-                        mt: { xs: 8, sm: 10 },
-                        alignSelf: 'center',
-                        height: { xs: 200, sm: 700 },
-                        width: '100%',
-                        backgroundImage:
-                            'url("https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?cs=srgb&dl=pexels-chanwalrus-958545.jpg&fm=jpg")',
-                        backgroundSize: 'cover',
-                        borderRadius: '10px',
-                        outline: '1px solid',
-                        outlineColor:
-                            theme.palette.mode === 'light'
-                                ? alpha('#BFCCD9', 0.5)
-                                : alpha('#9CCCFC', 0.1),
-                        boxShadow:
-                            theme.palette.mode === 'light'
-                                ? `0 0 12px 8px ${alpha('#9CCCFC', 0.2)}`
-                                : `0 0 24px 12px ${alpha('#033363', 0.2)}`,
-                    })}
-                />
-            </Container>
-        </Box>
-    );
+  return (
+    <section id="hero" className="relative overflow-hidden bg-brand-cream">
+      {/* Decorative background image with cream fade */}
+      <div
+        className="absolute inset-0 bg-cover bg-center opacity-25"
+        style={{ backgroundImage: `url("${heroImages.hero}")` }}
+        aria-hidden="true"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-brand-cream/40 via-brand-cream/70 to-brand-cream" aria-hidden="true" />
+
+      <Container className="relative flex flex-col items-center py-20 text-center sm:py-28">
+        <p className="mb-4 inline-flex items-center rounded-full border border-brand-terracotta/40 bg-white/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-brand-terracotta">
+          Since {brand.sinceYear}
+        </p>
+        <h1 className="max-w-3xl font-serif text-4xl font-bold leading-tight text-brand-maroon sm:text-6xl">
+          {brand.heroHeadline}
+        </h1>
+        <p className="mt-6 max-w-xl text-base text-brand-ink-soft sm:text-lg">{brand.heroSubtext}</p>
+        <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+          <Button size="lg" onClick={() => navigate("/store")}>
+            Shop the Collection
+          </Button>
+          <Button size="lg" variant="outline" onClick={() => navigate("/menu")}>
+            Browse Pickles
+          </Button>
+        </div>
+
+        {/* Trust strip */}
+        <div className="mt-14 grid w-full max-w-2xl grid-cols-2 gap-4 text-center sm:grid-cols-4">
+          {[
+            { k: "100%", v: "Natural" },
+            { k: "Sun", v: "Cured" },
+            { k: "PAN", v: "India Delivery" },
+            { k: "No", v: "Preservatives" },
+          ].map((s) => (
+            <div key={s.v} className="rounded-xl border border-brand-cream-dark bg-white/70 px-3 py-4">
+              <p className="font-serif text-2xl font-bold text-brand-maroon">{s.k}</p>
+              <p className="text-xs uppercase tracking-wide text-brand-ink-soft">{s.v}</p>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
 }

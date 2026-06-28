@@ -1,27 +1,26 @@
 import mailjet from 'node-mailjet';
-import dotenv from 'dotenv';
-import path from 'path';
+import { logger } from '../../logger';
 
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') }); 
-
-
-const mailjetPublic = process.env.MAIL_JET_PUBLIC_KEY;
-const mailjetPrivate = process.env.MAIL_JET_PRIVATE_KEY;
-
-if (!mailjetPublic || !mailjetPrivate) {
-  throw new Error('Missing Mailjet API keys in environment variables');
-}
-
-const mailjetClient = mailjet.apiConnect(mailjetPublic, mailjetPrivate);
+// Lazily create the Mailjet client so a missing key doesn't crash the server
+// at import/boot time. Returns null (and logs) when keys are unavailable.
+const getMailjetClient = () => {
+  const mailjetPublic = process.env.MAIL_JET_PUBLIC_KEY;
+  const mailjetPrivate = process.env.MAIL_JET_PRIVATE_KEY;
+  if (!mailjetPublic || !mailjetPrivate) {
+    logger.error('Missing Mailjet API keys in environment variables');
+    return null;
+  }
+  return mailjet.apiConnect(mailjetPublic, mailjetPrivate);
+};
 
 export const sendOTP = async (
   recipientEmail: string,
   otp: string,
 ) => {
-
-//   console.log("Sending Mailjet email with variables:", {
-//     otp: otp,
-//  });
+  const mailjetClient = getMailjetClient();
+  if (!mailjetClient) {
+    return false;
+  }
 
   try {
     const request = await mailjetClient
@@ -39,7 +38,7 @@ export const sendOTP = async (
               }
             ],
             Subject: 'OTP Verification DineEase',
-            TemplateID: 6992974, 
+            TemplateID: 6992974,
             TemplateLanguage: true,
             Variables: {
               otp: otp,
@@ -47,9 +46,10 @@ export const sendOTP = async (
           }
         ]
       });
+    logger.info({ recipientEmail }, "OTP email sent via Mailjet");
     return true;
   } catch (err: any) {
+    logger.error({ err: { statusCode: err?.statusCode, message: err?.message }, recipientEmail }, "Mailjet OTP send failed");
     return false;
   }
 };
-

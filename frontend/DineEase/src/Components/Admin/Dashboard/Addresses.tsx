@@ -6,6 +6,7 @@ import { AiFillEdit } from "react-icons/ai";
 import { ImBin } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import { NavigateOptions } from 'react-router-dom';
+import { Button } from "../../common/ui/Button";
 
 interface Field {
   houseStreet: string;
@@ -155,14 +156,14 @@ export function Addresses() {
 
   return (
     <div className="w-full h-full">
-      <div className="font-semibold text-3xl w-full text-center my-4">
+      <h1 className="font-serif font-bold text-3xl w-full text-center my-4 text-brand-maroon">
         Saved Addresses
-      </div>
+      </h1>
 
-      <div className="bg-gray-50 px-10 pt-10 pb-20 mt-6 mb-20 w-[80%] mx-auto rounded-xl border border-gray-100">
+      <div className="bg-white px-10 pt-10 pb-20 mt-6 mb-20 w-[80%] mx-auto rounded-2xl border border-brand-cream-dark shadow-card">
         {loading ? (
           <div className="flex justify-center items-center h-full">
-            <Loader2 className="w-10 h-10 animate-spin text-[#33A8FF]" />
+            <Loader2 className="w-10 h-10 animate-spin text-brand-maroon" />
           </div>
         ) : (
           <div className="flex flex-col">
@@ -170,12 +171,12 @@ export function Addresses() {
               {addresses.map((item) => (
                 <div key={item.id}>
                   <div className="relative">
-                    <div className="border-[#33A8FF] bg-[#EAF8FF] flex items-center justify-between cursor-pointer select-none rounded-lg border p-4">
+                    <div className="border-brand-cream-dark bg-brand-cream flex items-center justify-between cursor-pointer select-none rounded-lg border p-4">
                       <div className="ml-5 flex flex-col gap-3">
                         <input
                           type="text"
                           disabled={item.id !== open}
-                          className="mt-2 font-semibold p-1 rounded-lg border border-gray-300 focus:border-[#33A8FF] focus:ring-[#33A8FF]"
+                          className="mt-2 font-semibold p-1 rounded-lg border border-brand-cream-dark bg-white focus:border-brand-maroon focus:ring-brand-turmeric"
                           value={
                             item.id !== open
                               ? item.houseStreet
@@ -191,7 +192,7 @@ export function Addresses() {
                         <div className="flex gap-2">
                           <select
                             disabled={item.id !== open}
-                            className="text-slate-500 text-sm leading-6 p-1 rounded-lg border border-gray-300 focus:border-[#33A8FF] focus:ring-[#33A8FF]"
+                            className="text-brand-ink-soft text-sm leading-6 p-1 rounded-lg border border-brand-cream-dark bg-white focus:border-brand-maroon focus:ring-brand-turmeric"
                             value={item.id !== open ? item.state : newVal.state}
                             onChange={(e) => {
                               setNewVal((cur) => ({
@@ -242,7 +243,7 @@ export function Addresses() {
                           <input
                             type="text"
                             disabled={item.id !== open}
-                            className="text-slate-500 text-sm leading-6 p-1 rounded-lg border border-gray-300 focus:border-[#33A8FF] focus:ring-[#33A8FF]"
+                            className="text-brand-ink-soft text-sm leading-6 p-1 rounded-lg border border-brand-cream-dark bg-white focus:border-brand-maroon focus:ring-brand-turmeric"
                             value={
                               item.id !== open ? item.pincode : newVal.pincode
                             }
@@ -266,6 +267,7 @@ export function Addresses() {
                                 pincode: item.pincode,
                               });
                             }}
+                            className="text-brand-maroon hover:text-brand-maroon-dark"
                           >
                             <div className="flex flex-row items-center gap-2">
                               <AiFillEdit />
@@ -276,6 +278,7 @@ export function Addresses() {
                             onClick={() => {
                               deletehandler(item.id);
                             }}
+                            className="text-brand-terracotta hover:text-brand-terracotta-dark"
                           >
                             <div className="flex flex-row items-center gap-2">
                               <ImBin />
@@ -284,24 +287,25 @@ export function Addresses() {
                         </div>
                       ) : (
                         <div className="flex gap-3">
-                          <button
+                          <Button
                             onClick={() => {
                               submithandler();
                             }}
                             type="button"
-                            className="rounded-md px-2 py-2 font-medium text-white bg-[#0092FF] hover:bg-[#0073CC]"
+                            size="sm"
                           >
                             Save
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => {
                               setOpen(0);
                             }}
                             type="button"
-                            className="rounded-md px-2 py-2 font-medium text-white bg-[#0092FF] hover:bg-[#0073CC]"
+                            variant="outline"
+                            size="sm"
                           >
                             Back
-                          </button>
+                          </Button>
                         </div>
                       )}
                     </div>
@@ -371,16 +375,15 @@ function AddAddress({ setAddresses, navigate, setError }:Props) {
   if (!addressform) {
     return (
       <div className="flex justify-center">
-        <button
+        <Button
           onClick={() => {
             setAddressForm(true);
           }}
           type="button"
-          className={`mt-6 mb-8  rounded-md px-6 py-3 font-medium text-white
-                 bg-[#0092FF] hover:bg-[#0073CC]`}
+          className="mt-6 mb-8"
         >
           Add New Address
-        </button>
+        </Button>
       </div>
     );
   }
@@ -397,7 +400,7 @@ function AddAddress({ setAddresses, navigate, setError }:Props) {
                 onChange={(e) => {
                   setHouseStreet(e.target.value);
                 }}
-                className="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-[#33A8FF] focus:ring-[#33A8FF]"
+                className="w-full rounded-lg border border-brand-cream-dark bg-white px-4 py-3 pl-11 text-sm shadow-sm outline-none focus:z-10 focus:border-brand-maroon focus:ring-brand-turmeric"
                 placeholder="Street Address"
               />
               <div className="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
@@ -412,7 +415,7 @@ function AddAddress({ setAddresses, navigate, setError }:Props) {
               onChange={(e) => {
                 setState(e.target.value);
               }}
-              className="w-full rounded-md border bg-white border-gray-200 px-4 py-3 text-sm shadow-sm outline-none focus:z-10 focus:border-[#33A8FF] focus:ring-[#33A8FF]"
+              className="w-full rounded-lg border bg-white border-brand-cream-dark px-4 py-3 text-sm shadow-sm outline-none focus:z-10 focus:border-brand-maroon focus:ring-brand-turmeric"
             >
               <option selected>Delhi</option>
               <option>Andhra Pradesh</option>
@@ -456,7 +459,7 @@ function AddAddress({ setAddresses, navigate, setError }:Props) {
               onChange={(e) => {
                 setPincode(e.target.value);
               }}
-              className="flex-shrink-0 rounded-md border border-gray-200 px-4 py-3 text-sm shadow-sm outline-none sm:w-1/6 focus:z-10 focus:border-[#33A8FF] focus:ring-[#33A8FF]"
+              className="flex-shrink-0 rounded-lg border border-brand-cream-dark bg-white px-4 py-3 text-sm shadow-sm outline-none sm:w-1/6 focus:z-10 focus:border-brand-maroon focus:ring-brand-turmeric"
               placeholder="Pin Code"
             />
           </div>
@@ -471,8 +474,7 @@ function AddAddress({ setAddresses, navigate, setError }:Props) {
           <button
             type="button"
             onClick={submithandler}
-            className={`mt-6 mb-8  rounded-md px-6 py-3 font-medium text-white
-                 bg-[#0092FF] hover:bg-[#0073CC]`}
+            className="mt-6 mb-8 rounded-full px-6 py-3 font-medium text-brand-cream bg-brand-maroon hover:bg-brand-maroon-dark transition"
           >
             Save address
           </button>

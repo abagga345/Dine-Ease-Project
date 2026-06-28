@@ -51,41 +51,41 @@ export const ChartOne = () => {
 
   if (loading) {
     return (
-      <Loader2 className="w-10 h-10 animate-spin text-[#33A8FF]" />
+      <Loader2 className="w-10 h-10 animate-spin text-brand-maroon" />
     );
   }
-  if (error) return <p>Error: {error}</p>;
+  if (error) return <p className="text-brand-ink">Error: {error}</p>;
 
   return (
     <div className="flex md:flex-row flex-col">
       <div className="flex flex-col items-center md:w-[50%] w-[100%]">
-        <div className="bg-white shadow-lg p-4 rounded-lg mb-6 w-[90%]">
-          <div className="flex flex-col items-center gap-2">
-            <div className="flex flex-row items-center gap-2 text-lg">
+        <div className="bg-brand-cream border border-brand-cream-dark shadow-soft p-4 rounded-xl mb-6 w-[90%]">
+          <div className="flex flex-col items-center gap-2 text-brand-ink">
+            <div className="flex flex-row items-center gap-2 text-lg text-brand-maroon">
               <MdSell />
               <p>Total Sales</p>
             </div>
-            <p>₹ {totalSales !== null ? totalSales : "N/A"}</p>
+            <p className="font-semibold">₹ {totalSales !== null ? totalSales : "N/A"}</p>
           </div>
         </div>
-        <div className="bg-white shadow-lg p-4 rounded-lg mb-6 w-[90%]">
-          <div className="flex flex-col items-center gap-2">
-            <div className="flex flex-row items-center gap-2 text-lg">
+        <div className="bg-brand-cream border border-brand-cream-dark shadow-soft p-4 rounded-xl mb-6 w-[90%]">
+          <div className="flex flex-col items-center gap-2 text-brand-ink">
+            <div className="flex flex-row items-center gap-2 text-lg text-brand-maroon">
               <MdOutlineMenuBook />
               <p>Total Menu Items</p>
             </div>
-            <p>{visibleItemsCount !== null ? visibleItemsCount : "N/A"}</p>
+            <p className="font-semibold">{visibleItemsCount !== null ? visibleItemsCount : "N/A"}</p>
           </div>
         </div>
       </div>
       <div className="flex flex-col items-center md:w-[50%]">
-        <div className="bg-white shadow-lg p-4 rounded-lg  mb-6  w-[90%]">
-          <div className="flex flex-col items-center gap-2">
-            <div className="flex flex-row items-center gap-2 text-lg">
+        <div className="bg-brand-cream border border-brand-cream-dark shadow-soft p-4 rounded-xl  mb-6  w-[90%]">
+          <div className="flex flex-col items-center gap-2 text-brand-ink">
+            <div className="flex flex-row items-center gap-2 text-lg text-brand-maroon">
               <MdRateReview />
               <p>Average Rating</p>
             </div>
-            <p>{avgReview !== null ? avgReview : "N/A"}</p>
+            <p className="font-semibold">{avgReview !== null ? avgReview : "N/A"}</p>
           </div>
         </div>
         {/* <div className="bg-white shadow-lg p-4 rounded-lg  w-[90%]">

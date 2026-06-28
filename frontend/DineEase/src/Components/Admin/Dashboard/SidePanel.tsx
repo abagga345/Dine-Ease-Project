@@ -18,6 +18,7 @@ import { IoIosSettings } from "react-icons/io";
 import { IoCloseOutline } from "react-icons/io5";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ConfirmModal } from "../../common/ui/Modal";
 
 
 const navItems = [
@@ -43,7 +44,7 @@ const navItems = [
   { href: "/dashboard/additem", label: "Add Item", icon: MdAdd, role: "Admin" },
   {
     href: "/dashboard/menu",
-    label: "Menu",
+    label: "Products",
     icon: MdOutlineMenuBook,
     role: "Admin",
   },
@@ -73,25 +74,11 @@ const navItems = [
   }
 ];
 
-type ConfirmationModalType = {
-  text1: string;
-  text2: string;
-  btn1Text: string;
-  btn2Text: string;
-  btn1Handler: () => void;
-  btn2Handler: () => void;
-};
-
-interface ConfirmationModalProps {
-  modalData: ConfirmationModalType;
-}
-
-
 export const SidePanel = () => {
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const [confirmationModal, setConfirmationModal] = useState<ConfirmationModalType | null>(null);
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
   const navigate=useNavigate();
   
@@ -166,19 +153,19 @@ export const SidePanel = () => {
     <>
       {/* Toggle Button for Small Screens */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 text-white bg-[#008CFF] rounded"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 text-brand-cream bg-brand-maroon rounded-lg shadow-soft"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         {isCollapsed ? <GiHamburgerMenu /> : <IoCloseOutline />}
       </button>
 
-      
+
       <div
-        className={` min-h-screen bg-[#D5F1FF] text-black px-6 py-8 flex flex-col justify-between transition-all duration-300 
+        className={` min-h-screen bg-brand-maroon text-brand-cream px-6 py-8 flex flex-col justify-between transition-all duration-300
         ${isCollapsed ? "hidden lg:flex min-w-64" : "w-full fixed z-40"}`}
       >
         <div>
-          <h2 className="text-2xl font-semibold mb-4">
+          <h2 className="text-2xl font-serif font-semibold mb-6 text-brand-cream flex items-center gap-2">
             <MdDashboard className="inline" /> Dashboard
           </h2>
           <nav>
@@ -187,13 +174,14 @@ export const SidePanel = () => {
             ) : (
               navItems.map((item) => {
                 const Icon = item.icon;
+                const isActive = location.pathname === item.href;
                 return (
                   (item.role === role || item.role === "All") && (
                     <Link
                       key={item.href}
                       to={item.href}
-                     className={`flex flex-row gap-2 items-center px-4 py-2 mb-2 rounded 
-                     hover:bg-[#33A8FF] ${location.pathname === item.href ? "bg-[#33A8FF] text-white" : ""}`}
+                     className={`flex flex-row gap-2 items-center px-4 py-2 mb-2 rounded-lg border-l-4 transition-colors
+                     hover:bg-brand-maroon-dark ${isActive ? "bg-brand-maroon-dark border-brand-turmeric text-white" : "border-transparent text-brand-cream/90"}`}
 
                       onClick={() => {
                         setIsCollapsed(true);
@@ -208,69 +196,41 @@ export const SidePanel = () => {
             )}
           </nav>
         </div>
-        <div className="sticky bottom-0 bg-[#D5F1FF] py-4">
-           <div className="flex flex-row gap-2 items-center px-4 py-2 hover:bg-[#33A8FF] rounded">
+        <div className="sticky bottom-0 bg-brand-maroon py-4">
+           <div className="flex flex-row gap-2 items-center px-4 py-2 rounded-lg hover:bg-brand-maroon-dark transition-colors">
 
           <button
-            onClick={() =>
-              setConfirmationModal({
-                text1: "Are you sure?",
-                text2: "You will be logged out of your account.",
-                btn1Text: "Logout",
-                btn2Text: "Cancel",
-                btn1Handler: handleLogout,
-                btn2Handler: () => setConfirmationModal(null),
-              })
-            }
+            onClick={() => setLogoutModalOpen(true)}
           >
-            <div className="flex items-center gap-x-2">
+            <div className="flex items-center gap-x-2 text-brand-cream">
               <VscSignOut className="text-lg" />
               <span>Logout</span>
             </div>
           </button>
         </div>
         </div>
-        {confirmationModal && (
-          <ConfirmationModal modalData={confirmationModal} />
-        )}
       </div>
+
+      <ConfirmModal
+        open={logoutModalOpen}
+        title="Are you sure?"
+        message="You will be logged out of your account."
+        confirmText="Logout"
+        cancelText="Cancel"
+        onConfirm={() => {
+          setLogoutModalOpen(false);
+          handleLogout();
+        }}
+        onCancel={() => setLogoutModalOpen(false)}
+      />
 
       {/* Overlay for when the menu is open on smaller screens */}
       {!isCollapsed && (
         <div
-          className="fixed inset-0 bg-black opacity-50 z-30 lg:hidden"
+          className="fixed inset-0 bg-brand-ink opacity-50 z-30 lg:hidden"
           onClick={() => setIsCollapsed(true)}
         ></div>
       )}
     </>
   );
 };
-
-
-const ConfirmationModal = ({ modalData }:ConfirmationModalProps) => {
-    const { text1, text2, btn1Text, btn2Text, btn1Handler, btn2Handler } =
-      modalData;
-  
-    return (
-      <div className="fixed inset-0 flex flex-col gap-8 items-center justify-center z-50 backdrop-blur-sm">
-        <div className="md:w-[25%] p-4 rounded-lg shadow-lg flex flex-col gap-2 bg-[#008CFF]">
-          <p className="text-xl text-white font-semibold">{text1}</p>
-          <p className="text-white text-sm">{text2}</p>
-          <div className="flex justify-end mt-4">
-            <button
-              onClick={btn1Handler}
-              className="px-4 py-2 bg-yellow-50 font-inter text-black rounded-md hover:bg-blue-100 mr-2 font-semibold"
-            >
-              {btn1Text}
-            </button>
-            <button
-              onClick={btn2Handler}
-              className="px-4 py-2 text-white rounded-md "
-            >
-              {btn2Text}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };

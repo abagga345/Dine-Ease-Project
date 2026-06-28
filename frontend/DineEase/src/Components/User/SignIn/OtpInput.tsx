@@ -1,20 +1,13 @@
-import React from 'react'
-import { MuiOtpInput } from 'mui-one-time-password-input'
-export const OtpHandler = () => {
-  const [value, setValue] = React.useState<string>('')
+import { useState } from "react";
+import { OtpInput } from "../../common/ui/OtpInput";
 
-  const handleChange = (newValue: string) => {
-    setValue(newValue)
-  }
+/** Standalone OTP route handler (kept for the /verifyotp route). */
+export const OtpHandler = () => {
+  const [value, setValue] = useState<string>("");
 
   return (
-    <div className='h-12 flex flex-col mt-2'>
-      <MuiOtpInput
-        value={value}
-        onChange={handleChange}
-        length={6}
-        autoFocus
-      />
+    <div className="mx-auto mt-10 max-w-sm px-4">
+      <OtpInput value={value} onChange={setValue} length={6} />
     </div>
-  )
-}
+  );
+};

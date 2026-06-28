@@ -1,19 +1,17 @@
 import mailjet from 'node-mailjet';
-import dotenv from 'dotenv';
-import path from 'path';
+import { logger } from '../../logger';
 
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') }); 
-
-
-const mailjetPublic = process.env.MAIL_JET_PUBLIC_KEY;
-const mailjetPrivate = process.env.MAIL_JET_PRIVATE_KEY;
-
-if (!mailjetPublic || !mailjetPrivate) {
-  throw new Error('Missing Mailjet API keys in environment variables');
-}
-
-const mailjetClient = mailjet.apiConnect(mailjetPublic, mailjetPrivate);
-
+// Lazily create the Mailjet client so a missing key doesn't crash the server
+// at import/boot time. Returns null (and logs) when keys are unavailable.
+const getMailjetClient = () => {
+  const mailjetPublic = process.env.MAIL_JET_PUBLIC_KEY;
+  const mailjetPrivate = process.env.MAIL_JET_PRIVATE_KEY;
+  if (!mailjetPublic || !mailjetPrivate) {
+    logger.error('Missing Mailjet API keys in environment variables');
+    return null;
+  }
+  return mailjet.apiConnect(mailjetPublic, mailjetPrivate);
+};
 
 export const sendOrderConfirmationEmail = async (
   recipientEmail: string,
@@ -22,13 +20,10 @@ export const sendOrderConfirmationEmail = async (
   address: string,
   orderDate : string
 ) => {
-
-  // console.log("Sending Mailjet email with variables:", {
-  //   order_id: orderId,
-  //   amount,
-  //   address,
-  //   order_date: orderDate,
-  // });
+  const mailjetClient = getMailjetClient();
+  if (!mailjetClient) {
+    return;
+  }
 
   try {
     const request = await mailjetClient
@@ -46,7 +41,7 @@ export const sendOrderConfirmationEmail = async (
               }
             ],
             Subject: 'Order Confirmation',
-            TemplateID: 6992419, 
+            TemplateID: 6992419,
             TemplateLanguage: true,
             Variables: {
               orderId: orderId,
@@ -58,9 +53,8 @@ export const sendOrderConfirmationEmail = async (
         ]
       });
 
-    // console.log("Email sent successfully:", request.body);
+    logger.info({ recipientEmail, orderId }, "Order confirmation email sent via Mailjet");
   } catch (err: any) {
-    console.error("Mailjet error:", err.statusCode, err.message);
+    logger.error({ err: { statusCode: err?.statusCode, message: err?.message }, orderId }, "Mailjet order-email send failed");
   }
 };
-

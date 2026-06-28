@@ -3,6 +3,8 @@ import { Loader2, Trash2 } from "lucide-react";
 
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { Card } from "../../common/ui/Card";
+import { Button } from "../../common/ui/Button";
 
 interface MenuItem {
   id: number;
@@ -164,7 +166,7 @@ export const MenuItems: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <Loader2 className="w-10 h-10 animate-spin text-[#33A8FF]" />
+        <Loader2 className="w-10 h-10 animate-spin text-brand-maroon" />
       </div>
     );
   }
@@ -178,12 +180,13 @@ export const MenuItems: React.FC = () => {
   }
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">Our Menu</h1>
+      <h1 className="text-3xl font-serif font-bold mb-8 text-center text-brand-maroon">Our Products</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {menuItems.map((item, index) => (
-          <div
+          <Card
             key={index}
-            className={`bg-white rounded-lg shadow-md overflow-hidden flex flex-col ${
+            hoverable
+            className={`overflow-hidden flex flex-col ${
               !item.visibility ? "opacity-50" : ""
             }`}
           >
@@ -205,45 +208,43 @@ export const MenuItems: React.FC = () => {
               {/* Text Content */}
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <h2 className="text-xl font-semibold">{item.title}</h2>
-                  <span className="text-lg font-bold">
+                  <h2 className="text-xl font-serif font-semibold text-brand-maroon">{item.title}</h2>
+                  <span className="text-lg font-bold text-brand-terracotta">
                     ₹{item.amount.toFixed(2)}
                   </span>
                 </div>
-                <p className="text-gray-600 mb-4">{item.description}</p>
+                <p className="text-brand-ink-soft mb-4">{item.description}</p>
               </div>
-  
+
               {/* Buttons at the Bottom */}
               <div>
                 <div className="flex items-center gap-2">
-                  <button
+                  <Button
                     disabled={item.loading}
+                    loading={item.loading}
                     onClick={() => toggleOutOfStock(index)}
-                    className={`flex-grow font-semibold text-white py-2 px-4 rounded ${
-                      item.loading
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : item.visibility
-                        ? "bg-[#0092FF] hover:bg-[#0073CC]"
-                        : "bg-red-500 hover:bg-red-600"
-                    }`}
+                    variant={item.visibility ? "primary" : "outline"}
+                    className="flex-grow"
                   >
                     {item.visibility ? "Mark Out of Stock" : "Mark In Stock"}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => deleteMenuItem(item.id, item.imageUrl)}
-                    className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded flex-shrink-0"
+                    variant="ghost"
+                    className="flex-shrink-0 text-brand-ink-soft hover:text-brand-maroon"
+                    aria-label="Delete item"
                   >
                     <Trash2 size={20} />
-                  </button>
+                  </Button>
                 </div>
                 {!item.visibility && (
-                  <p className="text-red-500 font-bold text-center mt-3">
+                  <p className="text-brand-terracotta font-bold text-center mt-3">
                     Out of Stock
                   </p>
                 )}
               </div>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
     </div>

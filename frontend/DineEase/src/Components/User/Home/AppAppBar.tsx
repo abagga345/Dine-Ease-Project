@@ -1,43 +1,52 @@
-import Box from "@mui/material/Box";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography";
-import MenuItem from "@mui/material/MenuItem";
-import Drawer from "@mui/material/Drawer";
-import MenuIcon from "@mui/icons-material/Menu";
-import FastfoodIcon from "@mui/icons-material/Fastfood";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Menu as MenuIcon, ShoppingCart, X } from "lucide-react";
 import toast from "react-hot-toast";
-import React from "react";
+import { Container } from "../../common/ui/Container";
+import { Button } from "../../common/ui/Button";
+import { ConfirmModal } from "../../common/ui/Modal";
+import { cn } from "../../common/ui/cn";
+import { useCart } from "../../common/useCart";
+import { brand } from "../../../config/brand";
+import { CartDrawer } from "./CartDrawer";
 
-interface ModalInterface {
-  text1: string;
-  text2: string;
-  btn1Text: string;
-  btn2Text: string;
-  btn1Handler: () => void;
-  btn2Handler: () => void;
+interface NavLink {
+  label: string;
+  action: () => void;
+}
+
+function Brand({ onClick }: { onClick: () => void }) {
+  return (
+    <button onClick={onClick} className="flex items-baseline gap-1.5 text-left">
+      <span className="font-serif text-xl font-bold text-brand-maroon">{brand.name}</span>
+      <span className="hidden text-xs font-semibold uppercase tracking-[0.25em] text-brand-terracotta sm:inline">
+        {brand.wordmarkSuffix}
+      </span>
+    </button>
+  );
 }
 
 function AppAppBar() {
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false); // mobile drawer
+  const [cartOpen, setCartOpen] = useState(false);
   const [logged, setLogged] = useState(false);
-  const [confirmationModal, setConfirmationModal] =
-    useState<ModalInterface | null>(null);
+  const [confirmLogout, setConfirmLogout] = useState(false);
+  const { totalItems } = useCart();
 
-  const handleLogout = async () => {
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setLogged(token !== null && token !== "");
+  }, []);
+
+  const handleLogout = () => {
     const toastId = toast.loading("Loading...", { id: "load-toast" });
     try {
       localStorage.setItem("token", "");
       localStorage.setItem("cart", "{}");
       localStorage.setItem("storeId", "");
       setLogged(false);
-      setConfirmationModal(null);
+      setConfirmLogout(false);
       navigate("/");
       toast.dismiss(toastId);
       toast.success("Logged out successfully", { id: "logout-toast" });
@@ -47,352 +56,137 @@ function AppAppBar() {
     }
   };
 
-  useEffect(() => {
-    let result = localStorage.getItem("token");
-    if (result !== null && result !== "") {
-      setLogged(true);
-    }
-  }, []);
-
-  const toggleDrawer = (newOpen: boolean) => () => {
-    setOpen(newOpen);
-  };
-
   const scrollToSection = (sectionId: string) => {
-    const sectionElement = document.getElementById(sectionId);
-    const offset = 128;
-    if (sectionElement) {
-      const targetScroll = sectionElement.offsetTop - offset;
-      sectionElement.scrollIntoView({ behavior: "smooth" });
-      window.scrollTo({
-        top: targetScroll,
-        behavior: "smooth",
-      });
-      setOpen(false);
+    const el = document.getElementById(sectionId);
+    if (el) {
+      const offset = 100;
+      window.scrollTo({ top: el.offsetTop - offset, behavior: "smooth" });
+    } else {
+      navigate("/");
     }
+    setOpen(false);
   };
 
-  return (
-    <div>
-      <AppBar
-        position="static"
-        sx={{
-          boxShadow: 0,
-          bgcolor: "transparent",
-          backgroundImage: "none",
-          mt: 2,
-        }}
-      >
-        <Container maxWidth="lg">
-          <Toolbar
-            variant="regular"
-            sx={(theme) => ({
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              flexShrink: 0,
-              borderRadius: "999px",
-              bgcolor:
-                theme.palette.mode === "light"
-                  ? "rgba(255, 255, 255, 0.4)"
-                  : "rgba(0, 0, 0, 0.4)",
-              backdropFilter: "blur(24px)",
-              maxHeight: 40,
-              border: "1px solid",
-              borderColor: "divider",
-              boxShadow:
-                theme.palette.mode === "light"
-                  ? `0 0 1px rgba(85, 166, 246, 0.1), 1px 1.5px 2px -1px rgba(85, 166, 246, 0.15), 4px 4px 12px -2.5px rgba(85, 166, 246, 0.15)`
-                  : "0 0 1px rgba(2, 31, 59, 0.7), 1px 1.5px 2px -1px rgba(2, 31, 59, 0.65), 4px 4px 12px -2.5px rgba(2, 31, 59, 0.65)",
-            })}
-          >
-            <Box
-              sx={{
-                flexGrow: 1,
-                display: "flex",
-                alignItems: "center",
-                ml: "-18px",
-                px: 0,
-              }}
-            >
-              <h1 className="text-sky-600 font-bold mx-6 text-lg">
-                <FastfoodIcon fontSize="small" />
-                &nbsp;DineEase
-              </h1>
-              <Box sx={{ display: { xs: "none", md: "flex" } }}>
-                <MenuItem
-                  onClick={() => navigate("/")}
-                  sx={{ py: "6px", px: "12px" }}
-                >
-                  <Typography variant="body2" color="text.primary">
-                    Home
-                  </Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => scrollToSection("features")}
-                  sx={{ py: "6px", px: "12px" }}
-                >
-                  <Typography variant="body2" color="text.primary">
-                    Features
-                  </Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => scrollToSection("testimonials")}
-                  sx={{ py: "6px", px: "12px" }}
-                >
-                  <Typography variant="body2" color="text.primary">
-                    Testimonials
-                  </Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => navigate("/menu")}
-                  sx={{ py: "6px", px: "12px" }}
-                >
-                  <Typography variant="body2" color="text.primary">
-                    Menu
-                  </Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => navigate("/dashboard")}
-                  sx={{ py: "6px", px: "12px" }}
-                >
-                  <Typography variant="body2" color="text.primary">
-                    Dashboard
-                  </Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => navigate("/checkout")}
-                  sx={{ py: "6px", px: "12px" }}
-                >
-                  <Typography variant="body2" color="text.primary">
-                    Checkout
-                  </Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => navigate("/store")}
-                  sx={{ py: "6px", px: "12px" }}
-                >
-                  <Typography variant="body2" color="text.primary">
-                    Select Store
-                  </Typography>
-                </MenuItem>
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                display: { xs: "none", md: "flex" },
-                gap: 0.5,
-                alignItems: "center",
-              }}
-            >
-              {!logged ? (
-                <div>
-                  <Button
-                    color="primary"
-                    variant="text"
-                    size="small"
-                    component="a"
-                    onClick={() => {
-                      navigate("/signin");
-                    }}
-                    target="_blank"
-                  >
-                    Sign in
-                  </Button>
-                  <Button
-                    sx={{
-                      bgcolor: "#0092FF", // darker than #33A8FF
-                      "&:hover": {
-                        bgcolor: "#0073CC", // darker than #0092FF
-                      },
-                    }}
-                    variant="contained"
-                    size="small"
-                    component="a"
-                    onClick={() => {
-                      navigate("/signup");
-                    }}
-                    target="_blank"
-                  >
-                    Sign up
-                  </Button>
-                </div>
-              ) : (
-                <div>
-                  <Button
-                    sx={{
-                      bgcolor: "#0092FF", // darker than #33A8FF
-                      "&:hover": {
-                        bgcolor: "#0073CC", // darker than #0092FF
-                      },
-                    }}
-                    variant="contained"
-                    size="small"
-                    component="a"
-                    onClick={() =>
-                      setConfirmationModal({
-                        text1: "Are you sure?",
-                        text2: "You will be logged out of your account.",
-                        btn1Text: "Logout",
-                        btn2Text: "Cancel",
-                        btn1Handler: handleLogout,
-                        btn2Handler: () => setConfirmationModal(null),
-                      })
-                    }
-                    target="_blank"
-                  >
-                    Logout
-                  </Button>
-                </div>
-              )}
-            </Box>
-            <Box sx={{ display: { sm: "", md: "none" } }}>
-              <Button
-                variant="text"
-                color="primary"
-                aria-label="menu"
-                onClick={toggleDrawer(true)}
-                sx={{ minWidth: "30px", p: "4px" }}
-              >
-                <MenuIcon />
-              </Button>
-              <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
-                <Box
-                  sx={{
-                    minWidth: "60dvw",
-                    p: 2,
-                    backgroundColor: "background.paper",
-                    flexGrow: 1,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "end",
-                      flexGrow: 1,
-                    }}
-                  ></Box>
-                  <MenuItem onClick={() => navigate("/")}>Home</MenuItem>
-                  <MenuItem onClick={() => scrollToSection("features")}>
-                    Features
-                  </MenuItem>
-                  <MenuItem onClick={() => scrollToSection("testimonials")}>
-                    Testimonials
-                  </MenuItem>
-                  <MenuItem onClick={() => navigate("/menu")}>Menu</MenuItem>
-                  <MenuItem onClick={() => navigate("/dashboard")}>
-                    Dashboard
-                  </MenuItem>
-                  <MenuItem onClick={() => navigate("/checkout")}>
-                    Checkout
-                  </MenuItem>
-                  <MenuItem onClick={() => navigate("/store")}>
-                    Select Store
-                  </MenuItem>
-                  <Divider />
-                  {!logged ? (
-                    <div>
-                      <MenuItem>
-                        <Button
-                          sx={{
-                            bgcolor: "#0092FF", // darker than #33A8FF
-                            "&:hover": {
-                              bgcolor: "#0073CC", // darker than #0092FF
-                            },
-                            width: "100%",
-                          }}
-                          variant="contained"
-                          component="a"
-                          onClick={() => navigate("/signup")}
-                          target="_blank"
-                        >
-                          Sign up
-                        </Button>
-                      </MenuItem>
-                      <MenuItem>
-                        <Button
-                          sx={{
-                            bgcolor: "#0092FF", // darker than #33A8FF
-                            "&:hover": {
-                              bgcolor: "#0073CC", // darker than #0092FF
-                            },
-                            width: "100%",
-                          }}
-                          variant="contained"
-                          component="a"
-                          onClick={() => navigate("/signin")}
-                          target="_blank"
-                        >
-                          Sign in
-                        </Button>
-                      </MenuItem>
-                    </div>
-                  ) : (
-                    <div>
-                      <Button
-                        sx={{
-                          bgcolor: "#0092FF", // darker than #33A8FF
-                          "&:hover": {
-                            bgcolor: "#0073CC", // darker than #0092FF
-                          },
-                        }}
-                        variant="contained"
-                        size="small"
-                        component="a"
-                        onClick={() =>
-                          setConfirmationModal({
-                            text1: "Are you sure?",
-                            text2: "You will be logged out of your account.",
-                            btn1Text: "Logout",
-                            btn2Text: "Cancel",
-                            btn1Handler: handleLogout,
-                            btn2Handler: () => setConfirmationModal(null),
-                          })
-                        }
-                        target="_blank"
-                      >
-                        Logout
-                      </Button>
-                    </div>
-                  )}
-                </Box>
-              </Drawer>
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
-      {confirmationModal && <ConfirmationModal modalData={confirmationModal} />}
-    </div>
-  );
-}
+  const go = (path: string) => () => {
+    navigate(path);
+    setOpen(false);
+  };
 
-const ConfirmationModal = ({ modalData }: any) => {
-  const { text1, text2, btn1Text, btn2Text, btn1Handler, btn2Handler } =
-    modalData;
+  const links: NavLink[] = [
+    { label: "Home", action: go("/") },
+    { label: "Our Pickles", action: go("/menu") },
+    { label: "Our Story", action: () => scrollToSection("story") },
+    { label: "Stores", action: go("/store") },
+    { label: "Dashboard", action: go("/dashboard") },
+  ];
 
   return (
-    <div className="fixed inset-0 flex flex-col gap-8 items-center justify-center z-50 backdrop-blur-sm">
-      <div className="md:w-[25%] p-4 rounded-lg shadow-lg flex flex-col gap-2 bg-[#008CFF]">
-        <p className="text-xl text-white font-semibold">{text1}</p>
-        <p className="text-white text-sm">{text2}</p>
-        <div className="flex justify-end mt-4">
+    <header className="sticky top-0 z-40 border-b border-brand-cream-dark/70 bg-brand-cream/90 backdrop-blur-md">
+      <Container className="flex h-16 items-center justify-between gap-4">
+        <Brand onClick={go("/")} />
+
+        {/* Desktop nav */}
+        <nav className="hidden items-center gap-1 md:flex">
+          {links.map((l) => (
+            <button
+              key={l.label}
+              onClick={l.action}
+              className="rounded-full px-3 py-2 text-sm font-medium text-brand-ink transition hover:bg-brand-maroon/10 hover:text-brand-maroon"
+            >
+              {l.label}
+            </button>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-2">
           <button
-            onClick={btn1Handler}
-            className="px-4 py-2 bg-yellow-50 font-inter text-black rounded-md hover:bg-blue-100 mr-2 font-semibold"
+            onClick={() => setCartOpen(true)}
+            aria-label="Open cart"
+            className="relative rounded-full p-2 text-brand-maroon transition hover:bg-brand-maroon/10"
           >
-            {btn1Text}
+            <ShoppingCart size={22} />
+            {totalItems > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-turmeric px-1 text-xs font-bold text-brand-ink">
+                {totalItems}
+              </span>
+            )}
           </button>
+
+          <div className="hidden md:flex md:items-center md:gap-2">
+            {!logged ? (
+              <>
+                <Button variant="ghost" size="sm" onClick={go("/signin")}>
+                  Sign in
+                </Button>
+                <Button variant="primary" size="sm" onClick={go("/signup")}>
+                  Sign up
+                </Button>
+              </>
+            ) : (
+              <Button variant="primary" size="sm" onClick={() => setConfirmLogout(true)}>
+                Logout
+              </Button>
+            )}
+          </div>
+
+          {/* Mobile hamburger */}
           <button
-            onClick={btn2Handler}
-            className="px-4 py-2 text-white rounded-md "
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Menu"
+            className="rounded-full p-2 text-brand-maroon transition hover:bg-brand-maroon/10 md:hidden"
           >
-            {btn2Text}
+            {open ? <X size={22} /> : <MenuIcon size={22} />}
           </button>
         </div>
+      </Container>
+
+      {/* Mobile menu */}
+      <div
+        className={cn(
+          "overflow-hidden border-t border-brand-cream-dark bg-brand-cream transition-all duration-300 md:hidden",
+          open ? "max-h-96" : "max-h-0"
+        )}
+      >
+        <Container className="flex flex-col gap-1 py-3">
+          {links.map((l) => (
+            <button
+              key={l.label}
+              onClick={l.action}
+              className="rounded-lg px-3 py-2 text-left text-sm font-medium text-brand-ink transition hover:bg-brand-maroon/10"
+            >
+              {l.label}
+            </button>
+          ))}
+          <div className="mt-2 flex gap-2">
+            {!logged ? (
+              <>
+                <Button variant="outline" size="sm" fullWidth onClick={go("/signin")}>
+                  Sign in
+                </Button>
+                <Button variant="primary" size="sm" fullWidth onClick={go("/signup")}>
+                  Sign up
+                </Button>
+              </>
+            ) : (
+              <Button variant="primary" size="sm" fullWidth onClick={() => setConfirmLogout(true)}>
+                Logout
+              </Button>
+            )}
+          </div>
+        </Container>
       </div>
-    </div>
+
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+      <ConfirmModal
+        open={confirmLogout}
+        title="Are you sure?"
+        message="You will be logged out of your account."
+        confirmText="Logout"
+        onConfirm={handleLogout}
+        onCancel={() => setConfirmLogout(false)}
+      />
+    </header>
   );
-};
+}
 
 export default AppAppBar;

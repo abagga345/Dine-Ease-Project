@@ -1,30 +1,25 @@
-
-import CssBaseline from '@mui/material/CssBaseline';
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
-import AppAppBar from './AppAppBar';
-import Hero from './Hero';
-import Features from './Features';
-import Testimonials from './Testimonials';
-import Footer from './Footer';
+import AppAppBar from "./AppAppBar";
+import Hero from "./Hero";
+import FeaturedPickles from "./FeaturedPickles";
+import Collections from "./Collections";
+import HeritageStory from "./HeritageStory";
+import Features from "./Features";
+import Testimonials from "./Testimonials";
+import Footer from "./Footer";
 
 export function UserHome() {
-
-
-    return (
-        <>
-            <CssBaseline />
-            
-            <Hero>
-                <AppAppBar></AppAppBar>
-            </Hero>
-            <Box sx={{ bgcolor: 'background.default' }}>
-                <Features />
-                <Divider />
-                <Testimonials />
-                <Divider />
-                <Footer />
-            </Box>
-        </>
-    );
+  return (
+    <div className="min-h-screen bg-brand-cream">
+      <AppAppBar />
+      <main>
+        <Hero />
+        <FeaturedPickles />
+        <Collections />
+        <HeritageStory />
+        <Features />
+        <Testimonials />
+      </main>
+      <Footer />
+    </div>
+  );
 }

@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../../common/ui/Button";
 
 interface profile {
   firstName: string;
@@ -104,7 +105,7 @@ export const Setting = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader2 className="w-10 h-10 animate-spin text-[#33A8FF]" />
+        <Loader2 className="w-10 h-10 animate-spin text-brand-maroon" />
       </div>
     );
   }
@@ -125,24 +126,24 @@ export const Setting = () => {
 
   return (
     <div className="flex flex-col p-2 md:p-6 gap-10 w-[90%] mx-auto min-h-screen">
-      <h1 className="text-black font-semibold text-2xl font-inter text-center">
+      <h1 className="text-brand-maroon font-serif font-semibold text-2xl text-center">
         Edit Profile
       </h1>
       <div className="flex flex-col gap-8 w-full">
-        <div className="flex flex-row gap-4 justify-between items-center text-black bg-white p-8 rounded-lg shadow-lg">
+        <div className="flex flex-row gap-4 justify-between items-center text-brand-ink bg-white p-8 rounded-2xl border border-brand-cream-dark shadow-card">
           <div className="md:flex md:flex-row gap-8 items-center justify-between">
             <img
               src={`https://api.dicebear.com/7.x/initials/svg?seed=${globaluser.firstName}%20${globaluser.lastName}`}
               alt="xyz"
-              className="aspect-square w-20 rounded-full object-cover"
+              className="aspect-square w-20 rounded-full object-cover ring-2 ring-brand-turmeric"
             />
             <div className="flex flex-col">
               <p className="text-lg my-1">
-             
+
                 {globaluser.email}
               </p>
               {(globaluser.storeId!=="")?<p className="text-lg my-1">
-             
+
              {globaluser.storeId}
            </p>:""}
             </div>
@@ -150,16 +151,16 @@ export const Setting = () => {
         </div>
 
         <form onSubmit={handleSubmit(handleProfileSubmit)}>
-          <div className="flex flex-col gap-4 mb-10 justify-between text-black bg-white p-8 rounded-lg shadow-lg">
+          <div className="flex flex-col gap-4 mb-10 justify-between text-brand-ink bg-white p-8 rounded-2xl border border-brand-cream-dark shadow-card">
             <div className="flex flex-row gap-8 items-center justify-between">
               <div>
-                <p className="text-lg my-1 font-semibold font-inter">
+                <p className="text-lg my-1 font-serif font-semibold text-brand-maroon">
                   Edit Profile Information
                 </p>
               </div>
             </div>
 
-            <hr />
+            <hr className="border-brand-cream-dark" />
 
             <div className="flex flex-col md:flex-row items-center justify-between mt-4 md:w-[80%] w-[90%] gap-3">
               <div className="flex md:flex-row flex-col gap-8 md:w-[100%]">
@@ -172,7 +173,7 @@ export const Setting = () => {
                     placeholder="Enter First Name"
                     defaultValue={globaluser?.firstName}
                     {...register("firstName", { required: false })}
-                    className="bg-gray-100 p-3 rounded-md mt-3 focus:outline-none w-[100%] text-black font-medium"
+                    className="bg-brand-cream border border-brand-cream-dark p-3 rounded-lg mt-3 outline-none focus:border-brand-maroon focus:ring-2 focus:ring-brand-turmeric/40 w-[100%] text-brand-ink font-medium"
                   />
                 </label>
                 <label htmlFor="lastname">
@@ -184,11 +185,11 @@ export const Setting = () => {
                     placeholder="Enter Last Name"
                     defaultValue={globaluser?.lastName}
                     {...register("lastName", { required: false })}
-                    className="bg-gray-100 p-3 rounded-md mt-3 focus:outline-none w-[100%] text-black font-medium"
+                    className="bg-brand-cream border border-brand-cream-dark p-3 rounded-lg mt-3 outline-none focus:border-brand-maroon focus:ring-2 focus:ring-brand-turmeric/40 w-[100%] text-brand-ink font-medium"
                   />
                 </label>
 
-               
+
 
                 <label htmlFor="contact">
                   <p>Contact Number</p>
@@ -199,32 +200,34 @@ export const Setting = () => {
                     placeholder="Enter Contact Number"
                     defaultValue={globaluser?.contactNo}
                     {...register("contactNo")}
-                    className="bg-gray-100 p-3 rounded-md mt-3 focus:outline-none w-[100%] text-black font-medium"
+                    className="bg-brand-cream border border-brand-cream-dark p-3 rounded-lg mt-3 outline-none focus:border-brand-maroon focus:ring-2 focus:ring-brand-turmeric/40 w-[100%] text-brand-ink font-medium"
                   />
                 </label>
               </div>
 
-              
+
             </div>
           </div>
 
           <div className="flex flex-row-reverse gap-4 mt-6">
             {/* To be edited */}
-            <button
-              className="bg-gray-500 hover:bg-gray-600 text-white rounded-lg p-3 font-semibold w-[100%] shadow-lg"
+            <Button
+              variant="outline"
+              fullWidth
               onClick={(e) => {
                 e.preventDefault();
                 window.location.href = "/dashboard/profile";
               }}
             >
               Cancel
-            </button>
-            <button
-              className="text-white bg-[#0092FF] hover:bg-[#0073CC] rounded-lg font-semibold w-[100%] shadow-lg"
+            </Button>
+            <Button
+              variant="primary"
+              fullWidth
               type="submit"
             >
               Save
-            </button>
+            </Button>
           </div>
         </form>
       </div>

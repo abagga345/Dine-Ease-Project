@@ -12,6 +12,26 @@ import {
   MapPinHouse,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Card } from "../../common/ui/Card";
+import { Badge } from "../../common/ui/Badge";
+
+const statusTone = (
+  status: string
+): "maroon" | "turmeric" | "terracotta" | "muted" | "danger" => {
+  switch (status) {
+    case "Delivered":
+      return "maroon";
+    case "Processing":
+    case "Dispatched":
+      return "turmeric";
+    case "Unconfirmed":
+      return "terracotta";
+    case "Rejected":
+      return "danger";
+    default:
+      return "muted";
+  }
+};
 
 interface OrderItem{
     id: number;
@@ -118,11 +138,11 @@ export const AllOrders = () => {
     if (loading) {
       return (
         <div className="flex items-center justify-center h-screen">
-          <Loader2 className="w-10 h-10 animate-spin text-[#33A8FF]" />
+          <Loader2 className="w-10 h-10 animate-spin text-brand-maroon" />
         </div>
       );
     }
-  
+
     if (error) {
       return (
         <div className="flex items-center justify-center h-screen">
@@ -136,21 +156,22 @@ export const AllOrders = () => {
         </div>
       );
     }
-  
+
     return (
       <div className="container mx-auto p-4 min-h-screen">
-        <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
+        <h1 className="text-3xl font-serif font-bold mb-8 text-center text-brand-maroon">
           All Orders
         </h1>
-        <div className="overflow-x-auto rounded-lg mb-10">
-  <table className="min-w-full bg-white border rounded-lg">
+        <Card className="overflow-hidden mb-10">
+  <div className="overflow-x-auto">
+  <table className="min-w-full">
     <thead>
-      <tr className="bg-[#33A8FF] text-white text-left">
-        <th className="px-4 py-2 text-left">Order ID</th>
-        <th className="px-4 py-2 text-left">Amount</th>
-        <th className="px-4 py-2 text-left">Email</th>
-        <th className="px-4 py-2 text-left">Status</th>
-        <th className="px-4 py-2 text-left">Creation Date</th>
+      <tr className="bg-brand-maroon text-brand-cream text-left">
+        <th className="px-4 py-3 text-left font-semibold">Order ID</th>
+        <th className="px-4 py-3 text-left font-semibold">Amount</th>
+        <th className="px-4 py-3 text-left font-semibold">Email</th>
+        <th className="px-4 py-3 text-left font-semibold">Status</th>
+        <th className="px-4 py-3 text-left font-semibold">Creation Date</th>
         {/* <th className="px-4 py-2">Payment Method</th> */}
       </tr>
     </thead>
@@ -158,14 +179,16 @@ export const AllOrders = () => {
       {orders.map((order) => (
         <tr
           key={order.id}
-          className="border-b hover:bg-gray-100 cursor-pointer"
+          className="border-b border-brand-cream-dark hover:bg-brand-cream cursor-pointer text-brand-ink"
           onClick={() => handleOrderClick(order)}
         >
-          <td className="px-4 py-2 text-left">{order.id}</td>
-          <td className="px-4 py-2 text-left">₹ {order.amount}</td>
-          <td className="px-4 py-2 text-left">{order.email}</td>
-          <td className="px-4 py-2 text-left">{order.status}</td>
-          <td className="px-4 py-2 text-left">
+          <td className="px-4 py-3 text-left">{order.id}</td>
+          <td className="px-4 py-3 text-left">₹ {order.amount}</td>
+          <td className="px-4 py-3 text-left">{order.email}</td>
+          <td className="px-4 py-3 text-left">
+            <Badge tone={statusTone(order.status)}>{order.status}</Badge>
+          </td>
+          <td className="px-4 py-3 text-left">
             {new Date(order.creationDate).toLocaleString()}
           </td>
           {/* <td className="px-4 py-2">{order.paymentMethod}</td> */}
@@ -174,6 +197,7 @@ export const AllOrders = () => {
     </tbody>
   </table>
 </div>
+</Card>
 
         {selectedOrder && (
           <OrderModal
@@ -205,11 +229,11 @@ export const AllOrders = () => {
       return order.amount;
     };
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-          <div className="flex justify-between items-center bg-[#33A8FF] text-white px-6 py-3 rounded-t-lg">
-            <h2 className="text-xl font-semibold">Order #{order.id}</h2>
-            <button onClick={onClose} className="text-white hover:text-gray-200">
+      <div className="fixed inset-0 bg-brand-ink/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="bg-white rounded-2xl border border-brand-cream-dark shadow-card-hover w-full max-w-md">
+          <div className="flex justify-between items-center bg-brand-maroon text-brand-cream px-6 py-3 rounded-t-2xl">
+            <h2 className="text-xl font-serif font-semibold">Order #{order.id}</h2>
+            <button onClick={onClose} className="text-brand-cream hover:text-brand-turmeric">
               <X size={24} />
             </button>
           </div>
@@ -247,14 +271,14 @@ export const AllOrders = () => {
             /> */}
   
             <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-2 mt-6 flex items-center">
-                <ShoppingCart className="w-5 h-5 mr-2 text-[#008CFF]" />
+              <h3 className="text-lg font-serif font-semibold mb-2 mt-6 flex items-center text-brand-maroon">
+                <ShoppingCart className="w-5 h-5 mr-2 text-brand-terracotta" />
                 <p>Order Items</p>
               </h3>
-              <hr className="mb-4" />
+              <hr className="mb-4 border-brand-cream-dark" />
               {loadingItems ? (
                 <div className="flex items-center justify-center">
-                  <Loader2 className="w-6 h-6 animate-spin text-green-600" />
+                  <Loader2 className="w-6 h-6 animate-spin text-brand-maroon" />
                 </div>
               ) : (
                 <>
@@ -272,8 +296,8 @@ export const AllOrders = () => {
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <div className="flex justify-between items-center font-semibold">
+                  <div className="mt-4 pt-4 border-t border-brand-cream-dark">
+                    <div className="flex justify-between items-center font-semibold text-brand-maroon">
                       <span>Total Amount:</span>
                       <span>₹{calculateTotal().toFixed(2)}</span>
                     </div>
@@ -296,10 +320,10 @@ export const AllOrders = () => {
     label: string;
     value: string;
   }) => (
-    <div className="flex items-center text-gray-700">
-      <Icon className="w-5 h-5 mr-2 text-[#008CFF] flex-shrink-0" />
+    <div className="flex items-center text-brand-ink">
+      <Icon className="w-5 h-5 mr-2 text-brand-terracotta flex-shrink-0" />
       <span className="font-medium">{label}:</span>
-      <span className="ml-2 break-all">{value}</span>
+      <span className="ml-2 break-all text-brand-ink-soft">{value}</span>
     </div>
   );
   

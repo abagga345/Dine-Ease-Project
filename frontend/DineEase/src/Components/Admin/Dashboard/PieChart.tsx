@@ -64,7 +64,7 @@ const options: ApexOptions = {
     fontFamily: "Satoshi, sans-serif",
     type: "donut",
   },
-  colors: ["#633EBB", "#BE61CA", "#F2BC5E", "#F13C59","#868686"],
+  colors: ["#C75B2A", "#E0A500", "#7B1E1E", "#6B8E23", "#5C4F42"],
   // labels: ['Desktop', 'Tablet', 'Mobile', 'Unknown'],
   legend: {
     show: false,
@@ -129,10 +129,10 @@ export const ChartThree: React.FC = () => {
   }, []);
 
   return (
-    <div className="sm:px-7.5 col-span-12 border border-stroke bg-white px-5 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-5 rounded-xl">
+    <div className="sm:px-7.5 col-span-12 border border-brand-cream-dark bg-white px-5 pb-5 pt-7.5 shadow-card xl:col-span-5 rounded-2xl">
       <div className="mb-3 justify-between gap-4 sm:flex">
         <div>
-          <h5 className="text-xl font-semibold text-black dark:text-white">
+          <h5 className="text-xl font-serif font-semibold text-brand-maroon">
             Order Status
           </h5>
         </div>

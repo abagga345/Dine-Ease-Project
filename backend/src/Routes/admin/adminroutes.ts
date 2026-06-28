@@ -2,12 +2,12 @@ import express from "express"
 import { Request,Response} from "express"
 import multer from "multer"
 import bcrypt from "bcrypt"
-import { PrismaClient } from "@prisma/client";
 import { JWT_SECRET } from "../../config"
 import jwt from "jsonwebtoken"
 import { authMiddlewareadmin } from "../../Middlewares/authMiddlewareadmin";
 import { AdminSignin,status, visibility,additem, AdminSignup } from "../../zodschema/schema";
 import { connect } from "./cloudinary";
+import { prisma } from "../../prismaClient";
 
 const cloudinary = require("cloudinary").v2;
 connect();
@@ -53,7 +53,6 @@ const deletePicture = async (imageURL: any) => {
   
 
 export const adminRouter=express.Router();
-const prisma=new PrismaClient();
 interface CustomRequest extends Request{
     email?:string
     storeId?:string
@@ -120,6 +119,7 @@ adminRouter.get("/allorders",authMiddlewareadmin,async (req:CustomRequest,res:Re
         });
         res.json({"orders":result});
     }catch(err){
+        req.log.error({err},"Unexpected error handling admin request");
         res.status(500).json({"message":"Internal Server Error"});
     }
 })
@@ -128,13 +128,15 @@ adminRouter.get("/allorders",authMiddlewareadmin,async (req:CustomRequest,res:Re
 //CHECKED
 adminRouter.get("/vieworderitems",authMiddlewareadmin,async (req:CustomRequest,res:Response)=>{
     let orderId=parseInt(req.query.orderId as string);
-    if (orderId===null || orderId===undefined){
+    if (Number.isNaN(orderId)){
         res.status(400).json({"message":"Invalid Inputs"});
+        return;
     }
     try{
         let result=await prisma.orders.findFirst({
             where:{
-                id:orderId
+                id:orderId,
+                storeId:req.storeId as string
             },
             select:{
                 items:{
@@ -162,6 +164,7 @@ adminRouter.get("/vieworderitems",authMiddlewareadmin,async (req:CustomRequest,r
 
 
     }catch(err){
+        req.log.error({err},"Unexpected error handling admin request");
         res.status(500).json({"message":"Internal Server Error"});
     }
 })
@@ -212,7 +215,7 @@ adminRouter.get("/unconfirmedorders",authMiddlewareadmin,async (req:CustomReques
         });
         res.json({"orders":result});
     }catch(err){
-        // console.log(err);
+        req.log.error({err},"Unexpected error handling admin request");
         res.status(500).json({"message":"Internal Server Error"});
     }
 })
@@ -239,6 +242,7 @@ adminRouter.get("/allitems",authMiddlewareadmin,async (req:CustomRequest,res:Res
         })
         res.json({"items":result1});
     }catch(err){
+        req.log.error({err},"Unexpected error handling admin request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -256,10 +260,19 @@ adminRouter.post("/additem",authMiddlewareadmin,async (req:CustomRequest,res:Res
     return res.status(400).json({ message: "Store ID is required" });
     }
     try{
-        req.body.storeId=storeId;
-        let result1=await prisma.menu.create({data:req.body});
+        // Use validated data plus the injected storeId — never raw req.body.
+        let result1=await prisma.menu.create({data:{
+            imageUrl:result.data.imageUrl,
+            title:result.data.title,
+            amount:result.data.amount,
+            description:result.data.description,
+            ...(result.data.visibility!==undefined?{visibility:result.data.visibility}:{}),
+            storeId:storeId
+        }});
+        req.log.info({itemId:result1["id"],storeId},"Menu item created");
         res.json({"message":"Item added successfully","itemId":result1["id"]});
     }catch(err){
+        req.log.error({err},"Unexpected error handling admin request");
         res.status(500).json({"message":"Internal Server Error"});
     }
 })
@@ -285,6 +298,7 @@ adminRouter.put("/changevisibility",authMiddlewareadmin,async (req:CustomRequest
         });
         res.json({"message":"Updation Successful"});
     }catch(err){
+        req.log.error({err},"Unexpected error handling admin request");
         res.status(500).json({"message":"Internal Server Error"});
     }
 })
@@ -298,19 +312,21 @@ adminRouter.put("/deleteitem", authMiddlewareadmin, async (req: CustomRequest, r
         res.status(400).json({ message: "Invalid Inputs" });
         return;
       }
-      const updatedItem = await prisma.menu.update({
+      await prisma.menu.updateMany({
         where: {
           id:id,
+          storeId: storeId,
         },
         data: {
           available: false,
           visibility: false,
         },
       });
-  
+
+      req.log.info({ itemId: id }, "Menu item soft-deleted");
       return res.json({ message: "Menu Item deleted successfully" });
     } catch (error) {
-      console.error(error);
+      req.log.error({ err: error }, "Failed to delete menu item");
         res.status(500).json({ message: "Internal Server Error" });
     }
   });
@@ -324,58 +340,71 @@ adminRouter.put("/changestatus",authMiddlewareadmin,async (req:CustomRequest,res
         return;
     }
     try{
-        let previous=await prisma.orders.findFirst({
-            where:{
-                id:req.body.orderId
-            },
-            select:{
-                status:true,
-                amount:true,
-                creationDate:true
-            }
-        })
-        if (previous===null){
-            res.status(400).json({"message":"Invalid Id"});
-            return;
-        }
-        const year = previous.creationDate.getFullYear();
-        const month=previous.creationDate.getMonth()+1;
-        const day=previous.creationDate.getDate();
-        
-        await prisma.$transaction(async (tx)=>{
-            let current=await tx.orders.update({
+        const notFound = await prisma.$transaction(async (tx)=>{
+            // Read the order inside the tx, scoped to this store, so the
+            // status transition and sales adjustment are based on consistent
+            // data (no race / double-count).
+            const previous=await tx.orders.findFirst({
                 where:{
                     id:req.body.orderId,
                     storeId:req.storeId as string
                 },
-                data:{
-                status:req.body.status
-                },
                 select:{
                     status:true,
-                    amount:true
+                    amount:true,
+                    creationDate:true
                 }
-             })
+            });
+            if (previous===null){
+                return true;
+            }
 
-            if (previous["status"]!="Delivered" && current["status"]=="Delivered"){
+            const year = previous.creationDate.getFullYear();
+            const month = previous.creationDate.getMonth()+1;
+            const day = previous.creationDate.getDate();
+
+            await tx.orders.update({
+                where:{ id:req.body.orderId },
+                data:{ status:req.body.status }
+            });
+
+            const becameDelivered = previous.status!="Delivered" && req.body.status=="Delivered";
+            const leftDelivered = previous.status=="Delivered" && req.body.status!="Delivered";
+
+            if (becameDelivered){
                 await tx.monthlySales.upsert({
                     where: { year_month_day: { year, month , day } },
-                    update: { totalSales: { increment: previous["amount"] } },
-                    create:{year,month,day,totalSales:previous["amount"]}
+                    update: { totalSales: { increment: previous.amount } },
+                    create: { year, month, day, totalSales: previous.amount }
                 });
             }
-            else if (previous["status"]=="Delivered" && current["status"]!="Delivered"){
-                await tx.monthlySales.update({
-                    where: { year_month_day: { year, month ,day} },
-                    data: { totalSales: { decrement: previous["amount"] } },
+            else if (leftDelivered){
+                // upsert so a missing row never throws; floor at 0 so sales
+                // can't go negative.
+                const existing = await tx.monthlySales.findUnique({
+                    where: { year_month_day: { year, month, day } }
+                });
+                const current = existing ? existing.totalSales : 0;
+                const next = Math.max(0, current - previous.amount);
+                await tx.monthlySales.upsert({
+                    where: { year_month_day: { year, month, day } },
+                    update: { totalSales: next },
+                    create: { year, month, day, totalSales: next }
                 });
             }
-        })
+            return false;
+        });
 
+        if (notFound){
+            req.log.warn({orderId:req.body.orderId},"Status change rejected: order not found for store");
+            res.status(400).json({"message":"Invalid Id"});
+            return;
+        }
 
-
+        req.log.info({orderId:req.body.orderId,status:req.body.status},"Order status updated");
         res.json({"message":"Status updated successfully"});
     }catch(err){
+        req.log.error({err},"Unexpected error handling admin request");
         res.status(500).json({"message":"Internal Server Error"});
     }
 })
@@ -404,6 +433,7 @@ adminRouter.get("/totaldaysales",authMiddlewareadmin,async (req:CustomRequest,re
         res.json({"message":"Total day sales fetched successfully","totalSales":result["totalSales"]});
 
     }catch(err){
+        req.log.error({err},"Unexpected error handling admin request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 
@@ -431,6 +461,7 @@ adminRouter.get("/totalmonthlysales",authMiddlewareadmin,async (req:CustomReques
         }
         res.json({"message":"Total monthly sales fetched successfully","total":result["_sum"]["totalSales"]===null?0:result["_sum"]["totalSales"]})
     }catch(err){
+        req.log.error({err},"Unexpected error handling admin request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -478,6 +509,7 @@ adminRouter.get("/chartdata",authMiddlewareadmin,async (req:CustomRequest,res:Re
             totalReviews:(avg_reviews["_count"]['id']===null?0:avg_reviews["_count"]['id'])
         })
     }catch(err){
+        req.log.error({err},"Unexpected error handling admin request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 });
@@ -493,6 +525,7 @@ adminRouter.get("/ordercounts",authMiddlewareadmin,async (req:CustomRequest,res:
         })
         res.json({"message":"Order counts fetched successfully ",orderCounts:result});
     }catch(err){
+        req.log.error({err},"Unexpected error handling admin request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 });
@@ -575,6 +608,7 @@ adminRouter.get("/viewprofile",authMiddlewareadmin,async (req:CustomRequest,res:
             "store":result["store"]
         })
     }catch(err){
+        req.log.error({err},"Unexpected error handling admin request");
         res.status(500).json({"message":"Internal Server Error"})
     }
 })
@@ -603,12 +637,13 @@ adminRouter.post(
           quality
         );
   
+        req.log.info({ url: uploadResult.secure_url }, "Image uploaded to Cloudinary");
         return res.json({
           message: "Image uploaded successfully",
           url: uploadResult.secure_url,
         });
       } catch (error) {
-        console.error("Error uploading to Cloudinary:", error);
+        req.log.error({ err: error }, "Cloudinary image upload failed");
         return res.status(500).json({ message: "Upload failed" });
       }
     }
@@ -628,10 +663,11 @@ adminRouter.post(
         }
   
         await deletePicture(file);
-  
+
+        req.log.info("Image deleted from Cloudinary");
         return res.json({ message: "Image Deleted Successfully" });
       } catch (error) {
-        console.error("Error deleting from Cloudinary:", error);
+        req.log.error({ err: error }, "Cloudinary image delete failed");
         return res.status(500).json({ message: "Delete failed" });
       }
     }

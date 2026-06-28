@@ -22,3 +22,14 @@ services:
     #   - ./frontend/DineEase/.env
     # volumes: FOR BIND MOUNTING FOR HOT RELOADS DEV MODE
     #   - ./frontend/DineEase/src:/app/src:ro
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./backend/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - backend-dineease
+    

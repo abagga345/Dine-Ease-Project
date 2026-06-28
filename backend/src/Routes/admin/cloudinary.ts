@@ -1,7 +1,8 @@
-// IMAGE DELETE 
+// IMAGE DELETE
 // IMAGE UPLOAD ROUTES LEFT
 
 const cloudinary1 = require("cloudinary").v2;
+import { logger } from "../../logger";
 
 export const connect = () => {
   try {
@@ -11,8 +12,8 @@ export const connect = () => {
       api_secret: process.env.API_SECRET,
       secure: true,
     });
-    console.log("Cloudinary Connected Successfully");
+    logger.info("Cloudinary configured successfully");
   } catch (error) {
-    console.log("error connecting Cloudinary" + error);
+    logger.error({ err: error }, "Error configuring Cloudinary");
   }
 };

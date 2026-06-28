@@ -1,220 +1,105 @@
-import Box from '@mui/material/Box';
-// import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-// import IconButton from '@mui/material/IconButton';
-import Link from '@mui/material/Link';
-// import Stack from '@mui/material/Stack';
-// import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { Instagram, Facebook, Twitter, Youtube, Mail, Phone, MapPin } from "lucide-react";
+import { Container } from "../../common/ui/Container";
+import { brand } from "../../../config/brand";
 
-// import FacebookIcon from '@mui/icons-material/GitHub';
-// import LinkedInIcon from '@mui/icons-material/LinkedIn';
-// import TwitterIcon from '@mui/icons-material/X';
+const socialIcons = [
+  { key: "instagram", Icon: Instagram, href: brand.social.instagram },
+  { key: "facebook", Icon: Facebook, href: brand.social.facebook },
+  { key: "twitter", Icon: Twitter, href: brand.social.twitter },
+  { key: "youtube", Icon: Youtube, href: brand.social.youtube },
+].filter((s) => s.href);
 
-// const logoStyle = {
-//     width: '140px',
-//     height: 'auto',
-// };
-
-function Copyright() {
-    return (
-        <Typography variant="body2" color="text.secondary" mt={1}>
-            {'Copyright © '}
-            <Link href="/home">DineEase&nbsp;</Link>
-            {new Date().getFullYear()}
-        </Typography>
-    );
+function FooterColumn({
+  title,
+  links,
+  onNavigate,
+}: {
+  title: string;
+  links: ReadonlyArray<{ label: string; href: string }>;
+  onNavigate: (href: string) => void;
+}) {
+  return (
+    <div>
+      <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-brand-turmeric">
+        {title}
+      </h4>
+      <ul className="space-y-2">
+        {links.map((l) => (
+          <li key={l.label}>
+            <button
+              onClick={() => onNavigate(l.href)}
+              className="text-sm text-brand-cream/80 transition hover:text-brand-cream"
+            >
+              {l.label}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export default function Footer() {
-    const navigate=useNavigate();
-    return (
-        <Container
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: { xs: 4, sm: 8 },
-                py: { xs: 8, sm: 10 },
-                textAlign: { sm: 'center', md: 'left' },
-                backgroundColor:'white',
-            }}
-        >
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    width: '100%',
-                    justifyContent: 'space-between',
-                }}
-            >
-                {/* <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 4,
-                        minWidth: { xs: '100%', sm: '60%' },
-                    }}
-                >
-                    <Box sx={{ width: { xs: '100%', sm: '60%' } }}>
-                        <Box sx={{ ml: '-15px' }}>
-                            <img
-                                src={
-                                    'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/61f12e6faf73568658154dae_SitemarkDefault.svg'
-                                }
-                                style={logoStyle}
-                                alt="logo of sitemark"
-                            />
-                            <h1 className='text-sky-600 font-bold text-'>DineEase</h1>
-                        </Box>
-                        <Typography variant="body2" fontWeight={600} gutterBottom>
-                            Newsletter
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" mb={2}>
-                            Subscribe to our newsletter for weekly updates and promotions.
-                        </Typography>
-                        <Stack direction="row" spacing={1} useFlexGap>
-                            <TextField
-                                id="outlined-basic"
-                                hiddenLabel
-                                size="small"
-                                variant="outlined"
-                                fullWidth
-                                aria-label="Enter your email address"
-                                placeholder="Your email address"
-                                inputProps={{
-                                    autoComplete: 'off',
-                                    'aria-label': 'Enter your email address',
-                                }}
-                            />
-                            <Button variant="contained" color="primary" sx={{ flexShrink: 0 }}>
-                                Subscribe
-                            </Button>
-                        </Stack>
-                    </Box>
-                </Box> */}
-                <Box
-                    sx={{
-                        display: { xs: 'none', sm: 'flex' },
-                        flexDirection: 'column',
-                        gap: 1,
-                    }}
-                >
-                    <Typography variant="body2" fontWeight={600}>
-                        Product
-                    </Typography>
-                    <Link color="text.secondary" onClick={() => navigate("/")}>
-                        Home
-                    </Link>
-                    <Link color="text.secondary" onClick={() => navigate("/checkout")}>
-                        Checkout
-                    </Link>
-                    <Link color="text.secondary" onClick={() => navigate("/menu")}>
-                        Menu
-                    </Link>
-                    <Link color="text.secondary" onClick={() => navigate("/dashboard")}>
-                        Dashboard
-                    </Link>
-                </Box>
-                <Box
-                    sx={{
-                        display: { xs: 'none', sm: 'flex' },
-                        flexDirection: 'column',
-                        gap: 1,
-                    }}
-                >
-                    <Typography variant="body2" fontWeight={600}>
-                        Company
-                    </Typography>
-                    <Link color="text.secondary" href="#">
-                        About us
-                    </Link>
-                    <Link color="text.secondary" href="#">
-                        Careers
-                    </Link>
-                    <Link color="text.secondary" href="#">
-                        Press
-                    </Link>
-                </Box>
-                <Box
-                    sx={{
-                        display: { xs: 'none', sm: 'flex' },
-                        flexDirection: 'column',
-                        gap: 1,
-                    }}
-                >
-                    <Typography variant="body2" fontWeight={600}>
-                        Legal
-                    </Typography>
-                    <Link color="text.secondary" href="#">
-                        Terms
-                    </Link>
-                    <Link color="text.secondary" href="#">
-                        Privacy
-                    </Link>
-                    <Link color="text.secondary" href="#">
-                        Contact
-                    </Link>
-                </Box>
-            </Box>
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    pt: { xs: 4, sm: 8 },
-                    width: '100%',
-                    borderTop: '1px solid',
-                    borderColor: 'divider',
-                }}
-            >
-                <div>
-                    <Link color="text.secondary" href="#">
-                        Privacy Policy
-                    </Link>
-                    <Typography display="inline" sx={{ mx: 0.5, opacity: 0.5 }}>
-                        &nbsp;•&nbsp;
-                    </Typography>
-                    <Link color="text.secondary" href="#">
-                        Terms of Service
-                    </Link>
-                    <Copyright />
-                </div>
-                {/* <Stack
-                    direction="row"
-                    justifyContent="left"
-                    spacing={1}
-                    useFlexGap
-                    sx={{
-                        color: 'text.secondary',
-                    }}
-                >
-                    <IconButton
-                        color="inherit"
-                        href="https://github.com/mui"
-                        aria-label="GitHub"
-                        sx={{ alignSelf: 'center' }}
-                    >
-                        <FacebookIcon />
-                    </IconButton>
-                    <IconButton
-                        color="inherit"
-                        href="https://x.com/MaterialUI"
-                        aria-label="X"
-                        sx={{ alignSelf: 'center' }}
-                    >
-                        <TwitterIcon />
-                    </IconButton>
-                    <IconButton
-                        color="inherit"
-                        href="https://www.linkedin.com/company/mui/"
-                        aria-label="LinkedIn"
-                        sx={{ alignSelf: 'center' }}
-                    >
-                        <LinkedInIcon />
-                    </IconButton>
-                </Stack> */}
-            </Box>
-        </Container>
-    );
+  const navigate = useNavigate();
+  const onNavigate = (href: string) => {
+    if (href.startsWith("/")) navigate(href);
+  };
+
+  return (
+    <footer className="bg-brand-maroon-dark text-brand-cream">
+      <Container className="py-14">
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
+          {/* Brand blurb */}
+          <div className="lg:col-span-2">
+            <p className="font-serif text-2xl font-bold">
+              {brand.name}{" "}
+              <span className="text-base font-normal text-brand-turmeric">
+                {brand.wordmarkSuffix}
+              </span>
+            </p>
+            <p className="mt-3 max-w-sm text-sm text-brand-cream/80">{brand.tagline}</p>
+            <ul className="mt-5 space-y-2 text-sm text-brand-cream/80">
+              <li className="flex items-center gap-2">
+                <Mail size={15} /> {brand.contact.email}
+              </li>
+              <li className="flex items-center gap-2">
+                <Phone size={15} /> {brand.contact.phone}
+              </li>
+              <li className="flex items-center gap-2">
+                <MapPin size={15} /> {brand.contact.address}
+              </li>
+            </ul>
+            {socialIcons.length > 0 && (
+              <div className="mt-5 flex gap-3">
+                {socialIcons.map(({ key, Icon, href }) => (
+                  <a
+                    key={key}
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={key}
+                    className="rounded-full bg-brand-cream/10 p-2 transition hover:bg-brand-turmeric hover:text-brand-ink"
+                  >
+                    <Icon size={18} />
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <FooterColumn title="Shop" links={brand.footerLinks.shop} onNavigate={onNavigate} />
+          <FooterColumn title="Company" links={brand.footerLinks.company} onNavigate={onNavigate} />
+          <FooterColumn title="Legal" links={brand.footerLinks.legal} onNavigate={onNavigate} />
+        </div>
+
+        <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-brand-cream/20 pt-6 text-sm text-brand-cream/70 sm:flex-row">
+          <p>
+            © {brand.sinceYear}–{new Date().getFullYear()} {brand.name}. All rights reserved.
+          </p>
+          <p className="text-brand-cream/60">Crafted with tradition • Made in India</p>
+        </div>
+      </Container>
+    </footer>
+  );
 }

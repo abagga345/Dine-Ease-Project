@@ -1,218 +1,123 @@
-import { useEffect, useState } from "react";
-import Loader from "../../common/Loader";
-import { FaShoppingCart } from "react-icons/fa";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Search } from "lucide-react";
+import toast from "react-hot-toast";
 import AppAppBar from "../Home/AppAppBar";
 import Footer from "../Home/Footer";
-import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
+import Loader from "../../common/Loader";
+import { Container } from "../../common/ui/Container";
+import { Input } from "../../common/ui/Input";
+import { Select } from "../../common/ui/Select";
+import { ProductCard, Product } from "../../common/ProductCard";
+import { apiUrl } from "../../../config/api";
 
-interface MenuItem {
-  id: number;
-  title: string;
-  description: string;
-  amount: number;
-  imageUrl: string;
-  visibility: boolean;
-}
-
-type Cart = {
-  [key: number]: number;
-};
+type Sort = "default" | "price-asc" | "price-desc" | "name";
 
 export const Menu = () => {
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [menuItems, setMenuItems] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<Sort>("default");
   const navigate = useNavigate();
-  const [cart, setCart] = useState<Cart>({});
 
   useEffect(() => {
     const store = localStorage.getItem("storeId");
-    if (store === null || store === undefined || store === "") {
+    if (!store) {
       navigate("/store");
       return;
     }
     const fetchMenuItems = async () => {
       try {
-        const store = localStorage.getItem("storeId");
-        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
-        const res = await fetch(
-          `${url}api/v1/user/viewmenu?storeId=${store}`
-        );
+        const res = await fetch(apiUrl(`user/viewmenu?storeId=${store}`));
         const data = await res.json();
-        setMenuItems(data.items);
+        setMenuItems(data.items ?? []);
       } catch (error) {
         console.error("Failed to fetch menu items:", error);
         toast.error("Failed to fetch menu items");
         navigate("/error");
-        return;
       } finally {
         setLoading(false);
       }
     };
-
     fetchMenuItems();
-    loadCartFromLocalStorage();
   }, []);
 
-  const saveCartToLocalStorage = (cartItems: Cart) => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
-  };
-
-  const loadCartFromLocalStorage = () => {
-    const savedCart = localStorage.getItem("cart");
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
+  const visibleItems = useMemo(() => {
+    let list = menuItems.filter((i) =>
+      i.title.toLowerCase().includes(query.trim().toLowerCase())
+    );
+    switch (sort) {
+      case "price-asc":
+        list = [...list].sort((a, b) => a.amount - b.amount);
+        break;
+      case "price-desc":
+        list = [...list].sort((a, b) => b.amount - a.amount);
+        break;
+      case "name":
+        list = [...list].sort((a, b) => a.title.localeCompare(b.title));
+        break;
     }
-  };
-
-  const getShortDescription = (description: string) => {
-    const wordLimit = 10;
-    const words = description.split(" ");
-    return words.length > wordLimit
-      ? words.slice(0, wordLimit).join(" ") + "..."
-      : description;
-  };
-
-  const updateCart = (itemId: number, quantityChange: number) => {
-    setCart((prevCart) => {
-      const newCart = { ...prevCart };
-      const currentQuantity = prevCart[itemId] || 0;
-      const newQuantity = Math.max(0, currentQuantity + quantityChange);
-
-      if (newQuantity === 0) {
-        delete newCart[itemId];
-      } else {
-        newCart[itemId] = newQuantity;
-      }
-
-      saveCartToLocalStorage(newCart);
-      return newCart;
-    });
-  };
-
-  const incrementQuantity = (itemId: number) => {
-    updateCart(itemId, 1);
-  };
-
-  const decrementQuantity = (itemId: number) => {
-    updateCart(itemId, -1);
-  };
-
-  const addToCart = (itemId: number) => {
-    updateCart(itemId, 1);
-  };
-
-  const getItemQuantity = (itemId: number): number => {
-    return cart[itemId] || 0;
-  };
-
-  const renderCartControls = (item: MenuItem) => {
-    const quantity = getItemQuantity(item.id);
-
-    if (quantity > 0) {
-      return (
-        <>
-          <button
-            onClick={() => decrementQuantity(item.id)}
-            className="px-4 py-2 bg-gray-400 text-white rounded-md"
-          >
-            -
-          </button>
-          <span className="text-lg mx-2 w-6 text-center">{quantity}</span>
-          <button
-            onClick={() => incrementQuantity(item.id)}
-            className="px-4 py-2 bg-[#0092FF] hover:bg-[#0073CC] text-white rounded-md"
-          >
-            +
-          </button>
-        </>
-      );
-    } else {
-      return (
-        <button
-          onClick={() => addToCart(item.id)}
-          className="py-2 px-4 bg-[#0092FF] hover:bg-[#0073CC] text-white rounded-md flex items-center hover:shadow-md"
-        >
-          <FaShoppingCart className="mr-2" />
-          Add
-        </button>
-      );
-    }
-  };
+    return list;
+  }, [menuItems, query, sort]);
 
   return (
-  <>
-    <AppAppBar />
+    <div className="min-h-screen bg-brand-cream">
+      <AppAppBar />
 
-    {loading ? (
-      <div>
-        <div className="font-semibold text-2xl w-full text-center my-4">
-          Menu
-        </div>
-        <div className="bg-gray-50 px-10 pt-10 pb-20 mt-6 mb-20 text-white w-[80%] mx-auto rounded-xl border border-gray-100">
+      {/* Page banner */}
+      <div className="border-b border-brand-cream-dark bg-white">
+        <Container className="py-12 text-center">
+          <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-brand-terracotta">
+            The Pantry
+          </p>
+          <h1 className="font-serif text-4xl font-bold text-brand-maroon">Our Pickles</h1>
+          <div className="brand-rule mt-4" />
+        </Container>
+      </div>
+
+      <Container className="py-10">
+        {loading ? (
           <Loader />
-        </div>
-      </div>
-    ) : (
-      <div>
-        <div className="font-semibold text-3xl w-full text-center my-4">
-          Menu
-        </div>
-
-        <div className="bg-gray-50 px-4 md:px-10 pt-10 pb-20 mt-10 mb-20 text-white w-full mx-auto rounded-xl border border-gray-100">
-          {menuItems.length === 0 ? (
-            <div className="text-center text-black font-semibold text-lg">
-              No menu items available. Check Back Later...
+        ) : (
+          <>
+            {/* Controls */}
+            <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="sm:max-w-xs">
+                <Input
+                  placeholder="Search pickles…"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  icon={<Search size={16} />}
+                />
+              </div>
+              <div className="sm:w-52">
+                <Select value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
+                  <option value="default">Sort: Featured</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                  <option value="name">Name: A–Z</option>
+                </Select>
+              </div>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {menuItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-white px-6 py-4 rounded-lg shadow-sm border border-gray-200 flex flex-col hover:shadow-lg text-black"
-                >
-                  <img
-                    src={item.imageUrl}
-                    alt={item.title}
-                    className="w-full h-64 object-cover rounded-md mb-4"
-                  />
-                  <div className="font-bold text-xl my-2">{item.title}</div>
-                  <div className="text-gray-700 mb-4 h-10">
-                    {getShortDescription(item.description)}
-                  </div>
-                  <div className="flex flex-col items-center w-full text-lg mb-4 gap-2">
-                    <div className="flex flex-row justify-between items-center gap-6 w-full">
-                      <div className="text-gray-500 font-semibold">
-                        ₹{item.amount}
-                      </div>
 
-                      {item.visibility ? (
-                        <div className="flex flex-row items-center justify-center gap-2">
-                          {renderCartControls(item)}
-                        </div>
-                      ) : (
-                        <div className="text-red-500 font-semibold text-sm">
-                          Out of Stock
-                        </div>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => navigate(`/menuitem/${item.id}`)}
-                      className="py-2 px-4 bg-[#0092FF] hover:bg-[#0073CC] text-white rounded-md hover:shadow-md w-full text-center"
-                    >
-                      View Item
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    )}
+            {visibleItems.length === 0 ? (
+              <div className="rounded-2xl border border-brand-cream-dark bg-white py-20 text-center text-brand-ink-soft">
+                {menuItems.length === 0
+                  ? "No pickles available yet. Check back soon!"
+                  : "No pickles match your search."}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {visibleItems.map((item) => (
+                  <ProductCard key={item.id} item={item} />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </Container>
 
-    <Footer />
-  </>
-);
-
+      <Footer />
+    </div>
+  );
 };

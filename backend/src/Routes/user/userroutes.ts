@@ -1,7 +1,6 @@
 import express, { NextFunction } from "express"
 import  jwt  from "jsonwebtoken";
 import bcrypt from "bcrypt"
-import { PrismaClient } from "@prisma/client";
 import { Request,Response} from "express"
 import { JWT_SECRET } from "../../config"
 import { authMiddlewareuser } from "../../Middlewares/authMiddlewareuser";
@@ -10,10 +9,13 @@ import { rolegetter } from "../../Middlewares/rolegetter";
 import { sendOrderConfirmationEmail } from "./automail";
 import { otpEmail,otpVerifyEmail } from "../../zodschema/schema";
 import { sendOTP } from "./otp";
+import { prisma } from "../../prismaClient";
+import { computeOrderTotal } from "../../utils/pricing";
 
+// Bcrypt salt rounds used everywhere passwords/otps are hashed.
+const BCRYPT_ROUNDS = 10;
 
 export const userRouter=express.Router();
-const prisma=new PrismaClient();
 interface CustomRequest extends Request{
     email?:string
 }
@@ -22,18 +24,29 @@ interface Item{
     quantity:number
 }
 
+// Carries an HTTP status out of a transaction so the catch block can map it to
+// the right client response instead of a generic 500.
+class OrderError extends Error{
+    status:number;
+    constructor(status:number,message:string){
+        super(message);
+        this.status=status;
+    }
+}
+
 //CHECKED 
 userRouter.post("/signup",async (req:Request,res:Response,next:NextFunction)=>{
     let result=UserSignup.safeParse(req.body);
     if (result["success"]==false){
-        // console.log(result["error"]);
-        // console.log(req.body);
+        req.log.warn("Signup rejected: invalid inputs");
         res.status(400).json({"message":"INVALID INPUTS"});
         return;
     }
     try{
+        req.log.info({email:req.body.email},"Signup attempt");
         let result2=await prisma.users.findFirst({where:{email:req.body.email}});
         if (result2!==null){
+            req.log.warn({email:req.body.email},"Signup rejected: user already exists");
             res.status(400).json({"message":"User already exists"});
             return;
         }
@@ -43,10 +56,11 @@ userRouter.post("/signup",async (req:Request,res:Response,next:NextFunction)=>{
             }
         })
         if (verification===null || verification.verified===false){
+            req.log.warn({email:req.body.email},"Signup rejected: email not verified");
             res.status(400).json({"message":"Email not verified"});
             return;
         }
-        let temp=await bcrypt.hash(req.body.password,5);
+        let temp=await bcrypt.hash(req.body.password,BCRYPT_ROUNDS);
         let result1=await prisma.users.create({
             data:{
                 email:req.body.email,
@@ -60,10 +74,17 @@ userRouter.post("/signup",async (req:Request,res:Response,next:NextFunction)=>{
                 email:true
             }
         }) as {email:string};
-        let token=jwt.sign({email:result1["email"]},JWT_SECRET);
+        // Clear the verified flag so a stale verification can't be reused to
+        // re-register/verify this email without a fresh OTP.
+        await prisma.otpStatus.updateMany({
+            where:{email:req.body.email},
+            data:{verified:false}
+        });
+        let token=jwt.sign({email:result1["email"]},JWT_SECRET,{expiresIn:"7d"});
+        req.log.info({email:result1["email"]},"Signup successful");
         res.json({"message":"Successful sign up","token":"Bearer "+token});
     }catch(err){
-        // console.log(err);
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -82,22 +103,27 @@ userRouter.post("/signin",async (req:Request,res:Response,next:NextFunction)=>{
             }
         });
         if (result1===null){
+            req.log.warn({email:req.body.email},"Signin failed: no such user");
             res.status(401).json({"message":"Invalid credentials"});
             return;
         }
         if (! await bcrypt.compare(req.body.password,result1["password"])){
+            req.log.warn({email:req.body.email},"Signin failed: bad password");
             res.status(401).json({"message":"Unauthorised"});
             return;
         }
         if (result1.role==="User"){
-            let token:string=jwt.sign({email:result1["email"]},JWT_SECRET);
+            let token:string=jwt.sign({email:result1["email"]},JWT_SECRET,{expiresIn:"7d"});
+            req.log.info({email:result1["email"],role:result1.role},"Signin successful");
             res.json({"message":"Successful sign in","token":"Bearer "+token});
         }
         else{
-            let token:string=jwt.sign({email:result1["email"],storeId:result1["storeId"]},JWT_SECRET);
+            let token:string=jwt.sign({email:result1["email"],storeId:result1["storeId"]},JWT_SECRET,{expiresIn:"7d"});
+            req.log.info({email:result1["email"],role:result1.role,storeId:result1["storeId"]},"Signin successful");
             res.json({"message":"Successful sign in","token":"Bearer "+token});
         }
     }catch(err){
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -146,6 +172,7 @@ userRouter.get("/vieworders",authMiddlewareuser,async (req:CustomRequest,res:Res
         });
         res.json({"orders":result1});
     }catch(err){
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -176,6 +203,7 @@ userRouter.post("/addaddress",authMiddlewareuser,async (req:CustomRequest,res:Re
         });
         res.json({"message":"Address Added successfully","address":result});
     }catch(err){
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -199,7 +227,7 @@ userRouter.get("/getaddresses",authMiddlewareuser,async (req:CustomRequest,res:R
         });
         res.json({"addresses":result1});
     }catch(err){
-        // console.log(err);
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -215,8 +243,9 @@ userRouter.get("/viewmenu",async (req:CustomRequest,res:Response)=>{
         let result1=await prisma.menu.findMany({
             where:{
                 storeId:storeId,
-                available:true
-                
+                available:true,
+                visibility:true
+
             },
             select:{
                 imageUrl:true,
@@ -229,6 +258,7 @@ userRouter.get("/viewmenu",async (req:CustomRequest,res:Response)=>{
         });
         res.json({"items":result1});
     }catch(err){
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -236,6 +266,10 @@ userRouter.get("/viewmenu",async (req:CustomRequest,res:Response)=>{
 //CHECKED
 userRouter.get("/viewreviews",async (req:CustomRequest,res:Response)=>{
     let id:number=parseInt(req.query.itemId as string);
+    if (Number.isNaN(id)){
+        res.status(400).json({"message":"Invalid id"});
+        return;
+    }
     try{
         let result1=await prisma.reviews.findMany({
             where:{
@@ -255,6 +289,7 @@ userRouter.get("/viewreviews",async (req:CustomRequest,res:Response)=>{
         });
         res.json({"reviews":result1});
     }catch(err){
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -289,6 +324,7 @@ userRouter.post("/dropreview",authMiddlewareuser,async (req:CustomRequest,res:Re
         });
         res.json({"message":"Review added successfully","review":result});
     }catch(err){
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -296,6 +332,10 @@ userRouter.post("/dropreview",authMiddlewareuser,async (req:CustomRequest,res:Re
 //CHECKED
 userRouter.delete("/deletereview",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     let id:number=parseInt(req.query.reviewId as string);
+    if (Number.isNaN(id)){
+        res.status(400).json({"message":"Invalid id"});
+        return;
+    }
     try{
         await prisma.reviews.delete({
             where:{
@@ -305,6 +345,7 @@ userRouter.delete("/deletereview",authMiddlewareuser,async (req:CustomRequest,re
         });
         res.json({"message":"Review Deleted Successfully"});
     }catch(err){
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -316,89 +357,120 @@ userRouter.post("/checkout",authMiddlewareuser,async (req:CustomRequest,res:Resp
     // console.log(req.body);
     let result =checkout.safeParse(req.body);
     if (result["success"]===false){
-        
+        req.log.warn("Checkout rejected: invalid inputs");
         res.status(400).json({"message":"INVALID INPUTS"});
         return;
     }
     try{
-        let total=0;
-        for(let i=0;i<req.body.items.length;i++){
-            let price =await prisma.menu.findFirst({where:{id:req.body.items[i].id,storeId:req.body.storeId,visibility:true,available:true}}) ;
-            if (price===null){
-                res.status(400).json({"message":"Some items are out of stock or not available"});
-                return;
+        const email=req.email as string;
+        req.log.info({storeId:req.body.storeId,itemCount:req.body.items?.length,paymentMethod:req.body.paymentMethod},"Checkout started");
+
+        // Validate the address up-front: it must exist, belong to this user, and
+        // be available. Done BEFORE order creation so we never respond twice.
+        const address=await prisma.address.findFirst({
+            where:{
+                id:req.body.addressId,
+                email:email,
+                availability:true
             }
-            total+=(price["amount"])*req.body.items[i].quantity;
+        });
+        if (address===null){
+            req.log.warn({addressId:req.body.addressId},"Checkout rejected: invalid address");
+            res.status(400).json({"message":"Invalid address"});
+            return;
         }
-        //// console.log(total);
+
         const shipping = parseInt(process.env.SHIPPING_COST || "0");
         const codcharges = parseInt(process.env.COD || "0");
         const taxRate = parseInt(process.env.TAX_RATE || "0");
 
-        total += shipping + (req.body.paymentMethod === "COD" ? codcharges : 0);
-        //// console.log(total);
-        const tax = Math.round(total * (taxRate / 100));
-        total+=tax;
-        //// console.log(total)
-        if (total!==req.body.amount){
-            res.status(400).json({"message":"Price updated,Please retry"});
-            return;
-        }
-        let result1=await prisma.orders.create({data:{
-            amount:total,
-            storeId:req.body.storeId,
-            email:req.email as string,
-            description:req.body.description,
-            status:'Unconfirmed',
-            addressId:req.body.addressId,
-            paymentMethod: req.body.paymentMethod,
-            items:{
-                create:req.body.items.map((element:Item)=>{
-                    return{
-                        itemId:element.id,
-                        quantity:element.quantity
-                    } 
-                })
+        // Re-validate prices/visibility and create the order atomically so the
+        // total can't be raced against a concurrent price change.
+        const result1=await prisma.$transaction(async (tx)=>{
+            const lines:{amount:number;quantity:number}[]=[];
+            for(let i=0;i<req.body.items.length;i++){
+                let price =await tx.menu.findFirst({where:{id:req.body.items[i].id,storeId:req.body.storeId,visibility:true,available:true}});
+                if (price===null){
+                    throw new OrderError(400,"Some items are out of stock or not available");
+                }
+                lines.push({amount:price["amount"],quantity:req.body.items[i].quantity});
             }
-        }})
-        res.json({"message":"Order placed successfully","orderId":result1["id"]});
-        let address=await prisma.address.findFirst({
-            where:{
-                id:result1.addressId,
-                availability:true
+
+            const total=computeOrderTotal(lines,{shipping,cod:codcharges,taxRate,paymentMethod:req.body.paymentMethod});
+
+            if (total!==req.body.amount){
+                throw new OrderError(400,"Price updated,Please retry");
             }
-        })
-        if ( address===null ) throw new Error();
-        await sendOrderConfirmationEmail(
-            req.email as string,
+
+            return tx.orders.create({data:{
+                amount:total,
+                storeId:req.body.storeId,
+                email:email,
+                description:req.body.description ?? "",
+                status:'Unconfirmed',
+                addressId:req.body.addressId,
+                paymentMethod: req.body.paymentMethod,
+                items:{
+                    create:req.body.items.map((element:Item)=>{
+                        return{
+                            itemId:element.id,
+                            quantity:element.quantity
+                        }
+                    })
+                }
+            }});
+        });
+
+        // Fire-and-forget confirmation email: never touches res, never throws
+        // into this handler.
+        sendOrderConfirmationEmail(
+            email,
             result1.id,
-            total,
+            result1.amount,
             address.houseStreet + " , " + address.state + " , " + address.pincode,
             result1.creationDate.toLocaleDateString()
-        );
+        ).catch((err)=>req.log.error({err,orderId:result1.id},"Order confirmation email failed"));
+
+        req.log.info({orderId:result1.id,amount:result1.amount},"Order placed successfully");
+        res.json({"message":"Order placed successfully","orderId":result1["id"]});
     }catch(err){
+        if (err instanceof OrderError){
+            req.log.warn({status:err.status,reason:err.message},"Checkout rejected");
+            res.status(err.status).json({"message":err.message});
+            return;
+        }
+        req.log.error({err},"Unexpected error during checkout");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
-    } 
+    }
 })
 //CHECKED
 userRouter.put("/editreview",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     let rev_id:number=parseInt(req.query.reviewId as string);
     let email:string=req.email as string;
+    if (Number.isNaN(rev_id)){
+        res.status(400).json({"message":"Invalid id"});
+        return;
+    }
     let result=editreview.safeParse(req.body);
     if (result["success"]===false){
         res.status(400).json({"message":"Invalid Inputs"});
         return;
     }
     try{
+        // Only allow explicitly whitelisted, validated fields — never spread req.body.
+        const data:{rating?:number;description?:string}={};
+        if (result.data.rating!==undefined) data.rating=result.data.rating;
+        if (result.data.description!==undefined) data.description=result.data.description;
         let result1=await prisma.reviews.update({
             where:{
                 id:rev_id,
                 email:email
             },
-            data:req.body
+            data
         });
         res.json({"message":"Review updated successfully","review":result1});
     }catch(err){
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -412,23 +484,32 @@ userRouter.put("/editprofile",authMiddlewareuser,async (req:CustomRequest,res:Re
         return;
     }
     try{
+        // Build the update payload from validated, whitelisted fields only.
+        const data:{firstName?:string;lastName?:string;contactNo?:string;password?:string}={
+            firstName:result.data.firstName,
+            lastName:result.data.lastName,
+            contactNo:result.data.contactNo
+        };
+        if (result.data.password!==undefined){
+            data.password=await bcrypt.hash(result.data.password,BCRYPT_ROUNDS);
+        }
         let result1=await prisma.users.update({
             where:{
                 email:email
             },
-            data:req.body,
+            data,
             select:{
                 id:true,
                 email:true,
                 firstName:true,
                 lastName:true,
                 contactNo:true,
-                
+
             }
         });
         res.json({"message":"Profile updated successfully","profile":result1});
     }catch(err){
-        // console.log(err);
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 
@@ -443,17 +524,27 @@ userRouter.put("/editaddress",authMiddlewareuser,async (req:CustomRequest,res:Re
         res.status(400).json({"message":"Invalid Inputs"});
         return;
     }
+    if (Number.isNaN(add_id)){
+        res.status(400).json({"message":"Invalid id"});
+        return;
+    }
     try{
+        // Only allow explicitly whitelisted, validated fields — never spread req.body.
+        const data:{houseStreet?:string;state?:string;pincode?:string}={};
+        if (result.data.houseStreet!==undefined) data.houseStreet=result.data.houseStreet;
+        if (result.data.state!==undefined) data.state=result.data.state;
+        if (result.data.pincode!==undefined) data.pincode=result.data.pincode;
         let result1=await prisma.address.update({
             where:{
                 id:add_id,
                 email:email,
                 availability:true
             },
-            data:req.body
+            data
         });
         res.json({"message":"Address updated successfully","address":result1});
     }catch(err){
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -462,6 +553,10 @@ userRouter.put("/editaddress",authMiddlewareuser,async (req:CustomRequest,res:Re
 userRouter.delete("/deleteaddress",authMiddlewareuser,async (req:CustomRequest,res:Response)=>{
     let id:number=parseInt(req.query.id as string);
     let email:string=req.email as string;
+    if (Number.isNaN(id)){
+        res.status(400).json({"message":"Invalid id"});
+        return;
+    }
     try{
         await prisma.address.update({
             where:{
@@ -474,6 +569,7 @@ userRouter.delete("/deleteaddress",authMiddlewareuser,async (req:CustomRequest,r
         });
         res.json({"message":"Address removed successfully"});
     }catch(err){
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"INTERNAL SERVER ERROR"});
     }
 })
@@ -481,6 +577,10 @@ userRouter.delete("/deleteaddress",authMiddlewareuser,async (req:CustomRequest,r
 //CHECKED
 userRouter.get("/viewmenuitem",async (req:CustomRequest,res:Response)=>{
     let itemId:number=parseInt(req.query.itemId as string);
+    if (Number.isNaN(itemId)){
+        res.status(400).json({"message":"Invalid id"});
+        return;
+    }
     try{
         let result=await prisma.menu.findFirst({
             where:{
@@ -512,6 +612,7 @@ userRouter.get("/viewmenuitem",async (req:CustomRequest,res:Response)=>{
             title:result["title"]
         })
     }catch(err){
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"Internal server error"})
     }
 })
@@ -542,6 +643,7 @@ userRouter.get("/viewprofile",authMiddlewareuser,async (req:CustomRequest,res:Re
             "email":result["email"]
         })
     }catch(err){
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"Internal Server Error"})
     }
 })
@@ -563,7 +665,7 @@ userRouter.post("/generateotp",async (req:Request,res:Response)=>{
     try{
         //extra otp computation is better than additional db call to check for verified 
         let otp=Math.floor(100000 + Math.random() * 900000).toString();
-        let hashedotp = await bcrypt.hash(otp,5);
+        let hashedotp = await bcrypt.hash(otp,BCRYPT_ROUNDS);
         const creationDate = new Date();                       
         const expirationDate = new Date(
             creationDate.getTime() + 15 * 60_000     
@@ -587,9 +689,16 @@ userRouter.post("/generateotp",async (req:Request,res:Response)=>{
         })
         // console.log("email"+req.body.email);
         // console.log("otp"+otp);
-        await sendOTP(req.body.email,otp);
+        req.log.info({email:req.body.email},"OTP generated, sending email");
+        if (!(await sendOTP(req.body.email,otp))){
+            req.log.error({email:req.body.email},"OTP email failed to send");
+            res.status(502).json({"message":"Failed to send OTP, please try again"});
+            return;
+        }
+        req.log.info({email:req.body.email},"OTP sent successfully");
         res.json({"message":"Otp Generated Successfully"});
     }catch(err){
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"Internal Server Error"})
     }
 })
@@ -612,25 +721,16 @@ userRouter.put("/verifyotp",async (req:Request,res:Response)=>{
             res.status(400).json({"message":"INVALID EMAIL"});
             return;
         }
-        if (result.verified){
-            await prisma.otpStatus.update({
-                where:{
-                    id:result.id
-                },
-                data:{
-                    verified:true
-                }
-            })
-            res.json({"message":"User Verified Successfully"});
-            return;
-        }
+        // Always run a real OTP + expiry check. A stale `verified` flag must not
+        // bypass verification of a brand-new request.
         let cur=new Date();
         let expiry=result.expirationDate;
         if (expiry<cur){
+            req.log.warn({email},"OTP verification failed: expired");
             res.status(400).json({"message":"Otp Expired"});
             return;
         }
-        if (await bcrypt.compare(inputotp,result["otp"]) || result.verified){
+        if (await bcrypt.compare(inputotp,result["otp"])){
             await prisma.otpStatus.update({
                 where:{
                     id:result.id
@@ -639,12 +739,15 @@ userRouter.put("/verifyotp",async (req:Request,res:Response)=>{
                     verified:true
                 }
             })
+            req.log.info({email},"OTP verified successfully");
             res.json({"message":"User Verified Successfully"});
         }
         else{
+            req.log.warn({email},"OTP verification failed: invalid code");
             res.status(400).json({"message":"Invalid Otp"})
         }
     }catch(err){
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"Internal Server Error"})
     }
 })
@@ -667,7 +770,7 @@ userRouter.get("/allstores",async (req:Request,res:Response)=>{
             "stores":result
         })
     }catch(err){
-        // console.log(err);
+        req.log.error({err},"Unexpected error handling request");
         res.status(500).json({"message":"Internal Server Error"})
     }
 })

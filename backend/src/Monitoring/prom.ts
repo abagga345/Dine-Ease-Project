@@ -11,10 +11,10 @@ const requestCounter = new client.Counter({
 
 export function requestCount(req,res,next){
     // res has an event listener for 'finish' that is called when the response has been sent
-    const route = req.route ? req.route.path : 'unknown';
     const method= req.method;
     
     res.on('finish', () => {
+        const route = req.route ? req.route.path : req.path || 'unknown';
         const statusCode = res.statusCode;
         requestCounter.inc({ method, statusCode, route });
     })
@@ -32,7 +32,7 @@ const requestGauge = new client.Gauge({
 
 export function activeRequestCount(req, res, next) {
     const method = req.method;
-    const route = req.route ? req.route.path : 'unknown';
+    const route = req.route ? req.route.path : req.path || 'unknown';
     
     requestGauge.inc({ method, route });
     res.on('finish', () => {
@@ -55,9 +55,9 @@ const requestDurationHistogram = new client.Histogram({
 export function requestDuration(req, res, next) {
     const start = Date.now();
     const method = req.method;
-    const route = req.route ? req.route.path : 'unknown';
     
     res.on('finish', () => {
+        const route = req.route ? req.route.path : req.path || 'unknown';
         const duration = (Date.now() - start) / 1000; // Convert to seconds
         const statusCode = res.statusCode;
         requestDurationHistogram.observe({ method, statusCode, route }, duration);

@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
-import AppAppBar from "../Home/AppAppBar";
-import Loader from "../../common/Loader";
-import Footer from "../Home/Footer";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { MapPin } from "lucide-react";
+import AppAppBar from "../Home/AppAppBar";
+import Footer from "../Home/Footer";
+import Loader from "../../common/Loader";
+import { Container } from "../../common/ui/Container";
+import { Button } from "../../common/ui/Button";
+import { RadioCard } from "../../common/ui/RadioCard";
+import { apiUrl } from "../../../config/api";
+import { brand } from "../../../config/brand";
 
 interface storeInterface {
   storeId: string;
@@ -19,7 +25,6 @@ interface FormData {
 export function Store() {
   const [Stores, setStores] = useState<storeInterface[]>([]);
   const [loading, setLoading] = useState(true);
-  
   const navigate = useNavigate();
 
   const {
@@ -32,89 +37,88 @@ export function Store() {
   useEffect(() => {
     const Fetchstores = async () => {
       try {
-        const url= import.meta.env.VITE_API_URL || import.meta.env.VITE_DOCKER_URL || 'https://dine-ease.coderspro.xyz/';
-        const response = await fetch(`${url}api/v1/user/allstores`);
+        const response = await fetch(apiUrl("user/allstores"));
         const data = await response.json();
         setStores(data["stores"]);
-        const validStoreIds = data["stores"].map((store:storeInterface) => store.storeId);
-        let store=localStorage.getItem("storeId");
-        if (store!==null && store!=="" && store!==undefined && validStoreIds.includes(store)){
-          setValue("storeId",store);
+        const validStoreIds = data["stores"].map((store: storeInterface) => store.storeId);
+        const store = localStorage.getItem("storeId");
+        if (store && validStoreIds.includes(store)) {
+          setValue("storeId", store);
         }
       } catch (error) {
         console.error("Failed to fetch Stores: ", error);
         navigate("/error");
-         return;
       } finally {
         setLoading(false);
       }
     };
-
     Fetchstores();
   }, []);
 
- const onSubmit = (data: FormData) => {
-  localStorage.setItem("storeId", data.storeId.toString());
-  localStorage.setItem("cart","{}");
-  navigate("/menu");
-};
+  const onSubmit = (data: FormData) => {
+    localStorage.setItem("storeId", data.storeId.toString());
+    localStorage.setItem("cart", "{}");
+    window.dispatchEvent(new Event("cart-updated"));
+    navigate("/menu");
+  };
 
   return (
-    <div>
+    <div className="min-h-screen bg-brand-cream">
       <AppAppBar />
-      {loading ? (
-        <div>
-          <div className="font-semibold text-3xl w-full text-center my-4">Stores</div>
-          <div className="bg-gray-50 px-10 pt-10 pb-20 mt-6 mb-20 text-white w-[80%] mx-auto rounded-xl border border-gray-100">
-            <Loader />
-          </div>
-        </div>
-      ) : (
-        <div>
-          <div className="font-semibold text-3xl w-full text-center my-4">Stores</div>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="bg-gray-50 px-10 pt-10 pb-20 mt-6 mb-20 text-black w-[80%] mx-auto rounded-xl border border-gray-100">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Stores.map((store) => (
-                  <div key={store.storeId} className="relative">
-                    <input
-                      className="peer hidden"
-                      id={`radio_store_${store.storeId}`}
-                      type="radio"
-                      value={store.storeId}
-                      {...register("storeId", { required: true })}
-                    />
-                    <span className="peer-checked:border-blue-500 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
-                    <label
-                      htmlFor={`radio_store_${store.storeId}`}
-                      className="peer-checked:border peer-checked:border-blue-500 peer-checked:bg-blue-50 flex cursor-pointer select-none flex-col rounded-lg border border-gray-300 p-4"
-                    >
-                      <div className="font-semibold text-lg mb-1">Dine Ease</div>
-                      <div className="text-gray-700">{store.storeStreet}</div>
-                      <div className="text-gray-600">{store.state}</div>
-                      <div className="text-gray-500">Pincode: {store.pincode}</div>
-                    </label>
-                  </div>
-                ))}
-              </div>
-              <div className="flex flex-col justify-center items-center">
-                {errors.storeId && (
-                  <p className="text-red-500 mt-2 text-lg">Please select a store.</p>
-                )}
-                <p className="text-red-500 mt-2 text-lg">Any items in cart will be cleared</p>
-              </div>
-              <div className="w-full text-center mt-6">
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white font-semibold px-6 py-2 rounded hover:bg-blue-600 transition"
+
+      <div className="border-b border-brand-cream-dark bg-white">
+        <Container className="py-12 text-center">
+          <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-brand-terracotta">
+            Choose a location
+          </p>
+          <h1 className="font-serif text-4xl font-bold text-brand-maroon">Select Your Store</h1>
+          <div className="brand-rule mt-4" />
+        </Container>
+      </div>
+
+      <Container className="py-10">
+        {loading ? (
+          <Loader />
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)} className="mx-auto max-w-4xl">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+              {Stores.map((store) => (
+                <RadioCard
+                  key={store.storeId}
+                  id={`radio_store_${store.storeId}`}
+                  value={store.storeId}
+                  inputProps={register("storeId", { required: true })}
                 >
-                  Continue
-                </button>
-              </div>
+                  <div className="flex items-start gap-3">
+                    <span className="mt-0.5 text-brand-terracotta">
+                      <MapPin size={20} />
+                    </span>
+                    <div>
+                      <p className="font-serif text-lg font-bold text-brand-ink">{brand.name}</p>
+                      <p className="text-sm text-brand-ink-soft">{store.storeStreet}</p>
+                      <p className="text-sm text-brand-ink-soft">{store.state}</p>
+                      <p className="text-sm text-brand-ink-soft">Pincode: {store.pincode}</p>
+                    </div>
+                  </div>
+                </RadioCard>
+              ))}
+            </div>
+
+            <div className="mt-6 text-center">
+              {errors.storeId && (
+                <p className="mb-2 text-sm text-red-600">Please select a store.</p>
+              )}
+              <p className="mb-5 text-sm text-brand-ink-soft">
+                Note: changing your store will clear any items in your cart.
+              </p>
+              <Button type="submit" size="lg">
+                Continue to Pickles
+              </Button>
             </div>
           </form>
-        </div>
-      )}
+        )}
+      </Container>
+
       <Footer />
     </div>
   );

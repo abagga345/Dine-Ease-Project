@@ -5,9 +5,11 @@ import { Outlet } from "react-router-dom"
 export function Dashboard(){
     return (
         
-        <div className="w-full h-full flex">
+        <div className="w-full min-h-screen flex bg-brand-cream">
             <SidePanel></SidePanel>
-            <Outlet></Outlet>
+            <div className="flex-1 bg-brand-cream">
+                <Outlet></Outlet>
+            </div>
 
         </div>
     )
