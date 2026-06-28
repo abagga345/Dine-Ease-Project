@@ -29,7 +29,7 @@ export const sendOTP = async (
         Messages: [
           {
             From: {
-              Email: 'dinease@abagga.xyz',
+              Email: 'dinease@coderspro.xyz',
               Name: 'Dine-Ease',
             },
             To: [
