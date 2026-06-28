@@ -690,9 +690,11 @@ userRouter.post("/generateotp",async (req:Request,res:Response)=>{
         // console.log("email"+req.body.email);
         // console.log("otp"+otp);
         req.log.info({email:req.body.email},"OTP generated, sending email");
-        if (!(await sendOTP(req.body.email,otp))){
-            req.log.error({email:req.body.email},"OTP email failed to send");
-            res.status(502).json({"message":"Failed to send OTP, please try again"});
+        const sendRes = await sendOTP(req.body.email,otp);
+        if (!sendRes.ok){
+            req.log.error({email:req.body.email, mailjet:sendRes},"OTP email failed to send");
+            // TEMP DEBUG: surface Mailjet's actual reason so the failure can be diagnosed.
+            res.status(502).json({"message":"Failed to send OTP, please try again", debug:{status:sendRes.status, detail:sendRes.detail}});
             return;
         }
         req.log.info({email:req.body.email},"OTP sent successfully");

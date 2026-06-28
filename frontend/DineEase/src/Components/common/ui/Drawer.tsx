@@ -29,8 +29,12 @@ export function Drawer({
             <X size={22} />
           </button>
         </header>
-        <div className="flex-1 overflow-y-auto px-5 py-4">{children}</div>
-        {footer && <div className="border-t border-brand-cream-dark px-5 py-4">{footer}</div>}
+        {/* min-h-0 lets this flex child actually shrink and scroll instead of
+            growing with its content and pushing the footer off-screen. */}
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
+        {footer && (
+          <div className="flex-shrink-0 border-t border-brand-cream-dark px-5 py-4">{footer}</div>
+        )}
       </aside>
     </div>
   );
