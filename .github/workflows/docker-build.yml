@@ -3,7 +3,7 @@ name: Build and Push Frontend and Backend Docker Images on Production Update
 on:
   push:
     branches:
-      - production  
+      - pickle-website-prod
 
 jobs:
   Continuous-Integration:

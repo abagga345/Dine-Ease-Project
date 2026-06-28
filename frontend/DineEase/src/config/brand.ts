@@ -8,40 +8,44 @@
 
 export const brand = {
   /** Brand / company name shown in the navbar, footer, auth pages, emails copy. */
-  name: "Aamra & Co.",
+  name: "Gandhi Achar",
   /** Short word that follows the name as a wordmark suffix, e.g. "Pickles". */
-  wordmarkSuffix: "Pickles",
+  wordmarkSuffix: "6 Ranga",
   /** One-line tagline used under the hero headline and in the footer. */
-  tagline: "Heritage pickles, pressed and sun-cured the old way.",
+  tagline: "A rainbow of Khari Baoli pickles, hand-made in Delhi since 1950.",
   /** Founding year — drives the "Since ____" eyebrow and the footer copyright. */
-  sinceYear: 1998,
+  sinceYear: 1950,
 
   /** Hero headline (kept short; the serif display font does the heavy lifting). */
   heroHeadline: "The Royal Taste of Tradition",
   heroSubtext:
-    "Small-batch achaar made from hand-picked produce, mustard oil and " +
-    "stone-ground spices — just like it was made for generations.",
+    "Famous across Khari Baoli for a wide variety of pickles — Murabba, Garlic, " +
+    "Dela, Lemon, Ginger, Green & Red Chilli, Mango, Nimboo and Punjabi Mix — " +
+    "each made with chosen spices, salt and sugar for a magical taste.",
 
-  /** Heritage / About story block on the home page. PLACEHOLDER copy. */
+  /** Heritage / About story block on the home page. */
   story: {
     eyebrow: "Our Story",
-    title: "Four generations of flavour",
+    title: "Famous in Khari Baoli since 1950",
     body:
-      "[Placeholder] Tell your story here — where it began, the family recipe, " +
-      "the village kitchens, the slow sun-curing. This text appears on the home " +
-      "page heritage section and can be as long or short as you like.",
+      "Pickles from 6 Ranga Achar by Gandhi's, Khari Baoli, Delhi have been " +
+      "famous for their wide variety of flavours since 1950. Every variety is " +
+      "unique — made with carefully chosen spices, salt and sugar to impart a " +
+      "magical taste that compliments northern and continental dishes best.",
   },
 
-  /** About-us page / footer blurb. PLACEHOLDER. */
+  /** About-us page / footer blurb. */
   about:
-    "[Placeholder] A short paragraph about the company, its mission and what " +
-    "makes its pickles special. Replace this with your own words.",
+    "Gandhi Achar 6 Ranga, from Khari Baoli, Delhi, has been crafting a wide " +
+    "range of traditional pickles since 1950 — from Mango and Nimboo to Garlic, " +
+    "Ginger, Chilli, Murabba and our signature Punjabi Mix.",
 
-  /** Contact details — PLACEHOLDERS. */
+  /** Contact details. */
   contact: {
-    email: "hello@example.com",
+    email: "hello@gandhiachar6ranga.com",
     phone: "+91 00000 00000",
-    address: "123 Market Road, Your City, India",
+    address:
+      "Shop No. 6675, Opposite Kirana Commity, Main Road, Khari Baoli, Delhi-110006",
   },
 
   /** Social links — leave a value empty ("") to hide that icon. PLACEHOLDERS. */
@@ -88,13 +92,13 @@ export const heroImages = {
         "https://images.pexels.com/photos/9164642/pexels-photo-9164642.jpeg?auto=compress&cs=tinysrgb&w=800",
     },
     {
-      title: "Chilli & Lime",
+      title: "Green & Red Chilli",
       // Spicy homemade pickle with fresh chillies.
       image:
         "https://images.pexels.com/photos/13724203/pexels-photo-13724203.jpeg?auto=compress&cs=tinysrgb&w=800",
     },
     {
-      title: "Mixed Vegetable",
+      title: "Punjabi Mix",
       // Pickled vegetable platter (carrots, peppers, radish).
       image:
         "https://images.pexels.com/photos/5855239/pexels-photo-5855239.jpeg?auto=compress&cs=tinysrgb&w=800",
