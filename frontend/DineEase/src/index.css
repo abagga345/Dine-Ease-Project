@@ -5,9 +5,14 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Prevent any stray-wide element from triggering horizontal scroll,
+       which on mobile makes the browser zoom out to fit on navigation. */
+    overflow-x: hidden;
   }
   body {
     @apply bg-brand-cream text-brand-ink font-sans antialiased;
+    max-width: 100%;
+    overflow-x: hidden;
   }
   h1,
   h2,

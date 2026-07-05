@@ -30,11 +30,13 @@ import { PrivacyPolicy } from "./Components/User/Legal/PrivacyPolicy"
 import { TermsOfService } from "./Components/User/Legal/TermsOfService"
 import { ShippingReturns } from "./Components/User/Legal/ShippingReturns"
 import { AboutUs } from "./Components/User/Legal/AboutUs"
+import { ScrollToTop } from "./Components/common/ScrollToTop"
 function App() {
   return (
     <div>
       <Toaster position="top-center" />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<UserHome></UserHome>}></Route>
           <Route path="/signup" element={<UserSignup></UserSignup>}></Route>
