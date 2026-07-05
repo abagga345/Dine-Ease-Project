@@ -29,6 +29,7 @@ import {MenuItem} from "./Components/User/MenuItem/MenuItem"
 import { PrivacyPolicy } from "./Components/User/Legal/PrivacyPolicy"
 import { TermsOfService } from "./Components/User/Legal/TermsOfService"
 import { ShippingReturns } from "./Components/User/Legal/ShippingReturns"
+import { AboutUs } from "./Components/User/Legal/AboutUs"
 function App() {
   return (
     <div>
@@ -44,6 +45,7 @@ function App() {
           <Route path="/checkout" element={<Checkout></Checkout>}></Route>
           <Route path="/store" element={<Store></Store>}></Route>
           <Route path="/menuitem/:itemId" element={<MenuItem></MenuItem>}></Route>
+          <Route path="/about-us" element={<AboutUs></AboutUs>}></Route>
           <Route path="/privacy-policy" element={<PrivacyPolicy></PrivacyPolicy>}></Route>
           <Route path="/terms-of-service" element={<TermsOfService></TermsOfService>}></Route>
           <Route path="/shipping-returns" element={<ShippingReturns></ShippingReturns>}></Route>

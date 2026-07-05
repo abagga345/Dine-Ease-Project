@@ -64,7 +64,7 @@ export const brand = {
       { label: "Gift Boxes", href: "/store" },
     ],
     company: [
-      { label: "About Us", href: "/#features" },
+      { label: "About Us", href: "/about-us" },
       { label: "Our Heritage", href: "/#story" },
       { label: "Contact", href: "/#contact" },
     ],
